@@ -77,7 +77,7 @@
             box-shadow: 
                 0 0 20px rgba(255, 255, 255, 0.8),
                 inset 0 0 20px rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
+            transform: translateY(-5px) scale(1.05);
             animation: pulse 1s infinite;
         }
 
@@ -110,15 +110,25 @@
             justify-content: center;
             margin-bottom: 1rem;
             position: relative;
-            image-rendering: pixelated;
-            image-rendering: crisp-edges;
+            overflow: hidden;
         }
 
         .class-image img {
+            width: auto;
+            height: 100%;
             max-width: 100%;
-            height: auto;
+            object-fit: contain;
             image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
+            filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+
+        .class-card:hover .class-image img {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.6))
+                    brightness(1.2);
         }
 
         /* Nome da classe */
@@ -141,11 +151,17 @@
                 grid-template-columns: repeat(2, 1fr);
                 gap: 1rem;
             }
+            .class-name {
+                font-size: 0.8rem;
+            }
         }
 
         @media (max-width: 480px) {
             .class-selection {
                 grid-template-columns: 1fr;
+            }
+            .class-name {
+                font-size: 0.7rem;
             }
         }
 
@@ -186,32 +202,28 @@
     <div class="class-selection">
         <div class="class-card" data-class="squire">
             <div class="class-image">
-                <!-- Aqui você colocará a imagem do Squire -->
-                <div style="color: #666; font-size: 3rem;">⚔️</div>
+                <img src="assets/images/classes/squire.png" alt="Squire" />
             </div>
             <h2 class="class-name">Squire</h2>
         </div>
 
         <div class="class-card" data-class="knight">
             <div class="class-image">
-                <!-- Aqui você colocará a imagem do Knight -->
-                <div style="color: #666; font-size: 3rem;">🛡️</div>
+                <img src="assets/images/classes/knight.png" alt="Knight" />
             </div>
             <h2 class="class-name">Knight</h2>
         </div>
 
         <div class="class-card" data-class="mage">
             <div class="class-image">
-                <!-- Aqui você colocará a imagem do Mage -->
-                <div style="color: #666; font-size: 3rem;">🔮</div>
+                <img src="assets/images/classes/mage.png" alt="Mage" />
             </div>
             <h2 class="class-name">Mage</h2>
         </div>
 
         <div class="class-card" data-class="rogue">
             <div class="class-image">
-                <!-- Aqui você colocará a imagem do Rogue -->
-                <div style="color: #666; font-size: 3rem;">🗡️</div>
+                <img src="assets/images/classes/rogue.png" alt="Rogue" />
             </div>
             <h2 class="class-name">Rogue</h2>
         </div>
@@ -233,6 +245,19 @@
             card.addEventListener('mouseenter', function() {
                 // Pode adicionar um som de hover aqui se quiser
                 this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+
+        // Tratamento de erro para imagens não carregadas
+        document.querySelectorAll('.class-image img').forEach(img => {
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                this.parentElement.innerHTML = `
+                    <div style="color: #666; text-align: center;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                        <div style="font-size: 0.6rem;">Imagem não encontrada</div>
+                    </div>
+                `;
             });
         });
     </script>
