@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RPG Pixel - Stats Simulator</title>
+    <title>APOGEA - Stats Simulator</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
@@ -13,32 +13,39 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
-    <!-- Main CSS (modularizado) -->
+    <!-- Main CSS -->
     <link rel="stylesheet" href="../css/main.css">
     
     <!-- CSS específico desta página -->
     <link rel="stylesheet" href="../css/pages/stats-simulator.css">
 </head>
 <body>
+    <!-- Language Selector (igual ao index) -->
+    <div class="language-selector">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt-br">PT</button>
+    </div>
+    
     <!-- Stars Background -->
     <div class="stars-container" id="stars"></div>
     
-    <!-- Back Button (usando classe de buttons.css) -->
-    <a href="../index.html" class="lang-btn" style="position: fixed; top: 20px; left: 20px;">
-        ← BACK
+    <!-- Back Button -->
+    <a href="../index.html" class="back-btn">
+        <span data-i18n="stats.back">← BACK</span>
     </a>
     
-    <!-- Main Content (usando classe base) -->
+    <!-- Main Content -->
     <div class="main-content">
-        <!-- Header (usando classes do logo.css) -->
+        <!-- Header -->
         <div class="game-logo">
             <h1 class="class-title" id="classTitle">KNIGHT</h1>
-            <p class="game-subtitle">STATS SIMULATOR</p>
+            <p class="game-subtitle" data-i18n="stats.title">STATS SIMULATOR</p>
         </div>
         
         <!-- Points Display -->
         <div class="points-display">
-            Available Points: <span id="availablePoints">100</span>
+            <span data-i18n="stats.availablePoints">Available Points</span>: 
+            <span id="availablePoints">100</span>
         </div>
         
         <!-- Stats Container -->
@@ -46,12 +53,12 @@
             <table class="stats-table">
                 <thead>
                     <tr>
-                        <th>Stat</th>
-                        <th>Class Mult</th>
-                        <th>Base</th>
-                        <th>Points</th>
-                        <th class="hide-mobile">Bonus</th>
-                        <th>Final</th>
+                        <th data-i18n="stats.stat">Stat</th>
+                        <th data-i18n="stats.classMultiplier">Class Mult</th>
+                        <th data-i18n="stats.base">Base</th>
+                        <th data-i18n="stats.points">Points</th>
+                        <th class="hide-mobile" data-i18n="stats.bonus">Bonus</th>
+                        <th data-i18n="stats.final">Final</th>
                     </tr>
                 </thead>
                 <tbody id="statsTableBody">

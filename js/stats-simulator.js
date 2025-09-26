@@ -1,4 +1,4 @@
-// Class Multipliers
+// Class Multipliers (continua igual)
 const classMultipliers = {
     squire: {
         skill: 1.00, magic: 1.00, armor: 1.00, defense: 1.00,
@@ -26,22 +26,22 @@ const classMultipliers = {
     }
 };
 
-// Base Stats
+// Base Stats ATUALIZADO com chaves de tradução
 const baseStats = {
-    health: { name: 'Health', base: 150, points: 0 },
-    mana: { name: 'Mana', base: 15, points: 0 },
-    magic: { name: 'Magic', base: 0, points: 0 },
-    damage: { name: 'Damage', base: 0, points: 0 },
-    movespeed: { name: 'Move Speed', base: 35, points: 0 },
-    ability: { name: 'Ability', base: 0, points: 0 },
-    skill: { name: 'Skill', base: 0, points: 0 },
-    attackSpeed: { name: 'Attack Speed', base: 10, points: 0 },
-    hpRegen: { name: 'HP Regen', base: 1, points: 0 },
-    mpRegen: { name: 'MP Regen', base: 1, points: 0 },
-    range: { name: 'Range', base: 15, points: 0 },
-    armor: { name: 'Armor', base: 0, points: 0 },
-    defense: { name: 'Defense', base: 0, points: 0 },
-    capacity: { name: 'Capacity', base: 225, points: 0 }
+    health: { key: 'health', base: 150, points: 0 },
+    mana: { key: 'mana', base: 15, points: 0 },
+    magic: { key: 'magic', base: 0, points: 0 },
+    damage: { key: 'damage', base: 0, points: 0 },
+    movespeed: { key: 'movespeed', base: 35, points: 0 },
+    ability: { key: 'ability', base: 0, points: 0 },
+    skill: { key: 'skill', base: 0, points: 0 },
+    attackSpeed: { key: 'attackSpeed', base: 10, points: 0 },
+    hpRegen: { key: 'hpRegen', base: 1, points: 0 },
+    mpRegen: { key: 'mpRegen', base: 1, points: 0 },
+    range: { key: 'range', base: 15, points: 0 },
+    armor: { key: 'armor', base: 0, points: 0 },
+    defense: { key: 'defense', base: 0, points: 0 },
+    capacity: { key: 'capacity', base: 225, points: 0 }
 };
 
 let currentClass = 'knight';
@@ -53,7 +53,7 @@ function getClassFromURL() {
     return params.get('class') || 'knight';
 }
 
-// Create stars (reutilizando a função)
+// Create stars (igual)
 function createStars() {
     const starsContainer = document.getElementById('stars');
     const numberOfStars = 150;
@@ -80,7 +80,7 @@ function createStars() {
     }
 }
 
-// Render stats table
+// Render stats table ATUALIZADO com tradução
 function renderStats() {
     const tbody = document.getElementById('statsTableBody');
     tbody.innerHTML = '';
@@ -97,8 +97,11 @@ function renderStats() {
         if (multiplier > 1) multClass = 'high';
         else if (multiplier < 1) multClass = 'low';
         
+        // USA TRADUÇÃO PARA O NOME DO STAT
+        const statName = t(`stat.${stat.key}`);
+        
         row.innerHTML = `
-            <td class="stat-name">${stat.name}</td>
+            <td class="stat-name">${statName}</td>
             <td class="multiplier ${multClass}">${(multiplier * 100).toFixed(0)}%</td>
             <td class="value">${stat.base}</td>
             <td>
@@ -116,7 +119,7 @@ function renderStats() {
     }
 }
 
-// Adjust stat points
+// Adjust stat points (continua igual)
 function adjustStat(statKey, change) {
     const stat = baseStats[statKey];
     
@@ -140,7 +143,10 @@ function updatePointsDisplay() {
 // Initialize
 function init() {
     currentClass = getClassFromURL();
-    document.getElementById('classTitle').textContent = currentClass.toUpperCase();
+    
+    // Traduz o nome da classe
+    const classNameKey = `class.${currentClass}`;
+    document.getElementById('classTitle').textContent = t(classNameKey).toUpperCase();
     
     createStars();
     renderStats();

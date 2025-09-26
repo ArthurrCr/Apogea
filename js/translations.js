@@ -3,8 +3,9 @@
 // ======================
 const translations = {
     'en': {
-        'page.title': 'aPOGea',
-        'page.description': 'Choose your class and start your epic adventure!',
+        // Página principal
+        'page.title': 'Choose Your Class',
+        'page.description': 'Choose your class',
         'subtitle': 'Choose Your Class',
         'instructions': 'Click to select',
         'class.squire': 'Squire',
@@ -12,12 +13,40 @@ const translations = {
         'class.mage': 'Mage',
         'class.rogue': 'Rogue',
         'error.imageNotFound': 'Image not found',
-        'error.logoFallback': 'RPG PIXEL',
+        'error.logoFallback': 'APOGEA',
         'loading': 'Loading...',
-        'selected': 'Class selected'
+        'selected': 'Class selected',
+        
+        // PÁGINA DE STATS - NOVO
+        'stats.title': 'STATS SIMULATOR',
+        'stats.back': '← BACK',
+        'stats.availablePoints': 'Available Points',
+        'stats.stat': 'Stat',
+        'stats.classMultiplier': 'Class Mult',
+        'stats.base': 'Base',
+        'stats.points': 'Points',
+        'stats.bonus': 'Bonus',
+        'stats.final': 'Final',
+        
+        // Nomes dos stats
+        'stat.health': 'Health',
+        'stat.mana': 'Mana',
+        'stat.magic': 'Magic',
+        'stat.damage': 'Damage',
+        'stat.movespeed': 'Move Speed',
+        'stat.ability': 'Ability',
+        'stat.skill': 'Skill',
+        'stat.attackSpeed': 'Attack Speed',
+        'stat.hpRegen': 'HP Regen',
+        'stat.mpRegen': 'MP Regen',
+        'stat.range': 'Range',
+        'stat.armor': 'Armor',
+        'stat.defense': 'Defense',
+        'stat.capacity': 'Capacity'
     },
     'pt-br': {
-        'page.title': 'aPOGea',
+        // Página principal
+        'page.title': 'Escolha sua Classe',
         'page.description': 'Escolha sua classe e comece sua aventura épica!',
         'subtitle': 'Escolha Sua Classe',
         'instructions': 'Clique para selecionar',
@@ -26,39 +55,60 @@ const translations = {
         'class.mage': 'Mago',
         'class.rogue': 'Ladino',
         'error.imageNotFound': 'Imagem não encontrada',
-        'error.logoFallback': 'RPG PIXEL',
+        'error.logoFallback': 'APOGEA',
         'loading': 'Carregando...',
-        'selected': 'Classe selecionada'
+        'selected': 'Classe selecionada',
+        
+        // PÁGINA DE STATS 
+        'stats.title': 'SIMULADOR DE STATUS',
+        'stats.back': '← VOLTAR',
+        'stats.availablePoints': 'Pontos Disponíveis',
+        'stats.stat': 'Status',
+        'stats.classMultiplier': 'Mult. Classe',
+        'stats.base': 'Base',
+        'stats.points': 'Pontos',
+        'stats.bonus': 'Bônus',
+        'stats.final': 'Final',
+        
+        // Nomes dos stats
+        'stat.health': 'Vida',
+        'stat.mana': 'Mana',
+        'stat.magic': 'Magia',
+        'stat.damage': 'Dano',
+        'stat.movespeed': 'Vel. Movimento',
+        'stat.ability': 'Habilidade',
+        'stat.skill': 'Perícia',
+        'stat.attackSpeed': 'Vel. Ataque',
+        'stat.hpRegen': 'Regen. Vida',
+        'stat.mpRegen': 'Regen. Mana',
+        'stat.range': 'Alcance',
+        'stat.armor': 'Armadura',
+        'stat.defense': 'Defesa',
+        'stat.capacity': 'Capacidade'
     }
 };
 
-// Current language (default: English)
+// Resto do código continua igual...
 let currentLanguage = localStorage.getItem('gameLanguage') || 'en';
 
-// Translation function
 function t(key) {
     return translations[currentLanguage][key] || translations['en'][key] || key;
 }
 
-// Apply translations to DOM
 function applyTranslations() {
-    // Update HTML lang attribute
     document.documentElement.lang = currentLanguage === 'pt-br' ? 'pt-BR' : 'en';
     
-    // Update page title and meta
     document.title = t('page.title');
     const metaDescription = document.querySelector('meta[name="description"]');
     if (metaDescription) {
         metaDescription.content = t('page.description');
     }
     
-    // Update all elements with data-i18n
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
         element.textContent = t(key);
     });
     
-    // Update language buttons
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
         if (btn.dataset.lang === currentLanguage) {
@@ -67,23 +117,20 @@ function applyTranslations() {
     });
 }
 
-// Change language
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('gameLanguage', lang);
     applyTranslations();
     
-    // Re-apply error handlers with new language
-    if (typeof handleImageErrors === 'function') {
-        handleImageErrors();
+    // Se estiver na página de stats, re-renderiza
+    if (typeof renderStats === 'function') {
+        renderStats();
     }
 }
 
-// Initialize translations when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
     
-    // Setup language selector buttons
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             setLanguage(btn.dataset.lang);
