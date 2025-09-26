@@ -174,9 +174,11 @@ function calculateStatValue(stat, multiplier) {
         bonus = stat.formula(stat.points);
     }
     
-    // Calcula valor final: (base + bonus) × multiplicador
-    const finalValue = (stat.base + bonus) * multiplier;
-    return { bonus, finalValue };
+    // CORREÇÃO: Multiplicador aplica apenas no bonus, não no base
+    const bonusWithMultiplier = bonus * multiplier;
+    const finalValue = stat.base + bonusWithMultiplier;
+    
+    return { bonus: bonusWithMultiplier, finalValue };
 }
 
 // Render stats table
