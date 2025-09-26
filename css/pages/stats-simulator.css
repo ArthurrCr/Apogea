@@ -2,12 +2,25 @@
    STATS SIMULATOR PAGE
    ====================== */
 
+/* Garantir scroll horizontal sempre disponível */
+html, body {
+    overflow-x: hidden;
+}
+
+.main-content {
+    width: 100%;
+    min-width: 320px;
+    padding: 1rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
 /* Stats Header - Container para Level e Points */
 .stats-header {
     display: flex;
     justify-content: center;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
     align-items: center;
 }
 
@@ -15,29 +28,29 @@
 .level-container {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.6rem 1rem;
-    font-size: 0.6rem; /* Aumentado */
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem; /* Aumentado */
     animation: fadeIn 0.4s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
 }
 
 /* Points Display */
 .points-display {
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.6rem 1rem;
-    font-size: 0.6rem; /* Aumentado */
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem; /* Aumentado */
     animation: fadeIn 0.5s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
 }
 
 .points-display span#availablePoints {
     color: #0f0;
-    font-size: 0.8rem; /* Aumentado */
+    font-size: 1rem; /* Aumentado */
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     font-family: 'Press Start 2P', cursive;
 }
@@ -46,11 +59,11 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 0.3rem;
-    font-size: 0.55rem; /* Aumentado */
+    padding: 0.4rem;
+    font-size: 0.65rem; /* Aumentado */
     font-family: 'Press Start 2P', cursive;
     text-align: center;
-    width: 70px; /* Aumentado */
+    width: 80px; /* Aumentado */
     transition: all 0.3s ease;
 }
 
@@ -66,42 +79,76 @@
 
 /* Stats Container */
 .stats-container {
-    max-width: 1000px; /* Ajustado para maior */
-    margin: 0 auto;
+    max-width: 1200px; /* Aumentado significativamente */
+    margin: 0 auto 2rem auto;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 1rem;
+    padding: 1.5rem;
     animation: fadeIn 0.6s ease 0.2s both;
-    overflow-x: auto;
+    overflow-x: auto; /* Garantir scroll horizontal */
+    overflow-y: hidden;
+    position: relative;
+    /* Forçar barra de rolagem sempre visível */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
+}
+
+/* Customizar scrollbar para webkit browsers */
+.stats-container::-webkit-scrollbar {
+    height: 10px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.stats-container::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+}
+
+.stats-container::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 5px;
+    transition: background 0.3s;
+}
+
+.stats-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
 }
 
 /* Stats Table */
 .stats-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 550px;
+    min-width: 800px; /* Aumentado - força scroll em telas menores */
 }
 
 .stats-table th {
     background: rgba(255, 255, 255, 0.1);
-    padding: 0.6rem 0.5rem; /* Aumentado */
-    font-size: 0.5rem; /* Aumentado */
+    padding: 0.8rem 0.7rem; /* Aumentado significativamente */
+    font-size: 0.65rem; /* Aumentado */
     text-align: left;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     position: sticky;
     top: 0;
     z-index: 10;
     white-space: nowrap;
+    letter-spacing: 0.5px;
 }
 
 .stats-table td {
-    padding: 0.5rem 0.4rem; /* Aumentado */
-    font-size: 0.45rem; /* Aumentado */
+    padding: 0.7rem 0.6rem; /* Aumentado significativamente */
+    font-size: 0.55rem; /* Aumentado */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    white-space: nowrap;
 }
 
 .stats-table tr:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.08);
+    transition: background 0.2s ease;
+}
+
+/* Efeito hover nas linhas com transição suave */
+.stats-table tr {
+    transition: background 0.2s ease;
 }
 
 /* Stat Name Column */
@@ -109,13 +156,15 @@
     color: #ffd700;
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 0.45rem; /* Aumentado */
+    font-size: 0.55rem; /* Aumentado */
+    letter-spacing: 0.5px;
 }
 
 /* Multiplier Column */
 .multiplier {
     color: #00ffff;
-    font-size: 0.45rem; /* Aumentado */
+    font-size: 0.55rem; /* Aumentado */
+    font-weight: 600;
 }
 
 .multiplier.high {
@@ -131,20 +180,20 @@
 /* Controls */
 .controls {
     display: flex;
-    gap: 0.4rem;
+    gap: 0.5rem;
     align-items: center;
     justify-content: center;
 }
 
 .btn-adjust {
-    width: 22px; /* Aumentado */
-    height: 22px;
+    width: 28px; /* Aumentado */
+    height: 28px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.65rem; /* Aumentado */
+    font-size: 0.8rem; /* Aumentado */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -155,6 +204,7 @@
     background: rgba(255, 255, 255, 0.2);
     border-color: #fff;
     transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .btn-adjust:disabled {
@@ -163,11 +213,11 @@
 }
 
 .pts-value {
-    min-width: 35px; /* Aumentado */
+    min-width: 45px; /* Aumentado */
     text-align: center;
     color: #fff;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.45rem; /* Aumentado */
+    font-size: 0.55rem; /* Aumentado */
 }
 
 .pts-value.disabled {
@@ -179,13 +229,14 @@
 .value {
     text-align: right;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.45rem; /* Aumentado */
+    font-size: 0.55rem; /* Aumentado */
 }
 
 .value.final {
     color: #ffd700;
     font-weight: bold;
-    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+    font-size: 0.6rem; /* Maior destaque */
 }
 
 /* Back Button */
@@ -196,8 +247,8 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 6px 10px; /* Reduzido de 8px 12px */
-    font-size: 0.5rem; /* Reduzido de 0.6rem */
+    padding: 8px 12px;
+    font-size: 0.6rem; /* Aumentado */
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
@@ -212,133 +263,220 @@
     transform: scale(1.05);
 }
 
+/* Força scroll suave em dispositivos touch */
+.stats-container {
+    -webkit-overflow-scrolling: touch; /* iOS scroll suave */
+    scroll-behavior: smooth;
+}
+
+/* Garante que a tabela seja scrollável em todas as telas */
+@media (max-width: 1280px) {
+    .stats-container {
+        max-width: calc(100% - 2rem);
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
 /* Game Logo */
 .game-logo {
-    margin-bottom: 0.8rem;
+    margin-bottom: 1.2rem;
 }
 
 /* Ajuste para o título */
 .game-subtitle {
-    font-size: 1rem !important; /* Reduzido para melhor proporção */
-    margin-bottom: 0.5rem;
+    font-size: 1.3rem !important; /* Aumentado */
+    margin-bottom: 0.8rem;
+}
+
+/* Wrapper adicional para scroll em telas pequenas */
+.main-content {
+    width: 100%;
+    min-width: 320px;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* Indicador visual de scroll disponível */
+.stats-container::after {
+    content: '→';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 1.5rem;
+    animation: pulse 2s infinite;
+    pointer-events: none;
+}
+
+.stats-container:hover::after {
+    opacity: 0;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.7; }
 }
 
 /* Tablets e telas médias */
 @media (max-width: 1024px) {
     .stats-container {
         max-width: 95%;
-        padding: 0.8rem;
+        padding: 1rem;
+        margin: 0 auto 1rem auto;
+    }
+    
+    .stats-table {
+        min-width: 700px; /* Força scroll em tablets */
     }
     
     .stats-table th,
     .stats-table td {
-        padding: 0.5rem 0.3rem;
-        font-size: 0.45rem;
+        padding: 0.6rem 0.4rem;
+        font-size: 0.5rem;
+    }
+    
+    .btn-adjust {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
     }
 }
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
     .stats-header {
-        gap: 0.8rem;
+        gap: 1rem;
         flex-wrap: wrap;
     }
     
     .level-container,
     .points-display {
-        padding: 0.5rem 0.7rem;
-        font-size: 0.5rem;
+        padding: 0.6rem 0.8rem;
+        font-size: 0.55rem;
     }
     
     .level-input {
-        width: 55px;
-        font-size: 0.45rem;
+        width: 60px;
+        font-size: 0.5rem;
     }
     
     .points-display span#availablePoints {
-        font-size: 0.65rem;
+        font-size: 0.7rem;
     }
     
     .stats-container {
-        padding: 0.6rem;
+        padding: 0.8rem;
         max-width: 98%;
+        margin: 0 1%;
+    }
+    
+    /* Indicador de scroll mais visível no mobile */
+    .stats-container::after {
+        font-size: 1.2rem;
+        right: 5px;
     }
     
     .stats-table {
-        min-width: auto;
+        min-width: 650px; /* Força scroll no mobile */
     }
     
     .stats-table th,
     .stats-table td {
-        padding: 0.35rem 0.2rem;
-        font-size: 0.38rem;
+        padding: 0.4rem 0.3rem;
+        font-size: 0.42rem;
     }
     
     .btn-adjust {
-        width: 19px;
-        height: 19px;
-        font-size: 0.55rem;
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
     }
     
     .pts-value {
-        min-width: 28px;
-        font-size: 0.38rem;
+        min-width: 32px;
+        font-size: 0.42rem;
     }
     
     .back-btn {
-        padding: 5px 8px;
-        font-size: 0.4rem;
+        padding: 6px 9px;
+        font-size: 0.45rem;
     }
 }
 
 @media (max-width: 480px) {
     .stats-header {
         flex-direction: column;
-        gap: 0.5rem;
+        gap: 0.8rem;
     }
     
     .level-container,
     .points-display {
         width: auto;
         justify-content: center;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.5rem;
     }
     
     .hide-mobile {
         display: none;
     }
     
+    .stats-container {
+        padding: 0.5rem;
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .stats-table {
+        min-width: 600px; /* Força scroll em telas muito pequenas */
+    }
+    
     .stats-table th {
-        font-size: 0.3rem;
-        padding: 0.3rem 0.1rem;
+        font-size: 0.38rem;
+        padding: 0.35rem 0.2rem;
     }
     
     .stats-table td {
-        font-size: 0.3rem;
-        padding: 0.25rem 0.1rem;
+        font-size: 0.38rem;
+        padding: 0.32rem 0.2rem;
     }
     
     .stat-name,
     .multiplier,
     .value {
-        font-size: 0.3rem;
+        font-size: 0.38rem;
     }
     
     .btn-adjust {
-        width: 16px;
-        height: 16px;
-        font-size: 0.4rem;
+        width: 18px;
+        height: 18px;
+        font-size: 0.5rem;
+    }
+    
+    .pts-value {
+        font-size: 0.35rem;
+        min-width: 28px;
     }
 }
 
 /* Ajuste adicional para telas muito pequenas */
 @media (max-width: 360px) {
     .stats-container {
-        padding: 0.3rem;
+        padding: 0.4rem;
+    }
+    
+    .stats-table {
+        min-width: 580px; /* Garante scroll mesmo em telas muito pequenas */
     }
     
     .stats-table th,
     .stats-table td {
-        font-size: 0.28rem;
-        padding: 0.2rem 0.08rem;
+        font-size: 0.35rem;
+        padding: 0.3rem 0.15rem;
+    }
+    
+    .game-subtitle {
+        font-size: 0.9rem !important;
     }
 }
