@@ -1,66 +1,80 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="aPOGea">
-    <title>aPOGea</title>
+    <meta name="description" content="RPG Pixel - Choose your class and start your epic adventure!">
+    <title>RPG Pixel - Choose Your Class</title>
     
-    <!-- Favicon (opcional) -->
+    <!-- Favicon (optional) -->
     <link rel="icon" type="image/png" href="assets/images/favicon.png">
     
-    <!-- Fonte Pixelada -->
+    <!-- Pixelated Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
-    <!-- CSS Principal -->
+    <!-- Main CSS -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Container de estrelas animadas -->
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn active" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt-br">PT</button>
+    </div>
+
+    <!-- Animated Stars Container -->
     <div class="stars-container" id="stars"></div>
 
-    <!-- Container principal -->
+    <!-- Main Container -->
     <div class="main-content">
-        <!-- Logo do jogo -->
+        <!-- Game Logo -->
         <div class="game-logo">
             <img src="assets/images/logo.png" alt="RPG Pixel Logo" />
         </div>
 
-        <!-- Seleção de classes -->
+        <!-- Subtitle -->
+        <p class="game-subtitle" data-i18n="subtitle">Choose Your Class</p>
+
+        <!-- Class Selection -->
         <div class="class-selection">
             <div class="class-card" data-class="squire">
                 <div class="class-image">
                     <img src="assets/images/classes/squire.png" alt="Squire" />
                 </div>
-                <h2 class="class-name">Squire</h2>
+                <h2 class="class-name" data-i18n="class.squire">Squire</h2>
             </div>
 
             <div class="class-card" data-class="knight">
                 <div class="class-image">
                     <img src="assets/images/classes/knight.png" alt="Knight" />
                 </div>
-                <h2 class="class-name">Knight</h2>
+                <h2 class="class-name" data-i18n="class.knight">Knight</h2>
             </div>
 
             <div class="class-card" data-class="mage">
                 <div class="class-image">
                     <img src="assets/images/classes/mage.png" alt="Mage" />
                 </div>
-                <h2 class="class-name">Mage</h2>
+                <h2 class="class-name" data-i18n="class.mage">Mage</h2>
             </div>
 
             <div class="class-card" data-class="rogue">
                 <div class="class-image">
                     <img src="assets/images/classes/rogue.png" alt="Rogue" />
                 </div>
-                <h2 class="class-name">Rogue</h2>
+                <h2 class="class-name" data-i18n="class.rogue">Rogue</h2>
             </div>
         </div>
+
+        <!-- Instructions -->
+        <p class="instructions" data-i18n="instructions">Click to select</p>
     </div>
 
-    <!-- JavaScript Principal -->
+    <!-- Translation System -->
+    <script src="js/translations.js"></script>
+    <!-- Main JavaScript -->
     <script src="js/main.js"></script>
 </body>
 </html>

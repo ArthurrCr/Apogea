@@ -1,4 +1,82 @@
 /* ======================
+   LANGUAGE SELECTOR
+   ====================== */
+.language-selector {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    gap: 5px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 5px;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.lang-btn {
+    background: transparent;
+    color: #666;
+    border: 2px solid transparent;
+    padding: 8px 12px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:hover {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.lang-btn.active {
+    color: #fff;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Subtitle style */
+.game-subtitle {
+    font-size: 1.2rem;
+    color: #fff;
+    text-align: center;
+    margin: -2rem 0 2rem 0;
+    text-shadow: 
+        2px 2px 0px #333,
+        3px 3px 0px #222;
+    animation: fadeIn 1s ease-out 0.5s both;
+}
+
+/* Instructions style */
+.instructions {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+    margin-top: 2rem;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes blink {
+    0%, 100% {
+        opacity: 0.6;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ======================
    RESET E BASE
    ====================== */
 * {
