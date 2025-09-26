@@ -1,0 +1,167 @@
+/* ======================
+   STATS SIMULATOR PAGE
+   ====================== */
+
+/* Points Display */
+.points-display {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    animation: fadeIn 0.5s ease;
+}
+
+.points-display span {
+    color: #0f0;
+    font-size: 1.2rem;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* Stats Container */
+.stats-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    animation: fadeIn 0.6s ease 0.2s both;
+    overflow-x: auto;
+}
+
+/* Stats Table */
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.stats-table th {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem 0.5rem;
+    font-size: 0.6rem;
+    text-align: left;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.stats-table td {
+    padding: 0.6rem 0.5rem;
+    font-size: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.stats-table tr:hover {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Stat Name Column */
+.stat-name {
+    color: #ffd700;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* Multiplier Column */
+.multiplier {
+    color: #00ffff;
+}
+
+.multiplier.high {
+    color: #0f0;
+    text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+}
+
+.multiplier.low {
+    color: #f00;
+    text-shadow: 0 0 5px rgba(255, 0, 0, 0.5);
+}
+
+/* Controls */
+.controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-adjust {
+    width: 24px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.btn-adjust:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    transform: scale(1.1);
+}
+
+.btn-adjust:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.pts-value {
+    min-width: 40px;
+    text-align: center;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Values */
+.value {
+    text-align: right;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.value.final {
+    color: #ffd700;
+    font-weight: bold;
+    text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .stats-container {
+        padding: 0.5rem;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        padding: 0.4rem 0.2rem;
+        font-size: 0.4rem;
+    }
+    
+    .btn-adjust {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
+    
+    .points-display {
+        font-size: 0.6rem;
+    }
+    
+    .points-display span {
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hide-mobile {
+        display: none;
+    }
+}
