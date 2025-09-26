@@ -124,7 +124,7 @@ const baseStats = {
 // Global variables
 let currentClass = 'knight';
 let currentLevel = 1;
-let availablePoints = 3;
+let availablePoints = 0; 
 let usedPoints = 0;
 
 // Get class from URL
@@ -135,7 +135,7 @@ function getClassFromURL() {
 
 // Calculate points from level
 function calculatePointsFromLevel(level) {
-    return level * 3;
+    return (level - 1) * 3; // Nível 1 = 0 pontos, depois 3 por nível
 }
 
 // Create stars
