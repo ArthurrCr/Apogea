@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
+    overflow: hidden; /* Desktop sem scroll */
     position: relative;
     image-rendering: pixelated;
     image-rendering: -moz-crisp-edges;
@@ -171,6 +171,39 @@ body {
 }
 
 /* ======================
+   MOBILE SCROLL FIX
+   ====================== */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto; /* Permite scroll vertical */
+        overflow-x: hidden; /* Previne scroll horizontal */
+        align-items: flex-start; /* Alinha no topo */
+        padding: 20px 0; /* Espaço top/bottom */
+    }
+    
+    .main-content {
+        min-height: auto; /* Remove altura mínima */
+        padding-top: 60px; /* Espaço para o seletor de idioma */
+        padding-bottom: 40px; /* Espaço no final */
+    }
+    
+    /* Ajusta o seletor de idioma para não atrapalhar */
+    .language-selector {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.95); /* Mais opaco no mobile */
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        z-index: 1000; /* Garante que fica acima */
+    }
+    
+    /* Estrelas fixas no background */
+    .stars-container {
+        position: fixed; /* Mantém estrelas fixas durante scroll */
+    }
+}
+
+/* ======================
    LAYOUT PRINCIPAL
    ====================== */
 .main-content {
@@ -181,7 +214,8 @@ body {
     min-height: 100vh;
     position: relative;
     z-index: 2;
-    padding: 1rem; /* Adiciona padding geral */
+    padding: 1rem;
+    width: 100%; /* Garante largura total */
 }
 
 .class-selection {
@@ -341,6 +375,8 @@ body {
         grid-template-columns: repeat(2, 1fr);
         gap: 1rem;
         padding: 1rem;
+        width: 100%;
+        max-width: 500px; /* Limita largura em tablets */
     }
     
     .class-name {
@@ -348,7 +384,7 @@ body {
     }
     
     .game-logo img {
-        max-width: 240px; /* Reduzido de 300px */
+        max-width: 240px;
     }
     
     .game-logo {
@@ -357,36 +393,132 @@ body {
     
     .game-subtitle {
         font-size: 0.8rem;
+        margin-bottom: 1.5rem;
     }
     
     .class-image {
         height: 160px;
     }
+    
+    .instructions {
+        margin-bottom: 2rem; /* Mais espaço no final */
+    }
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 15px 0; /* Menos padding em telas muito pequenas */
+    }
+    
+    .main-content {
+        padding: 10px;
+        padding-top: 50px; /* Espaço para lang selector */
+    }
+    
     .class-selection {
         grid-template-columns: 1fr;
         max-width: 300px;
+        gap: 1.2rem; /* Mais espaço entre cards no mobile */
+    }
+    
+    .class-card {
+        margin: 0 auto; /* Centraliza cards */
+        width: 100%;
+        max-width: 280px; /* Limita largura do card */
     }
     
     .class-name {
         font-size: 0.6rem;
+        padding: 0.5rem 0; /* Mais área clicável */
     }
     
     .game-logo img {
-        max-width: 200px; /* Reduzido de 250px */
+        max-width: 200px;
+    }
+    
+    .game-logo {
+        margin-bottom: 1rem;
     }
     
     .game-subtitle {
         font-size: 0.7rem;
+        margin-bottom: 1.5rem;
     }
     
     .class-image {
-        height: 140px;
+        height: 150px; /* Mantém altura razoável */
     }
     
     .instructions {
         font-size: 0.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 3rem; /* Bastante espaço no final */
+        padding: 0 1rem;
+    }
+}
+
+/* ======================
+   SCROLL SUAVE
+   ====================== */
+@media (max-width: 768px) {
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    /* Scrollbar customizada (webkit browsers) */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* ======================
+   AJUSTE PARA TELAS MUITO PEQUENAS
+   ====================== */
+@media (max-height: 600px) and (max-width: 480px) {
+    /* Para celulares em landscape ou muito pequenos */
+    .main-content {
+        padding-top: 40px;
+    }
+    
+    .game-logo img {
+        max-width: 150px;
+    }
+    
+    .class-image {
+        height: 120px;
+    }
+    
+    .game-subtitle {
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* ======================
+   SAFE AREAS (iPhone X+)
+   ====================== */
+@supports (padding: env(safe-area-inset-bottom)) {
+    @media (max-width: 768px) {
+        body {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .language-selector {
+            top: calc(10px + env(safe-area-inset-top, 0));
+            right: calc(10px + env(safe-area-inset-right, 0));
+        }
     }
 }
