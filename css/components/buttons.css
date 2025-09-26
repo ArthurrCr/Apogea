@@ -68,3 +68,83 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     transform: scale(1.1);
 }
+
+/* ÍCONES DE ÁUDIO */
+.audio-icon {
+    display: none;
+}
+
+.audio-btn.playing .audio-icon.playing {
+    display: block;
+    animation: musicNote 2s ease-in-out infinite;
+}
+
+.audio-btn.paused .audio-icon.paused {
+    display: block;
+    opacity: 0.5;
+}
+
+@keyframes musicNote {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* VISUALIZADOR DE ÁUDIO */
+.audio-visualizer {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.audio-visualizer.active {
+    opacity: 1;
+}
+
+.audio-visualizer span {
+    width: 3px;
+    background: rgba(255, 255, 255, 0.7);
+    animation: soundBar 1s ease-in-out infinite;
+}
+
+.audio-visualizer span:nth-child(1) {
+    animation-delay: 0s;
+    height: 10px;
+}
+
+.audio-visualizer span:nth-child(2) {
+    animation-delay: 0.3s;
+    height: 15px;
+}
+
+.audio-visualizer span:nth-child(3) {
+    animation-delay: 0.6s;
+    height: 12px;
+}
+
+@keyframes soundBar {
+    0%, 100% { 
+        transform: scaleY(0.5);
+        opacity: 0.5;
+    }
+    50% { 
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile adjustments para áudio */
+@media (max-width: 768px) {
+    .audio-controller {
+        bottom: 70px;
+        left: 15px;
+    }
+    
+    .audio-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
