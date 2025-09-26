@@ -26,28 +26,28 @@ const classMultipliers = {
     }
 };
 
-// Base Stats com configurações de editabilidade e fórmulas
+// Base Stats - TODOS IGUAIS (sem multiplicador base)
 const baseStats = {
     health: { 
         key: 'health', 
         base: 150, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 5  // (pontos × 5)
+        formula: (points) => points * 5  // (1×5)
     },
     mana: { 
         key: 'mana', 
         base: 15, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 5  // (pontos × 5)
+        formula: (points) => points * 5  // (1×5)
     },
     magic: { 
         key: 'magic', 
         base: 0, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 2  // (pontos × 2)
+        formula: (points) => points * 1  
     },
     damage: { 
         key: 'damage', 
@@ -66,7 +66,7 @@ const baseStats = {
         base: 0, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 1  // (pontos × 1)
+        formula: (points) => points * 1  // (1×1)
     },
     skill: { 
         key: 'skill', 
@@ -85,14 +85,14 @@ const baseStats = {
         base: 1, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 1  // (pontos × 1)
+        formula: (points) => points * 1  // (1×1)
     },
     mpRegen: { 
         key: 'mpRegen', 
         base: 1, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 1  // (pontos × 1)
+        formula: (points) => points * 1  // (1×1)
     },
     range: { 
         key: 'range', 
@@ -117,7 +117,7 @@ const baseStats = {
         base: 225, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 25  // (pontos × 25)
+        formula: (points) => points * 25  // (1×25)
     }
 };
 
@@ -230,10 +230,14 @@ function adjustStat(statKey, change) {
     if (!stat.editable) return;
     
     const totalPoints = calculatePointsFromLevel(currentLevel);
+    const maxPointsPerStat = currentLevel; // NOVO: Máximo de pontos por stat = nível
     
-    if (change > 0 && usedPoints < totalPoints) {
-        stat.points++;
-        usedPoints++;
+    if (change > 0) {
+        // Verifica se tem pontos disponíveis E se não passou do máximo por stat
+        if (usedPoints < totalPoints && stat.points < maxPointsPerStat) {
+            stat.points++;
+            usedPoints++;
+        }
     } else if (change < 0 && stat.points > 0) {
         stat.points--;
         usedPoints--;
