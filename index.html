@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPG Pixel - Escolha sua Classe</title>
+    
+    <!-- Fonte Pixelada -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset e Base */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        /* Efeito de scanlines para dar aspecto retrô-futurista */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                transparent 50%,
+                rgba(255, 255, 255, 0.01) 50%
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Container principal */
+        .class-selection {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+            max-width: 1200px;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Cada bloco de classe */
+        .class-card {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Efeito de hover com brilho branco */
+        .class-card:hover {
+            border-color: #fff;
+            box-shadow: 
+                0 0 20px rgba(255, 255, 255, 0.8),
+                inset 0 0 20px rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+            animation: pulse 1s infinite;
+        }
+
+        /* Animação de pulso no hover */
+        @keyframes pulse {
+            0% {
+                box-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.8),
+                    inset 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+            50% {
+                box-shadow: 
+                    0 0 30px rgba(255, 255, 255, 1),
+                    inset 0 0 25px rgba(255, 255, 255, 0.2);
+            }
+            100% {
+                box-shadow: 
+                    0 0 20px rgba(255, 255, 255, 0.8),
+                    inset 0 0 20px rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* Imagem do personagem */
+        .class-image {
+            width: 100%;
+            height: 250px;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            position: relative;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        .class-image img {
+            max-width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+
+        /* Nome da classe */
+        .class-name {
+            text-align: center;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 
+                2px 2px 0px #333,
+                3px 3px 0px #222;
+            font-family: 'Press Start 2P', cursive;
+            padding-top: 0.5rem;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .class-selection {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .class-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Efeito de glitch pixelado */
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    4px 4px 0px rgba(255, 0, 255, 0.5);
+            }
+            25% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    -2px 0px 0px rgba(0, 255, 255, 0.8);
+            }
+            50% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    2px 0px 0px rgba(255, 255, 0, 0.8);
+            }
+            75% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    0px -2px 0px rgba(255, 0, 0, 0.8);
+            }
+        }
+
+        .class-card:hover .class-name {
+            animation: glitch 0.2s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="class-selection">
+        <div class="class-card" data-class="squire">
+            <div class="class-image">
+                <!-- Aqui você colocará a imagem do Squire -->
+                <div style="color: #666; font-size: 3rem;">⚔️</div>
+            </div>
+            <h2 class="class-name">Squire</h2>
+        </div>
+
+        <div class="class-card" data-class="knight">
+            <div class="class-image">
+                <!-- Aqui você colocará a imagem do Knight -->
+                <div style="color: #666; font-size: 3rem;">🛡️</div>
+            </div>
+            <h2 class="class-name">Knight</h2>
+        </div>
+
+        <div class="class-card" data-class="mage">
+            <div class="class-image">
+                <!-- Aqui você colocará a imagem do Mage -->
+                <div style="color: #666; font-size: 3rem;">🔮</div>
+            </div>
+            <h2 class="class-name">Mage</h2>
+        </div>
+
+        <div class="class-card" data-class="rogue">
+            <div class="class-image">
+                <!-- Aqui você colocará a imagem do Rogue -->
+                <div style="color: #666; font-size: 3rem;">🗡️</div>
+            </div>
+            <h2 class="class-name">Rogue</h2>
+        </div>
+    </div>
+
+    <script>
+        // Script super leve para interação
+        document.querySelectorAll('.class-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const selectedClass = this.dataset.class;
+                console.log(`Classe selecionada: ${selectedClass}`);
+                // Aqui você pode adicionar a navegação para a próxima página
+                // window.location.href = `/${selectedClass}.html`;
+            });
+        });
+
+        // Efeito de som no hover (opcional, super leve)
+        document.querySelectorAll('.class-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                // Pode adicionar um som de hover aqui se quiser
+                this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+            });
+        });
+    </script>
+</body>
+</html>
