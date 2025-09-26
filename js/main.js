@@ -28,85 +28,6 @@ function createStars() {
 }
 
 // ======================
-// SELEÇÃO DE CLASSES
-// ======================
-function initClassSelection() {
-    document.querySelectorAll('.class-card').forEach(card => {
-        card.addEventListener('click', function(e) {
-            e.preventDefault(); // Previne comportamento padrão
-            
-            const selectedClass = this.dataset.class;
-            console.log(`Navegando para simulador da classe: ${selectedClass}`);
-            
-            // Fade out da música antes de navegar (opcional)
-            const bgMusic = document.getElementById('bgMusic');
-            if (bgMusic && !bgMusic.paused) {
-                bgMusic.volume = 0;
-            }
-            
-            // Navega para o simulador
-            setTimeout(() => {
-                window.location.href = `pages/stats-simulator.html?class=${selectedClass}`;
-            }, 100); // Pequeno delay para garantir
-        });
-        
-        card.addEventListener('mouseenter', function() {
-            this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
-        });
-    });
-}
-
-// ======================
-// TRATAMENTO DE ERROS
-// ======================
-function handleImageErrors() {
-    // Class images
-    document.querySelectorAll('.class-image img').forEach(img => {
-        img.onerror = function() {
-            this.style.display = 'none';
-            this.parentElement.innerHTML = `
-                <div style="color: #666; text-align: center;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
-                    <div style="font-size: 0.6rem;">${t('error.imageNotFound')}</div>
-                </div>
-            `;
-        };
-    });
-    
-    // Game logo
-    const logoImg = document.querySelector('.game-logo img');
-    if (logoImg) {
-        logoImg.onerror = function() {
-            this.style.display = 'none';
-            this.parentElement.innerHTML = `
-                <h1 style="
-                    font-size: 2rem; 
-                    color: #fff; 
-                    text-shadow: 
-                        0 0 20px rgba(255, 255, 255, 0.5),
-                        2px 2px 0 #333;
-                    margin: 0;
-                    font-family: 'Press Start 2P', cursive;
-                ">${t('error.logoFallback')}</h1>
-            `;
-        };
-    }
-}
-
-// ======================
-// INICIALIZAÇÃO
-// ======================
-document.addEventListener('DOMContentLoaded', function() {
-    createStars();
-    initClassSelection();
-    
-    // Wait for translations to load
-    setTimeout(() => {
-        handleImageErrors();
-    }, 100);
-});
-
-// ======================
 // SISTEMA DE ÁUDIO
 // ======================
 let audioContext = null;
@@ -140,7 +61,7 @@ function initAudioSystem() {
         });
     }
     
-    // Função para pausar música E ATUALIZAR ÍCONE
+    // Função para pausar música
     function pauseMusic() {
         bgMusic.pause();
         audioBtn.classList.remove('playing');
@@ -158,41 +79,6 @@ function initAudioSystem() {
         }
     });
     
-    // Fade out ao clicar em classe - CORRIGIDO
-    function fadeOutMusic() {
-        let volume = bgMusic.volume;
-        const fadeOut = setInterval(() => {
-            if (volume > 0.05) {
-                volume -= 0.05;
-                bgMusic.volume = volume;
-            } else {
-                clearInterval(fadeOut);
-                bgMusic.pause();
-                bgMusic.volume = 0.3; // Reseta o volume para próxima vez
-                
-                // ATUALIZA O ÍCONE E VISUALIZADOR
-                audioBtn.classList.remove('playing');
-                audioBtn.classList.add('paused');
-                visualizer.classList.remove('active');
-            }
-        }, 50);
-    }
-    
-    // Click nas classes
-    document.querySelectorAll('.class-card').forEach(card => {
-        card.addEventListener('click', () => {
-            if (!bgMusic.paused) {
-                fadeOutMusic(); // Agora atualiza o ícone também
-            }
-            
-            // Por enquanto, só loga - depois vai navegar
-            const selectedClass = card.dataset.class;
-            console.log(`Classe selecionada: ${selectedClass}`);
-            
-            // Futuro: window.location.href = `/pages/${selectedClass}.html`;
-        });
-    });
-    
     // Auto-start baseado na preferência
     const musicPref = localStorage.getItem('musicEnabled');
     if (musicPref === 'true') {
@@ -205,10 +91,85 @@ function initAudioSystem() {
     }
 }
 
-// Adiciona a inicialização do sistema de áudio
+// ======================
+// SELEÇÃO DE CLASSES
+// ======================
+function initClassSelection() {
+    document.querySelectorAll('.class-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            const selectedClass = this.dataset.class;
+            console.log(`Navegando para simulador da classe: ${selectedClass}`);
+            
+            // Para a música se estiver tocando
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic && !bgMusic.paused) {
+                bgMusic.pause();
+                const audioBtn = document.getElementById('audioToggle');
+                const visualizer = document.querySelector('.audio-visualizer');
+                if (audioBtn) {
+                    audioBtn.classList.remove('playing');
+                    audioBtn.classList.add('paused');
+                }
+                if (visualizer) {
+                    visualizer.classList.remove('active');
+                }
+            }
+            
+            // NAVEGA PARA O SIMULADOR
+            window.location.href = `pages/stats-simulator.html?class=${selectedClass}`;
+        });
+        
+        card.addEventListener('mouseenter', function() {
+            this.style.transition = 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)';
+        });
+    });
+}
+
+// ======================
+// TRATAMENTO DE ERROS
+// ======================
+function handleImageErrors() {
+    // Class images
+    document.querySelectorAll('.class-image img').forEach(img => {
+        img.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = `
+                <div style="color: #666; text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">⚠️</div>
+                    <div style="font-size: 0.6rem;">Image not found</div>
+                </div>
+            `;
+        };
+    });
+    
+    // Game logo
+    const logoImg = document.querySelector('.game-logo img');
+    if (logoImg) {
+        logoImg.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = `
+                <h1 style="
+                    font-size: 2rem; 
+                    color: #fff; 
+                    text-shadow: 
+                        0 0 20px rgba(255, 255, 255, 0.5),
+                        2px 2px 0 #333;
+                    margin: 0;
+                    font-family: 'Press Start 2P', cursive;
+                ">APOGEA</h1>
+            `;
+        };
+    }
+}
+
+// ======================
+// INICIALIZAÇÃO 
+// ======================
 document.addEventListener('DOMContentLoaded', function() {
     createStars();
     initClassSelection();
+    initAudioSystem();
     handleImageErrors();
-    initAudioSystem(); // Nova linha
 });
