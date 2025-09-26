@@ -27,6 +27,7 @@ const translations = {
         'stats.points': 'Points',
         'stats.bonus': 'Bonus',
         'stats.final': 'Final',
+        'stats.level': 'Level',
         
         // Nomes dos stats
         'stat.health': 'Health',
@@ -69,6 +70,7 @@ const translations = {
         'stats.points': 'Pontos',
         'stats.bonus': 'Bônus',
         'stats.final': 'Final',
+        'stats.level': 'Nível',
         
         // Nomes dos stats
         'stat.health': 'Vida',

@@ -33,7 +33,7 @@ const baseStats = {
         base: 150, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 5  // (1×5)
+        formula: (points) => points * 5  // (1×5) * multiplicador
     },
     mana: { 
         key: 'mana', 
@@ -47,7 +47,7 @@ const baseStats = {
         base: 0, 
         points: 0, 
         editable: true,
-        formula: (points) => points * 1  
+        formula: (points) => points * 1  // (1×1)
     },
     damage: { 
         key: 'damage', 
