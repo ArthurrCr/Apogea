@@ -1,0 +1,190 @@
+/* ======================
+   RESPONSIVO - TABLET
+   ====================== */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+        overflow-x: hidden;
+        align-items: flex-start;
+        padding: 20px 0;
+    }
+    
+    .main-content {
+        min-height: auto;
+        padding-top: 60px;
+        padding-bottom: 40px;
+    }
+    
+    .language-selector {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        z-index: 1000;
+    }
+    
+    .stars-container {
+        position: fixed;
+    }
+    
+    .class-selection {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        padding: 1rem;
+        width: 100%;
+        max-width: 500px;
+    }
+    
+    .class-name {
+        font-size: 0.7rem;
+    }
+    
+    .game-logo img {
+        max-width: 240px;
+    }
+    
+    .game-logo {
+        margin-bottom: 1.5rem;
+    }
+    
+    .game-subtitle {
+        font-size: 0.8rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .class-image {
+        height: 160px;
+    }
+    
+    .instructions {
+        margin-bottom: 2rem;
+    }
+    
+    .audio-controller {
+        bottom: 70px;
+        left: 15px;
+    }
+    
+    .audio-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}
+
+/* ======================
+   RESPONSIVO - MOBILE
+   ====================== */
+@media (max-width: 480px) {
+    body {
+        padding: 15px 0;
+    }
+    
+    .main-content {
+        padding: 10px;
+        padding-top: 50px;
+    }
+    
+    .class-selection {
+        grid-template-columns: 1fr;
+        max-width: 300px;
+        gap: 1.2rem;
+    }
+    
+    .class-card {
+        margin: 0 auto;
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .class-name {
+        font-size: 0.6rem;
+        padding: 0.5rem 0;
+    }
+    
+    .game-logo img {
+        max-width: 200px;
+    }
+    
+    .game-logo {
+        margin-bottom: 1rem;
+    }
+    
+    .game-subtitle {
+        font-size: 0.7rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .class-image {
+        height: 150px;
+    }
+    
+    .instructions {
+        font-size: 0.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 3rem;
+        padding: 0 1rem;
+    }
+}
+
+/* ======================
+   LANDSCAPE MOBILE
+   ====================== */
+@media (max-height: 600px) and (max-width: 480px) {
+    .main-content {
+        padding-top: 40px;
+    }
+    
+    .game-logo img {
+        max-width: 150px;
+    }
+    
+    .class-image {
+        height: 120px;
+    }
+    
+    .game-subtitle {
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* ======================
+   SCROLL & SAFE AREAS
+   ====================== */
+@media (max-width: 768px) {
+    html {
+        scroll-behavior: smooth;
+    }
+    
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.1);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+}
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    @media (max-width: 768px) {
+        body {
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+            padding-top: env(safe-area-inset-top, 20px);
+        }
+        
+        .language-selector {
+            top: calc(10px + env(safe-area-inset-top, 0));
+            right: calc(10px + env(safe-area-inset-right, 0));
+        }
+    }
+}
