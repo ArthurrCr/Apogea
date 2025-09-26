@@ -26,28 +26,105 @@ const classMultipliers = {
     }
 };
 
-// Base Stats
+// Base Stats com configurações de editabilidade e fórmulas
 const baseStats = {
-    health: { key: 'health', base: 150, points: 0 },
-    mana: { key: 'mana', base: 15, points: 0 },
-    magic: { key: 'magic', base: 0, points: 0 },
-    damage: { key: 'damage', base: 0, points: 0 },
-    movespeed: { key: 'movespeed', base: 35, points: 0 },
-    ability: { key: 'ability', base: 0, points: 0 },
-    skill: { key: 'skill', base: 0, points: 0 },
-    attackSpeed: { key: 'attackSpeed', base: 10, points: 0 },
-    hpRegen: { key: 'hpRegen', base: 1, points: 0 },
-    mpRegen: { key: 'mpRegen', base: 1, points: 0 },
-    range: { key: 'range', base: 15, points: 0 },
-    armor: { key: 'armor', base: 0, points: 0 },
-    defense: { key: 'defense', base: 0, points: 0 },
-    capacity: { key: 'capacity', base: 225, points: 0 }
+    health: { 
+        key: 'health', 
+        base: 150, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 5  // (pontos × 5)
+    },
+    mana: { 
+        key: 'mana', 
+        base: 15, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 5  // (pontos × 5)
+    },
+    magic: { 
+        key: 'magic', 
+        base: 0, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 2  // (pontos × 2)
+    },
+    damage: { 
+        key: 'damage', 
+        base: 0, 
+        points: 0, 
+        editable: false 
+    },
+    movespeed: { 
+        key: 'movespeed', 
+        base: 35, 
+        points: 0, 
+        editable: false 
+    },
+    ability: { 
+        key: 'ability', 
+        base: 0, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 1  // (pontos × 1)
+    },
+    skill: { 
+        key: 'skill', 
+        base: 0, 
+        points: 0, 
+        editable: false 
+    },
+    attackSpeed: { 
+        key: 'attackSpeed', 
+        base: 10, 
+        points: 0, 
+        editable: false 
+    },
+    hpRegen: { 
+        key: 'hpRegen', 
+        base: 1, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 1  // (pontos × 1)
+    },
+    mpRegen: { 
+        key: 'mpRegen', 
+        base: 1, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 1  // (pontos × 1)
+    },
+    range: { 
+        key: 'range', 
+        base: 15, 
+        points: 0, 
+        editable: false 
+    },
+    armor: { 
+        key: 'armor', 
+        base: 0, 
+        points: 0, 
+        editable: false 
+    },
+    defense: { 
+        key: 'defense', 
+        base: 0, 
+        points: 0, 
+        editable: false 
+    },
+    capacity: { 
+        key: 'capacity', 
+        base: 225, 
+        points: 0, 
+        editable: true,
+        formula: (points) => points * 25  // (pontos × 25)
+    }
 };
 
 // Global variables
 let currentClass = 'knight';
 let currentLevel = 1;
-let availablePoints = 3; // Começa com 3 pontos (nível 1)
+let availablePoints = 3;
 let usedPoints = 0;
 
 // Get class from URL
@@ -58,7 +135,7 @@ function getClassFromURL() {
 
 // Calculate points from level
 function calculatePointsFromLevel(level) {
-    return level * 3; // 3 pontos por nível
+    return level * 3;
 }
 
 // Create stars
@@ -88,6 +165,20 @@ function createStars() {
     }
 }
 
+// Calculate stat value based on formula
+function calculateStatValue(stat, multiplier) {
+    let bonus = 0;
+    
+    // Se o stat tem fórmula específica, usa ela
+    if (stat.formula && stat.points > 0) {
+        bonus = stat.formula(stat.points);
+    }
+    
+    // Calcula valor final: (base + bonus) × multiplicador
+    const finalValue = (stat.base + bonus) * multiplier;
+    return { bonus, finalValue };
+}
+
 // Render stats table
 function renderStats() {
     const tbody = document.getElementById('statsTableBody');
@@ -98,8 +189,9 @@ function renderStats() {
     for (const [key, stat] of Object.entries(baseStats)) {
         const row = document.createElement('tr');
         const multiplier = multipliers[key] || 1;
-        const bonus = stat.points * 5;
-        const finalValue = (stat.base + bonus) * multiplier;
+        
+        // Calcula valores usando a nova fórmula
+        const { bonus, finalValue } = calculateStatValue(stat, multiplier);
         
         let multClass = '';
         if (multiplier > 1) multClass = 'high';
@@ -108,17 +200,20 @@ function renderStats() {
         // Usa tradução se disponível
         const statName = (typeof t !== 'undefined') ? t(`stat.${stat.key}`) : stat.key;
         
+        // Define se mostra controles ou não
+        const controlsHTML = stat.editable ? 
+            `<div class="controls">
+                <button class="btn-adjust" onclick="adjustStat('${key}', -1)">-</button>
+                <span class="pts-value">${stat.points}</span>
+                <button class="btn-adjust" onclick="adjustStat('${key}', 1)">+</button>
+            </div>` : 
+            `<span class="pts-value disabled">-</span>`;
+        
         row.innerHTML = `
             <td class="stat-name">${statName}</td>
             <td class="multiplier ${multClass}">${(multiplier * 100).toFixed(0)}%</td>
             <td class="value">${stat.base}</td>
-            <td>
-                <div class="controls">
-                    <button class="btn-adjust" onclick="adjustStat('${key}', -1)">-</button>
-                    <span class="pts-value">${stat.points}</span>
-                    <button class="btn-adjust" onclick="adjustStat('${key}', 1)">+</button>
-                </div>
-            </td>
+            <td>${controlsHTML}</td>
             <td class="value hide-mobile">+${bonus}</td>
             <td class="value final">${finalValue.toFixed(0)}</td>
         `;
@@ -130,6 +225,10 @@ function renderStats() {
 // Adjust stat points
 function adjustStat(statKey, change) {
     const stat = baseStats[statKey];
+    
+    // Verifica se o stat é editável
+    if (!stat.editable) return;
+    
     const totalPoints = calculatePointsFromLevel(currentLevel);
     
     if (change > 0 && usedPoints < totalPoints) {
@@ -156,7 +255,9 @@ function updatePointsDisplay() {
 function resetPoints() {
     usedPoints = 0;
     for (const stat of Object.values(baseStats)) {
-        stat.points = 0;
+        if (stat.editable) {
+            stat.points = 0;
+        }
     }
     renderStats();
     updatePointsDisplay();
@@ -164,8 +265,6 @@ function resetPoints() {
 
 // Update translations on page
 function updatePageTranslations() {
-    // Removido a parte do classTitle pois não é mais necessário
-    // Re-renderiza a tabela com novos nomes
     renderStats();
 }
 
@@ -182,42 +281,35 @@ function init() {
             const newLevel = parseInt(this.value) || 1;
             if (newLevel >= 1 && newLevel <= 100) {
                 currentLevel = newLevel;
-                resetPoints(); // Reseta pontos ao mudar de nível
+                resetPoints();
                 updatePointsDisplay();
             }
         });
     }
     
-    // Configura botões de idioma localmente
+    // Configura botões de idioma
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        // Define idioma ativo baseado no localStorage
         const savedLang = localStorage.getItem('gameLanguage') || 'en';
         if (btn.dataset.lang === savedLang) {
             btn.classList.add('active');
         }
         
-        // Adiciona listener local
         btn.addEventListener('click', function() {
             const lang = this.dataset.lang;
             
-            // Remove active de todos
             document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            // Adiciona active no clicado
             this.classList.add('active');
             
-            // Chama setLanguage se existir
             if (typeof setLanguage !== 'undefined') {
                 setLanguage(lang);
             }
             
-            // Atualiza traduções locais
             setTimeout(() => {
                 updatePageTranslations();
             }, 100);
         });
     });
     
-    // Renderiza inicial
     renderStats();
     updatePointsDisplay();
 }
@@ -225,5 +317,5 @@ function init() {
 // Start when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
 
-// Expõe globalmente para o onclick funcionar
+// Expõe globalmente
 window.adjustStat = adjustStat;

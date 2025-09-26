@@ -228,3 +228,12 @@
 .game-logo {
     margin-bottom: 1rem;
 }
+
+/* Disabled stats */
+.pts-value.disabled {
+    color: #666;
+    font-style: italic;
+    min-width: 40px;
+    display: inline-block;
+    text-align: center;
+}
