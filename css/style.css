@@ -522,3 +522,116 @@ body {
         }
     }
 }
+
+/* ======================
+   AUDIO CONTROLLER
+   ====================== */
+.audio-controller {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.audio-btn {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+}
+
+.audio-btn:hover {
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+}
+
+.audio-icon {
+    display: none;
+}
+
+.audio-btn.playing .audio-icon.playing {
+    display: block;
+    animation: musicNote 2s ease-in-out infinite;
+}
+
+.audio-btn.paused .audio-icon.paused {
+    display: block;
+    opacity: 0.5;
+}
+
+@keyframes musicNote {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+}
+
+/* Visualizer bars */
+.audio-visualizer {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.audio-visualizer.active {
+    opacity: 1;
+}
+
+.audio-visualizer span {
+    width: 3px;
+    background: rgba(255, 255, 255, 0.7);
+    animation: soundBar 1s ease-in-out infinite;
+}
+
+.audio-visualizer span:nth-child(1) {
+    animation-delay: 0s;
+    height: 10px;
+}
+
+.audio-visualizer span:nth-child(2) {
+    animation-delay: 0.3s;
+    height: 15px;
+}
+
+.audio-visualizer span:nth-child(3) {
+    animation-delay: 0.6s;
+    height: 12px;
+}
+
+@keyframes soundBar {
+    0%, 100% { 
+        transform: scaleY(0.5);
+        opacity: 0.5;
+    }
+    50% { 
+        transform: scaleY(1);
+        opacity: 1;
+    }
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .audio-controller {
+        bottom: 70px; /* Acima da área de scroll */
+        left: 15px;
+    }
+    
+    .audio-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+}

@@ -33,6 +33,24 @@
         <div class="game-logo">
             <img src="assets/images/logo.png" alt="RPG Pixel Logo" />
         </div>
+        <!-- Audio Controller -->
+        <div class="audio-controller">
+            <button class="audio-btn" id="audioToggle" title="Toggle Music">
+                <span class="audio-icon playing">♪</span>
+                <span class="audio-icon paused">♫</span>
+            </button>
+            <div class="audio-visualizer">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Background Music (no final do body) -->
+        <audio id="bgMusic" loop preload="none">
+            <source src="assets/audio/theme.mp3" type="audio/mpeg">
+            <source src="assets/audio/theme.ogg" type="audio/ogg">
+        </audio>
 
         <!-- Subtitle -->
         <p class="game-subtitle" data-i18n="subtitle">Choose Your Class</p>
