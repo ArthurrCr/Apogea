@@ -215,7 +215,7 @@ function renderStats() {
             <td class="value">${stat.base}</td>
             <td>${controlsHTML}</td>
             <td class="value hide-mobile">+${bonus}</td>
-            <td class="value final">${finalValue.toFixed(0)}</td>
+            <td class="value final">${finalValue % 1 === 0 ? finalValue : finalValue.toFixed(1)}</td>
         `;
         
         tbody.appendChild(row);
