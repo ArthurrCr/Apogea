@@ -3,17 +3,14 @@
    ====================== */
 
 /* Base */
-@import 'base/reset.css';
-@import 'base/animations.css';
+@import url('./base/reset.css');
+@import url('./base/animations.css');
 
 /* Components */
-@import 'components/stars.css';
-@import 'components/logo.css';
-@import 'components/cards.css';
-@import 'components/buttons.css';
+@import url('./components/stars.css');
+@import url('./components/logo.css');
+@import url('./components/cards.css');
+@import url('./components/buttons.css');
 
 /* Layout */
-@import 'layout/responsive.css';
-
-/* Utilities */
-@import 'utilities/helpers.css';
+@import url('./layout/responsive.css');
