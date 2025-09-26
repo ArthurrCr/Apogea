@@ -1,13 +1,13 @@
 /* ======================
-   STATS SIMULATOR PAGE
+   STATS SIMULATOR PAGE 
    ====================== */
 
 /* Stats Header - Container para Level e Points */
 .stats-header {
     display: flex;
     justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
     align-items: center;
 }
 
@@ -15,29 +15,29 @@
 .level-container {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem 1.2rem;
-    font-size: 0.7rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.55rem; /* Reduzido de 0.7rem */
     animation: fadeIn 0.4s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 /* Points Display */
 .points-display {
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem 1.2rem;
-    font-size: 0.8rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.55rem; /* Reduzido de 0.8rem */
     animation: fadeIn 0.5s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .points-display span#availablePoints {
     color: #0f0;
-    font-size: 1rem;
+    font-size: 0.7rem; /* Reduzido de 1rem */
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     font-family: 'Press Start 2P', cursive;
 }
@@ -46,11 +46,11 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 0.4rem;
-    font-size: 0.7rem;
+    padding: 0.25rem;
+    font-size: 0.5rem; /* Reduzido de 0.7rem */
     font-family: 'Press Start 2P', cursive;
     text-align: center;
-    width: 80px;
+    width: 60px; /* Reduzido de 80px */
     transition: all 0.3s ease;
 }
 
@@ -66,11 +66,11 @@
 
 /* Stats Container */
 .stats-container {
-    max-width: 1200px;
+    max-width: 900px; /* Reduzido de 1200px */
     margin: 0 auto;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 1rem;
+    padding: 0.8rem;
     animation: fadeIn 0.6s ease 0.2s both;
     overflow-x: auto;
 }
@@ -79,23 +79,24 @@
 .stats-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px;
+    min-width: 500px; /* Reduzido de 600px */
 }
 
 .stats-table th {
     background: rgba(255, 255, 255, 0.1);
-    padding: 0.8rem 0.5rem;
-    font-size: 0.6rem;
+    padding: 0.5rem 0.4rem; /* Reduzido de 0.8rem 0.5rem */
+    font-size: 0.45rem; /* Reduzido de 0.6rem */
     text-align: left;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     position: sticky;
     top: 0;
     z-index: 10;
+    white-space: nowrap;
 }
 
 .stats-table td {
-    padding: 0.6rem 0.5rem;
-    font-size: 0.5rem;
+    padding: 0.4rem 0.3rem; /* Reduzido de 0.6rem 0.5rem */
+    font-size: 0.4rem; /* Reduzido de 0.5rem */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -108,11 +109,13 @@
     color: #ffd700;
     font-weight: bold;
     text-transform: uppercase;
+    font-size: 0.4rem;
 }
 
 /* Multiplier Column */
 .multiplier {
     color: #00ffff;
+    font-size: 0.4rem;
 }
 
 .multiplier.high {
@@ -128,20 +131,20 @@
 /* Controls */
 .controls {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.3rem;
     align-items: center;
     justify-content: center;
 }
 
 .btn-adjust {
-    width: 24px;
-    height: 24px;
+    width: 20px; /* Reduzido de 24px */
+    height: 20px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.8rem;
+    font-size: 0.6rem; /* Reduzido de 0.8rem */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -160,10 +163,11 @@
 }
 
 .pts-value {
-    min-width: 40px;
+    min-width: 30px; /* Reduzido de 40px */
     text-align: center;
     color: #fff;
     font-family: 'Press Start 2P', cursive;
+    font-size: 0.4rem;
 }
 
 .pts-value.disabled {
@@ -175,6 +179,7 @@
 .value {
     text-align: right;
     font-family: 'Press Start 2P', cursive;
+    font-size: 0.4rem;
 }
 
 .value.final {
@@ -191,8 +196,8 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 8px 12px;
-    font-size: 0.6rem;
+    padding: 6px 10px; /* Reduzido de 8px 12px */
+    font-size: 0.5rem; /* Reduzido de 0.6rem */
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
@@ -209,60 +214,130 @@
 
 /* Game Logo */
 .game-logo {
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
+}
+
+/* Ajuste para o título */
+.game-subtitle {
+    font-size: 1rem !important; /* Reduzido para melhor proporção */
+    margin-bottom: 0.5rem;
+}
+
+/* Tablets e telas médias */
+@media (max-width: 1024px) {
+    .stats-container {
+        max-width: 95%;
+        padding: 0.6rem;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        padding: 0.4rem 0.25rem;
+    }
 }
 
 /* Mobile Adjustments */
 @media (max-width: 768px) {
     .stats-header {
-        gap: 1rem;
+        gap: 0.8rem;
+        flex-wrap: wrap;
     }
     
     .level-container,
     .points-display {
-        padding: 0.6rem 1rem;
-        font-size: 0.6rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.45rem;
     }
     
     .level-input {
-        width: 60px;
-        font-size: 0.6rem;
+        width: 50px;
+        font-size: 0.4rem;
     }
     
     .points-display span#availablePoints {
-        font-size: 0.8rem;
+        font-size: 0.6rem;
     }
     
     .stats-container {
-        padding: 0.5rem;
+        padding: 0.4rem;
+        max-width: 98%;
+    }
+    
+    .stats-table {
+        min-width: auto;
     }
     
     .stats-table th,
     .stats-table td {
-        padding: 0.4rem 0.2rem;
-        font-size: 0.4rem;
+        padding: 0.3rem 0.15rem;
+        font-size: 0.35rem;
     }
     
     .btn-adjust {
-        width: 20px;
-        height: 20px;
-        font-size: 0.6rem;
+        width: 18px;
+        height: 18px;
+        font-size: 0.5rem;
+    }
+    
+    .pts-value {
+        min-width: 25px;
+        font-size: 0.35rem;
+    }
+    
+    .back-btn {
+        padding: 5px 8px;
+        font-size: 0.4rem;
     }
 }
 
 @media (max-width: 480px) {
     .stats-header {
         flex-direction: column;
-        gap: 0.8rem;
+        gap: 0.5rem;
     }
     
     .level-container,
     .points-display {
-        width: 100%;
+        width: auto;
         justify-content: center;
     }
     
     .hide-mobile {
         display: none;
+    }
+    
+    .stats-table th {
+        font-size: 0.3rem;
+        padding: 0.3rem 0.1rem;
+    }
+    
+    .stats-table td {
+        font-size: 0.3rem;
+        padding: 0.25rem 0.1rem;
+    }
+    
+    .stat-name,
+    .multiplier,
+    .value {
+        font-size: 0.3rem;
+    }
+    
+    .btn-adjust {
+        width: 16px;
+        height: 16px;
+        font-size: 0.4rem;
+    }
+}
+
+/* Ajuste adicional para telas muito pequenas */
+@media (max-width: 360px) {
+    .stats-container {
+        padding: 0.3rem;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        font-size: 0.28rem;
+        padding: 0.2rem 0.08rem;
     }
 }
