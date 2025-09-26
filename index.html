@@ -33,21 +33,103 @@
             image-rendering: crisp-edges;
         }
 
-        /* Efeito de scanlines para dar aspecto retrô-futurista */
-        body::before {
-            content: "";
+        /* Container de estrelas */
+        .stars-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(
-                transparent 50%,
-                rgba(255, 255, 255, 0.01) 50%
-            );
-            background-size: 100% 4px;
             pointer-events: none;
-            z-index: 1;
+            z-index: 0;
+        }
+
+        /* Estrelas pequenas */
+        .star {
+            position: absolute;
+            background: white;
+            animation: twinkle 4s ease-in-out infinite;
+        }
+
+        .star.small {
+            width: 1px;
+            height: 1px;
+        }
+
+        .star.medium {
+            width: 2px;
+            height: 2px;
+        }
+
+        .star.large {
+            width: 3px;
+            height: 3px;
+            animation: twinkle 3s ease-in-out infinite;
+        }
+
+        /* Animação de brilho das estrelas */
+        @keyframes twinkle {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+
+
+        /* Container do logo do jogo */
+        .game-logo {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: logoEntry 1s ease-out, logoGlow 3s ease-in-out infinite 1s;
+        }
+
+        .game-logo img {
+            max-width: 400px;
+            width: 100%;
+            height: auto;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+
+        /* Animação de entrada do logo */
+        @keyframes logoEntry {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Animação suave de brilho no logo */
+        @keyframes logoGlow {
+            0%, 100% {
+                filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.5));
+            }
+        }
+
+        /* Container principal do conteúdo */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
         }
 
         /* Container principal */
@@ -154,6 +236,12 @@
             .class-name {
                 font-size: 0.8rem;
             }
+            .game-logo img {
+                max-width: 300px;
+            }
+            .game-logo {
+                margin-bottom: 2rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -162,6 +250,9 @@
             }
             .class-name {
                 font-size: 0.7rem;
+            }
+            .game-logo img {
+                max-width: 250px;
             }
         }
 
@@ -199,38 +290,86 @@
     </style>
 </head>
 <body>
-    <div class="class-selection">
-        <div class="class-card" data-class="squire">
-            <div class="class-image">
-                <img src="assets/images/classes/squire.png" alt="Squire" />
-            </div>
-            <h2 class="class-name">Squire</h2>
+    <!-- Container de estrelas animadas -->
+    <div class="stars-container" id="stars"></div>
+
+    <!-- Container principal -->
+    <div class="main-content">
+        <!-- Logo do jogo -->
+        <div class="game-logo">
+            <img src="assets/images/logo.png" alt="Nome do Jogo" />
         </div>
 
-        <div class="class-card" data-class="knight">
-            <div class="class-image">
-                <img src="assets/images/classes/knight.png" alt="Knight" />
+        <!-- Seleção de classes -->
+        <div class="class-selection">
+            <div class="class-card" data-class="squire">
+                <div class="class-image">
+                    <img src="assets/images/classes/squire.png" alt="Squire" />
+                </div>
+                <h2 class="class-name">Squire</h2>
             </div>
-            <h2 class="class-name">Knight</h2>
-        </div>
 
-        <div class="class-card" data-class="mage">
-            <div class="class-image">
-                <img src="assets/images/classes/mage.png" alt="Mage" />
+            <div class="class-card" data-class="knight">
+                <div class="class-image">
+                    <img src="assets/images/classes/knight.png" alt="Knight" />
+                </div>
+                <h2 class="class-name">Knight</h2>
             </div>
-            <h2 class="class-name">Mage</h2>
-        </div>
 
-        <div class="class-card" data-class="rogue">
-            <div class="class-image">
-                <img src="assets/images/classes/rogue.png" alt="Rogue" />
+            <div class="class-card" data-class="mage">
+                <div class="class-image">
+                    <img src="assets/images/classes/mage.png" alt="Mage" />
+                </div>
+                <h2 class="class-name">Mage</h2>
             </div>
-            <h2 class="class-name">Rogue</h2>
+
+            <div class="class-card" data-class="rogue">
+                <div class="class-image">
+                    <img src="assets/images/classes/rogue.png" alt="Rogue" />
+                </div>
+                <h2 class="class-name">Rogue</h2>
+            </div>
         </div>
     </div>
 
     <script>
-        // Script super leve para interação
+        // Gera estrelas aleatórias
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const numberOfStars = 150; // Quantidade de estrelas
+            
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Tamanhos aleatórios
+                const size = Math.random();
+                if (size < 0.5) {
+                    star.classList.add('small');
+                } else if (size < 0.8) {
+                    star.classList.add('medium');
+                } else {
+                    star.classList.add('large');
+                }
+                
+                // Posição aleatória
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                
+                // Delay aleatório para a animação
+                star.style.animationDelay = Math.random() * 4 + 's';
+                
+                // Duração aleatória
+                star.style.animationDuration = (Math.random() * 3 + 3) + 's';
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Cria as estrelas quando a página carrega
+        createStars();
+
+        // Script para interação com as classes
         document.querySelectorAll('.class-card').forEach(card => {
             card.addEventListener('click', function() {
                 const selectedClass = this.dataset.class;
@@ -260,6 +399,25 @@
                 `;
             });
         });
+
+        // Tratamento de erro para o logo
+        const logoImg = document.querySelector('.game-logo img');
+        if (logoImg) {
+            logoImg.addEventListener('error', function() {
+                this.style.display = 'none';
+                this.parentElement.innerHTML = `
+                    <h1 style="
+                        font-size: 2rem; 
+                        color: #fff; 
+                        text-shadow: 
+                            0 0 20px rgba(255, 255, 255, 0.5),
+                            2px 2px 0 #333;
+                        margin: 0;
+                        font-family: 'Press Start 2P', cursive;
+                    ">RPG PIXEL</h1>
+                `;
+            });
+        }
     </script>
 </body>
 </html>
