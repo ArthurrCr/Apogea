@@ -237,3 +237,97 @@
     display: inline-block;
     text-align: center;
 }
+
+/* Stats Header - Container para Level e Points */
+.stats-header {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Level Container - Ajustado */
+.level-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem;
+    animation: fadeIn 0.4s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Points Display - Ajustado */
+.points-display {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.8rem;
+    animation: fadeIn 0.5s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.points-display span#availablePoints {
+    color: #0f0;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.level-input {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.4rem;
+    font-size: 0.7rem;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    width: 80px;
+    transition: all 0.3s ease;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .stats-header {
+        gap: 1rem;
+    }
+    
+    .level-container,
+    .points-display {
+        padding: 0.6rem 1rem;
+        font-size: 0.6rem;
+    }
+    
+    .level-input {
+        width: 60px;
+        font-size: 0.6rem;
+    }
+    
+    .points-display span#availablePoints {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-header {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .level-container,
+    .points-display {
+        width: 100%;
+        justify-content: center;
+    }
+}

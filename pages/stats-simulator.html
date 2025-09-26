@@ -42,17 +42,18 @@
         <div class="game-logo">
             <p class="game-subtitle" data-i18n="stats.title">STATS SIMULATOR</p>
         </div>
-
-        <!-- Level Input (NOVO) -->
-        <div class="level-container">
-            <label for="levelInput" data-i18n="stats.level">Level</label>:
-            <input type="number" id="levelInput" min="1" max="100" value="1" class="level-input">
-        </div>
-
-        <!-- Points Display -->
-        <div class="points-display">
-            <span class="points-label" data-i18n="stats.availablePoints">Available Points</span>:
-            <span id="availablePoints">3</span>
+        
+        <!-- Level and Points Container (NOVO LAYOUT) -->
+        <div class="stats-header">
+            <div class="level-container">
+                <label for="levelInput" data-i18n="stats.level">Level</label>:
+                <input type="number" id="levelInput" min="1" max="100" value="1" class="level-input">
+            </div>
+            
+            <div class="points-display">
+                <span class="points-label" data-i18n="stats.availablePoints">Points</span>: 
+                <span id="availablePoints">0</span>
+            </div>
         </div>
 
         <!-- Stats Container -->

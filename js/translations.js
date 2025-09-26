@@ -20,7 +20,7 @@ const translations = {
         // PÁGINA DE STATS - NOVO
         'stats.title': 'STATS SIMULATOR',
         'stats.back': '← BACK',
-        'stats.availablePoints': 'Available Points',
+        'stats.availablePoints': 'Points',
         'stats.stat': 'Stat',
         'stats.classMultiplier': 'Class Mult',
         'stats.base': 'Base',
@@ -63,7 +63,7 @@ const translations = {
         // PÁGINA DE STATS 
         'stats.title': 'SIMULADOR DE STATUS',
         'stats.back': '← VOLTAR',
-        'stats.availablePoints': 'Pontos Disponíveis',
+        'stats.availablePoints': 'Pontos',
         'stats.stat': 'Status',
         'stats.classMultiplier': 'Mult. Classe',
         'stats.base': 'Base',

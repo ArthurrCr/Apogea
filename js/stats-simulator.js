@@ -325,3 +325,5 @@ document.addEventListener('DOMContentLoaded', init);
 
 // Expõe globalmente
 window.adjustStat = adjustStat;
+
+
