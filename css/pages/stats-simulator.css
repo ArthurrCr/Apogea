@@ -2,21 +2,66 @@
    STATS SIMULATOR PAGE
    ====================== */
 
-/* Points Display */
-.points-display {
-    text-align: center;
+/* Stats Header - Container para Level e Points */
+.stats-header {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
     margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.8rem;
-    animation: fadeIn 0.5s ease;
+    align-items: center;
 }
 
-.points-display span {
+/* Level Container */
+.level-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem;
+    animation: fadeIn 0.4s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Points Display */
+.points-display {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.8rem;
+    animation: fadeIn 0.5s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.points-display span#availablePoints {
     color: #0f0;
-    font-size: 1.2rem;
+    font-size: 1rem;
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    font-family: 'Press Start 2P', cursive;
+}
+
+.level-input {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.4rem;
+    font-size: 0.7rem;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    width: 80px;
+    transition: all 0.3s ease;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.level-input:hover {
+    border-color: rgba(255, 255, 255, 0.5);
 }
 
 /* Stats Container */
@@ -121,6 +166,11 @@
     font-family: 'Press Start 2P', cursive;
 }
 
+.pts-value.disabled {
+    color: #666;
+    font-style: italic;
+}
+
 /* Values */
 .value {
     text-align: right;
@@ -131,39 +181,6 @@
     color: #ffd700;
     font-weight: bold;
     text-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
-}
-
-/* Mobile adjustments */
-@media (max-width: 768px) {
-    .stats-container {
-        padding: 0.5rem;
-    }
-    
-    .stats-table th,
-    .stats-table td {
-        padding: 0.4rem 0.2rem;
-        font-size: 0.4rem;
-    }
-    
-    .btn-adjust {
-        width: 20px;
-        height: 20px;
-        font-size: 0.6rem;
-    }
-    
-    .points-display {
-        font-size: 0.6rem;
-    }
-    
-    .points-display span {
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .hide-mobile {
-        display: none;
-    }
 }
 
 /* Back Button */
@@ -190,114 +207,12 @@
     transform: scale(1.05);
 }
 
-/* Level Container */
-.level-container {
-    text-align: center;
-    margin-bottom: 1rem;
-    padding: 0.8rem;
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    font-size: 0.7rem;
-    animation: fadeIn 0.4s ease;
-}
-
-.level-input {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 0.5rem;
-    font-size: 0.8rem;
-    font-family: 'Press Start 2P', cursive;
-    text-align: center;
-    width: 100px;
-    margin-left: 1rem;
-    transition: all 0.3s ease;
-}
-
-.level-input:focus {
-    outline: none;
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.level-input:hover {
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Remove margem extra do game-logo sem título */
+/* Game Logo */
 .game-logo {
     margin-bottom: 1rem;
 }
 
-/* Disabled stats */
-.pts-value.disabled {
-    color: #666;
-    font-style: italic;
-    min-width: 40px;
-    display: inline-block;
-    text-align: center;
-}
-
-/* Stats Header - Container para Level e Points */
-.stats-header {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1.5rem;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-/* Level Container - Ajustado */
-.level-container {
-    background: rgba(255, 255, 255, 0.03);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem 1.2rem;
-    font-size: 0.7rem;
-    animation: fadeIn 0.4s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/* Points Display - Ajustado */
-.points-display {
-    background: rgba(255, 255, 255, 0.05);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem 1.2rem;
-    font-size: 0.8rem;
-    animation: fadeIn 0.5s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.points-display span#availablePoints {
-    color: #0f0;
-    font-size: 1rem;
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-    font-family: 'Press Start 2P', cursive;
-}
-
-.level-input {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 0.4rem;
-    font-size: 0.7rem;
-    font-family: 'Press Start 2P', cursive;
-    text-align: center;
-    width: 80px;
-    transition: all 0.3s ease;
-}
-
-.level-input:focus {
-    outline: none;
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-/* Mobile adjustments */
+/* Mobile Adjustments */
 @media (max-width: 768px) {
     .stats-header {
         gap: 1rem;
@@ -317,6 +232,22 @@
     .points-display span#availablePoints {
         font-size: 0.8rem;
     }
+    
+    .stats-container {
+        padding: 0.5rem;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        padding: 0.4rem 0.2rem;
+        font-size: 0.4rem;
+    }
+    
+    .btn-adjust {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -329,5 +260,9 @@
     .points-display {
         width: 100%;
         justify-content: center;
+    }
+    
+    .hide-mobile {
+        display: none;
     }
 }
