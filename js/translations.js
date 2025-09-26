@@ -137,3 +137,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 });
+
+// Re-renderiza stats quando mudar idioma (se estiver na página de stats)
+window.addEventListener('languageChanged', () => {
+    if (typeof renderStats === 'function') {
+        renderStats();
+    }
+});
+
+// Dispara evento customizado quando mudar idioma
+const originalSetLanguage = setLanguage;
+window.setLanguage = function(lang) {
+    originalSetLanguage(lang);
+    window.dispatchEvent(new Event('languageChanged'));
+};

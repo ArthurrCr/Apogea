@@ -1,4 +1,4 @@
-// Class Multipliers (continua igual)
+// Class Multipliers
 const classMultipliers = {
     squire: {
         skill: 1.00, magic: 1.00, armor: 1.00, defense: 1.00,
@@ -26,7 +26,7 @@ const classMultipliers = {
     }
 };
 
-// Base Stats ATUALIZADO com chaves de tradução
+// Base Stats
 const baseStats = {
     health: { key: 'health', base: 150, points: 0 },
     mana: { key: 'mana', base: 15, points: 0 },
@@ -53,7 +53,7 @@ function getClassFromURL() {
     return params.get('class') || 'knight';
 }
 
-// Create stars (igual)
+// Create stars
 function createStars() {
     const starsContainer = document.getElementById('stars');
     const numberOfStars = 150;
@@ -80,7 +80,7 @@ function createStars() {
     }
 }
 
-// Render stats table ATUALIZADO com tradução
+// Render stats table
 function renderStats() {
     const tbody = document.getElementById('statsTableBody');
     tbody.innerHTML = '';
@@ -97,8 +97,8 @@ function renderStats() {
         if (multiplier > 1) multClass = 'high';
         else if (multiplier < 1) multClass = 'low';
         
-        // USA TRADUÇÃO PARA O NOME DO STAT
-        const statName = t(`stat.${stat.key}`);
+        // Usa tradução se disponível
+        const statName = (typeof t !== 'undefined') ? t(`stat.${stat.key}`) : stat.key;
         
         row.innerHTML = `
             <td class="stat-name">${statName}</td>
@@ -119,7 +119,7 @@ function renderStats() {
     }
 }
 
-// Adjust stat points (continua igual)
+// Adjust stat points
 function adjustStat(statKey, change) {
     const stat = baseStats[statKey];
     
@@ -140,18 +140,58 @@ function updatePointsDisplay() {
     document.getElementById('availablePoints').textContent = availablePoints;
 }
 
+// Update translations on page
+function updatePageTranslations() {
+    // Atualiza o título da classe
+    const classNameKey = `class.${currentClass}`;
+    if (typeof t !== 'undefined') {
+        document.getElementById('classTitle').textContent = t(classNameKey).toUpperCase();
+    }
+    
+    // Re-renderiza a tabela com novos nomes
+    renderStats();
+}
+
 // Initialize
 function init() {
     currentClass = getClassFromURL();
     
-    // Traduz o nome da classe
-    const classNameKey = `class.${currentClass}`;
-    document.getElementById('classTitle').textContent = t(classNameKey).toUpperCase();
-    
     createStars();
-    renderStats();
+    updatePageTranslations();
     updatePointsDisplay();
+    
+    // Configura botões de idioma localmente
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        // Define idioma ativo baseado no localStorage
+        const savedLang = localStorage.getItem('gameLanguage') || 'en';
+        if (btn.dataset.lang === savedLang) {
+            btn.classList.add('active');
+        }
+        
+        // Adiciona listener local
+        btn.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            
+            // Remove active de todos
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            // Adiciona active no clicado
+            this.classList.add('active');
+            
+            // Chama setLanguage se existir
+            if (typeof setLanguage !== 'undefined') {
+                setLanguage(lang);
+            }
+            
+            // Atualiza traduções locais
+            setTimeout(() => {
+                updatePageTranslations();
+            }, 100);
+        });
+    });
 }
 
 // Start when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
+
+// Expõe globalmente para o onclick funcionar
+window.adjustStat = adjustStat;
