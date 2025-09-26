@@ -32,15 +32,22 @@ function createStars() {
 // ======================
 function initClassSelection() {
     document.querySelectorAll('.class-card').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function(e) {
+            e.preventDefault(); // Previne comportamento padrão
+            
             const selectedClass = this.dataset.class;
-            const className = this.querySelector('.class-name').textContent;
+            console.log(`Navegando para simulador da classe: ${selectedClass}`);
             
-            // Using translation system
-            console.log(`${t('selected')}: ${className}`);
+            // Fade out da música antes de navegar (opcional)
+            const bgMusic = document.getElementById('bgMusic');
+            if (bgMusic && !bgMusic.paused) {
+                bgMusic.volume = 0;
+            }
             
-            // Future navigation
-            // window.location.href = `/pages/${selectedClass}.html`;
+            // Navega para o simulador
+            setTimeout(() => {
+                window.location.href = `pages/stats-simulator.html?class=${selectedClass}`;
+            }, 100); // Pequeno delay para garantir
         });
         
         card.addEventListener('mouseenter', function() {
