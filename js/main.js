@@ -113,13 +113,12 @@ function initAudioSystem() {
     if (!bgMusic || !audioBtn) return;
     
     // Configurações iniciais
-    bgMusic.volume = 0.3; // Volume em 30%
+    bgMusic.volume = 0.3;
     audioBtn.classList.add('paused');
     
     // Função para iniciar música
     function startMusic() {
         if (!musicStarted) {
-            // Primeiro clique - carrega e toca
             bgMusic.load();
             musicStarted = true;
         }
@@ -128,22 +127,18 @@ function initAudioSystem() {
             audioBtn.classList.remove('paused');
             audioBtn.classList.add('playing');
             visualizer.classList.add('active');
-            
-            // Salva preferência
             localStorage.setItem('musicEnabled', 'true');
         }).catch(error => {
             console.log('Autoplay prevented:', error);
         });
     }
     
-    // Função para pausar música
+    // Função para pausar música E ATUALIZAR ÍCONE
     function pauseMusic() {
         bgMusic.pause();
         audioBtn.classList.remove('playing');
         audioBtn.classList.add('paused');
         visualizer.classList.remove('active');
-        
-        // Salva preferência
         localStorage.setItem('musicEnabled', 'false');
     }
     
@@ -156,19 +151,7 @@ function initAudioSystem() {
         }
     });
     
-    // Auto-start baseado na preferência (mas respeita autoplay policy)
-    const musicPref = localStorage.getItem('musicEnabled');
-    if (musicPref === 'true') {
-        // Tenta iniciar após interação do usuário
-        document.addEventListener('click', function startOnInteraction() {
-            if (bgMusic.paused && musicPref === 'true') {
-                startMusic();
-                document.removeEventListener('click', startOnInteraction);
-            }
-        });
-    }
-    
-    // Fade in/out ao mudar de página
+    // Fade out ao clicar em classe - CORRIGIDO
     function fadeOutMusic() {
         let volume = bgMusic.volume;
         const fadeOut = setInterval(() => {
@@ -178,21 +161,44 @@ function initAudioSystem() {
             } else {
                 clearInterval(fadeOut);
                 bgMusic.pause();
+                bgMusic.volume = 0.3; // Reseta o volume para próxima vez
+                
+                // ATUALIZA O ÍCONE E VISUALIZADOR
+                audioBtn.classList.remove('playing');
+                audioBtn.classList.add('paused');
+                visualizer.classList.remove('active');
             }
         }, 50);
     }
     
-    // Se houver navegação futura
+    // Click nas classes
     document.querySelectorAll('.class-card').forEach(card => {
         card.addEventListener('click', () => {
             if (!bgMusic.paused) {
-                fadeOutMusic();
+                fadeOutMusic(); // Agora atualiza o ícone também
             }
+            
+            // Por enquanto, só loga - depois vai navegar
+            const selectedClass = card.dataset.class;
+            console.log(`Classe selecionada: ${selectedClass}`);
+            
+            // Futuro: window.location.href = `/pages/${selectedClass}.html`;
         });
     });
+    
+    // Auto-start baseado na preferência
+    const musicPref = localStorage.getItem('musicEnabled');
+    if (musicPref === 'true') {
+        document.addEventListener('click', function startOnInteraction() {
+            if (bgMusic.paused && musicPref === 'true') {
+                startMusic();
+                document.removeEventListener('click', startOnInteraction);
+            }
+        });
+    }
 }
 
-// Adicione ao DOMContentLoaded
+// Adiciona a inicialização do sistema de áudio
 document.addEventListener('DOMContentLoaded', function() {
     createStars();
     initClassSelection();
