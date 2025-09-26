@@ -1,53 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>APOGEA - Stats Simulator</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../favicon.ico">
-    
+
     <!-- Pixelated Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
+
     <!-- Main CSS -->
     <link rel="stylesheet" href="../css/main.css">
-    
+
     <!-- CSS específico desta página -->
     <link rel="stylesheet" href="../css/pages/stats-simulator.css">
 </head>
+
 <body>
     <!-- Language Selector (igual ao index) -->
     <div class="language-selector">
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="pt-br">PT</button>
     </div>
-    
+
     <!-- Stars Background -->
     <div class="stars-container" id="stars"></div>
-    
+
     <!-- Back Button -->
     <a href="../index.html" class="back-btn">
         <span data-i18n="stats.back">← BACK</span>
     </a>
-    
+
     <!-- Main Content -->
     <div class="main-content">
         <!-- Header -->
         <div class="game-logo">
-            <h1 class="class-title" id="classTitle">KNIGHT</h1>
             <p class="game-subtitle" data-i18n="stats.title">STATS SIMULATOR</p>
         </div>
-        
+
+        <!-- Level Input (NOVO) -->
+        <div class="level-container">
+            <label for="levelInput" data-i18n="stats.level">Level</label>:
+            <input type="number" id="levelInput" min="1" max="100" value="1" class="level-input">
+        </div>
+
         <!-- Points Display -->
         <div class="points-display">
-            <span class="points-label" data-i18n="stats.availablePoints">Available Points</span>: 
-            <span id="availablePoints">100</span>
+            <span class="points-label" data-i18n="stats.availablePoints">Available Points</span>:
+            <span id="availablePoints">3</span>
         </div>
-        
+
         <!-- Stats Container -->
         <div class="stats-container">
             <table class="stats-table">
@@ -67,9 +74,10 @@
             </table>
         </div>
     </div>
-    
+
     <!-- Scripts -->
     <script src="../js/translations.js"></script>
     <script src="../js/stats-simulator.js"></script>
 </body>
+
 </html>

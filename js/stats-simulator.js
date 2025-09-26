@@ -44,13 +44,21 @@ const baseStats = {
     capacity: { key: 'capacity', base: 225, points: 0 }
 };
 
+// Global variables
 let currentClass = 'knight';
-let availablePoints = 100;
+let currentLevel = 1;
+let availablePoints = 3; // Começa com 3 pontos (nível 1)
+let usedPoints = 0;
 
 // Get class from URL
 function getClassFromURL() {
     const params = new URLSearchParams(window.location.search);
     return params.get('class') || 'knight';
+}
+
+// Calculate points from level
+function calculatePointsFromLevel(level) {
+    return level * 3; // 3 pontos por nível
 }
 
 // Create stars
@@ -122,13 +130,14 @@ function renderStats() {
 // Adjust stat points
 function adjustStat(statKey, change) {
     const stat = baseStats[statKey];
+    const totalPoints = calculatePointsFromLevel(currentLevel);
     
-    if (change > 0 && availablePoints > 0) {
+    if (change > 0 && usedPoints < totalPoints) {
         stat.points++;
-        availablePoints--;
+        usedPoints++;
     } else if (change < 0 && stat.points > 0) {
         stat.points--;
-        availablePoints++;
+        usedPoints--;
     }
     
     renderStats();
@@ -137,17 +146,25 @@ function adjustStat(statKey, change) {
 
 // Update points display
 function updatePointsDisplay() {
-    document.getElementById('availablePoints').textContent = availablePoints;
+    const totalPoints = calculatePointsFromLevel(currentLevel);
+    const remainingPoints = totalPoints - usedPoints;
+    availablePoints = remainingPoints;
+    document.getElementById('availablePoints').textContent = remainingPoints;
+}
+
+// Reset all points
+function resetPoints() {
+    usedPoints = 0;
+    for (const stat of Object.values(baseStats)) {
+        stat.points = 0;
+    }
+    renderStats();
+    updatePointsDisplay();
 }
 
 // Update translations on page
 function updatePageTranslations() {
-    // Atualiza o título da classe
-    const classNameKey = `class.${currentClass}`;
-    if (typeof t !== 'undefined') {
-        document.getElementById('classTitle').textContent = t(classNameKey).toUpperCase();
-    }
-    
+    // Removido a parte do classTitle pois não é mais necessário
     // Re-renderiza a tabela com novos nomes
     renderStats();
 }
@@ -157,8 +174,19 @@ function init() {
     currentClass = getClassFromURL();
     
     createStars();
-    updatePageTranslations();
-    updatePointsDisplay();
+    
+    // Configura input de nível
+    const levelInput = document.getElementById('levelInput');
+    if (levelInput) {
+        levelInput.addEventListener('input', function() {
+            const newLevel = parseInt(this.value) || 1;
+            if (newLevel >= 1 && newLevel <= 100) {
+                currentLevel = newLevel;
+                resetPoints(); // Reseta pontos ao mudar de nível
+                updatePointsDisplay();
+            }
+        });
+    }
     
     // Configura botões de idioma localmente
     document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -188,6 +216,10 @@ function init() {
             }, 100);
         });
     });
+    
+    // Renderiza inicial
+    renderStats();
+    updatePointsDisplay();
 }
 
 // Start when DOM is ready

@@ -4,7 +4,7 @@
 const translations = {
     'en': {
         // Página principal
-        'page.title': 'Choose Your Class',
+        'page.title': 'aPOGea',
         'page.description': 'Choose your class',
         'subtitle': 'Choose Your Class',
         'instructions': 'Click to select',
@@ -46,7 +46,7 @@ const translations = {
     },
     'pt-br': {
         // Página principal
-        'page.title': 'Escolha sua Classe',
+        'page.title': 'aPOGea',
         'page.description': 'Escolha sua classe e comece sua aventura épica!',
         'subtitle': 'Escolha Sua Classe',
         'instructions': 'Clique para selecionar',

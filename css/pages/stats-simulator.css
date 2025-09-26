@@ -189,3 +189,42 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
 }
+
+/* Level Container */
+.level-container {
+    text-align: center;
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.7rem;
+    animation: fadeIn 0.4s ease;
+}
+
+.level-input {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.5rem;
+    font-size: 0.8rem;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    width: 100px;
+    margin-left: 1rem;
+    transition: all 0.3s ease;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.level-input:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Remove margem extra do game-logo sem título */
+.game-logo {
+    margin-bottom: 1rem;
+}
