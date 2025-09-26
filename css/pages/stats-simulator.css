@@ -1,5 +1,5 @@
 /* ======================
-   STATS SIMULATOR PAGE 
+   STATS SIMULATOR PAGE
    ====================== */
 
 /* Stats Header - Container para Level e Points */
@@ -15,29 +15,29 @@
 .level-container {
     background: rgba(255, 255, 255, 0.03);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 0.5rem 0.8rem;
-    font-size: 0.55rem; /* Reduzido de 0.7rem */
+    padding: 0.6rem 1rem;
+    font-size: 0.6rem; /* Aumentado */
     animation: fadeIn 0.4s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
 }
 
 /* Points Display */
 .points-display {
     background: rgba(255, 255, 255, 0.05);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.5rem 0.8rem;
-    font-size: 0.55rem; /* Reduzido de 0.8rem */
+    padding: 0.6rem 1rem;
+    font-size: 0.6rem; /* Aumentado */
     animation: fadeIn 0.5s ease;
     display: inline-flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: 0.5rem;
 }
 
 .points-display span#availablePoints {
     color: #0f0;
-    font-size: 0.7rem; /* Reduzido de 1rem */
+    font-size: 0.8rem; /* Aumentado */
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
     font-family: 'Press Start 2P', cursive;
 }
@@ -46,11 +46,11 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 0.25rem;
-    font-size: 0.5rem; /* Reduzido de 0.7rem */
+    padding: 0.3rem;
+    font-size: 0.55rem; /* Aumentado */
     font-family: 'Press Start 2P', cursive;
     text-align: center;
-    width: 60px; /* Reduzido de 80px */
+    width: 70px; /* Aumentado */
     transition: all 0.3s ease;
 }
 
@@ -66,11 +66,11 @@
 
 /* Stats Container */
 .stats-container {
-    max-width: 900px; /* Reduzido de 1200px */
+    max-width: 1000px; /* Ajustado para maior */
     margin: 0 auto;
     background: rgba(0, 0, 0, 0.9);
     border: 2px solid rgba(255, 255, 255, 0.2);
-    padding: 0.8rem;
+    padding: 1rem;
     animation: fadeIn 0.6s ease 0.2s both;
     overflow-x: auto;
 }
@@ -79,13 +79,13 @@
 .stats-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 500px; /* Reduzido de 600px */
+    min-width: 550px;
 }
 
 .stats-table th {
     background: rgba(255, 255, 255, 0.1);
-    padding: 0.5rem 0.4rem; /* Reduzido de 0.8rem 0.5rem */
-    font-size: 0.45rem; /* Reduzido de 0.6rem */
+    padding: 0.6rem 0.5rem; /* Aumentado */
+    font-size: 0.5rem; /* Aumentado */
     text-align: left;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
     position: sticky;
@@ -95,8 +95,8 @@
 }
 
 .stats-table td {
-    padding: 0.4rem 0.3rem; /* Reduzido de 0.6rem 0.5rem */
-    font-size: 0.4rem; /* Reduzido de 0.5rem */
+    padding: 0.5rem 0.4rem; /* Aumentado */
+    font-size: 0.45rem; /* Aumentado */
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -109,13 +109,13 @@
     color: #ffd700;
     font-weight: bold;
     text-transform: uppercase;
-    font-size: 0.4rem;
+    font-size: 0.45rem; /* Aumentado */
 }
 
 /* Multiplier Column */
 .multiplier {
     color: #00ffff;
-    font-size: 0.4rem;
+    font-size: 0.45rem; /* Aumentado */
 }
 
 .multiplier.high {
@@ -131,20 +131,20 @@
 /* Controls */
 .controls {
     display: flex;
-    gap: 0.3rem;
+    gap: 0.4rem;
     align-items: center;
     justify-content: center;
 }
 
 .btn-adjust {
-    width: 20px; /* Reduzido de 24px */
-    height: 20px;
+    width: 22px; /* Aumentado */
+    height: 22px;
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.6rem; /* Reduzido de 0.8rem */
+    font-size: 0.65rem; /* Aumentado */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -163,11 +163,11 @@
 }
 
 .pts-value {
-    min-width: 30px; /* Reduzido de 40px */
+    min-width: 35px; /* Aumentado */
     text-align: center;
     color: #fff;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.4rem;
+    font-size: 0.45rem; /* Aumentado */
 }
 
 .pts-value.disabled {
@@ -179,7 +179,7 @@
 .value {
     text-align: right;
     font-family: 'Press Start 2P', cursive;
-    font-size: 0.4rem;
+    font-size: 0.45rem; /* Aumentado */
 }
 
 .value.final {
@@ -227,12 +227,13 @@
 @media (max-width: 1024px) {
     .stats-container {
         max-width: 95%;
-        padding: 0.6rem;
+        padding: 0.8rem;
     }
     
     .stats-table th,
     .stats-table td {
-        padding: 0.4rem 0.25rem;
+        padding: 0.5rem 0.3rem;
+        font-size: 0.45rem;
     }
 }
 
@@ -245,21 +246,21 @@
     
     .level-container,
     .points-display {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.45rem;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.5rem;
     }
     
     .level-input {
-        width: 50px;
-        font-size: 0.4rem;
+        width: 55px;
+        font-size: 0.45rem;
     }
     
     .points-display span#availablePoints {
-        font-size: 0.6rem;
+        font-size: 0.65rem;
     }
     
     .stats-container {
-        padding: 0.4rem;
+        padding: 0.6rem;
         max-width: 98%;
     }
     
@@ -269,19 +270,19 @@
     
     .stats-table th,
     .stats-table td {
-        padding: 0.3rem 0.15rem;
-        font-size: 0.35rem;
+        padding: 0.35rem 0.2rem;
+        font-size: 0.38rem;
     }
     
     .btn-adjust {
-        width: 18px;
-        height: 18px;
-        font-size: 0.5rem;
+        width: 19px;
+        height: 19px;
+        font-size: 0.55rem;
     }
     
     .pts-value {
-        min-width: 25px;
-        font-size: 0.35rem;
+        min-width: 28px;
+        font-size: 0.38rem;
     }
     
     .back-btn {
