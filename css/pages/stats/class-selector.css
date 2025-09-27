@@ -18,14 +18,14 @@
     right: 70px;
     visibility: hidden;
     opacity: 0;
-    transform: translateX(30px) scale(0.8);
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform: translateX(30px);
+    transition: all 0.3s ease;
 }
 
 .class-options.active {
     visibility: visible;
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
 }
 
 /* Opções individuais */
@@ -39,29 +39,22 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.2s ease;
     box-sizing: border-box;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease, transform 0.2s ease;
 }
 
-/* Animação de entrada mais suave */
+/* Delays para cascata suave */
+.class-option:nth-child(1) { transition-delay: 0s, 0s; }
+.class-option:nth-child(2) { transition-delay: 0.05s, 0.05s; }
+.class-option:nth-child(3) { transition-delay: 0.1s, 0.1s; }
+.class-option:nth-child(4) { transition-delay: 0.15s, 0.15s; }
+
+/* Estado ativo das opções */
 .class-options.active .class-option {
-    animation: fadeSlideIn 0.4s ease-out forwards;
-}
-
-.class-options.active .class-option:nth-child(1) { animation-delay: 0s; }
-.class-options.active .class-option:nth-child(2) { animation-delay: 0.05s; }
-.class-options.active .class-option:nth-child(3) { animation-delay: 0.1s; }
-.class-options.active .class-option:nth-child(4) { animation-delay: 0.15s; }
-
-@keyframes fadeSlideIn {
-    0% {
-        opacity: 0;
-        transform: translateX(15px);
-    }
-    100% {
-        opacity: 1;
-        transform: translateX(0);
-    }
+    opacity: 1;
+    transform: translateX(0);
 }
 
 /* Hover nas opções */
