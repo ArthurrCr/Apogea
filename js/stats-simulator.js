@@ -130,6 +130,91 @@ function initLevelInput() {
     }
 }
 
+// Initialize class selector hologram
+function initClassSelector() {
+    const classIconButton = document.getElementById('classIconButton');
+    const classHologram = document.getElementById('classHologram');
+    const closeButton = document.getElementById('closeHologram');
+    const classOptions = document.querySelectorAll('.hologram-class');
+    
+    // Open hologram on icon click
+    if (classIconButton) {
+        classIconButton.addEventListener('click', function() {
+            classHologram.classList.add('active');
+            
+            // Mark current class
+            classOptions.forEach(option => {
+                if (option.dataset.class === currentClass) {
+                    option.classList.add('current');
+                } else {
+                    option.classList.remove('current');
+                }
+            });
+        });
+    }
+    
+    // Close hologram
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            classHologram.classList.remove('active');
+        });
+    }
+    
+    // Close on backdrop click
+    if (classHologram) {
+        classHologram.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+    }
+    
+    // Handle class selection
+    classOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const selectedClass = this.dataset.class;
+            if (selectedClass !== currentClass) {
+                // Change class
+                currentClass = selectedClass;
+                
+                // Update URL
+                const url = new URL(window.location);
+                url.searchParams.set('class', selectedClass);
+                window.history.replaceState({}, '', url);
+                
+                // Update class icon
+                const classIcon = document.getElementById('classIcon');
+                if (classIcon) {
+                    classIcon.src = `../assets/images/icons/${currentClass}_icon.png`;
+                    classIcon.alt = `${currentClass} icon`;
+                }
+                
+                // Reset points when changing class
+                resetPoints();
+                
+                // Re-render stats with new multipliers
+                renderStats();
+                updatePointsDisplay();
+                
+                // Close hologram
+                classHologram.classList.remove('active');
+            }
+        });
+        
+        // Handle image errors in hologram
+        const img = option.querySelector('img');
+        if (img) {
+            img.onerror = function() {
+                this.style.display = 'none';
+                const iconPlaceholder = document.createElement('div');
+                iconPlaceholder.style.cssText = 'color: #666; font-size: 2rem;';
+                iconPlaceholder.innerHTML = '⚔️';
+                this.parentElement.insertBefore(iconPlaceholder, this);
+            };
+        }
+    });
+}
+
 // Initialize
 function init() {
     // Obtém classe da URL
@@ -156,6 +241,7 @@ function init() {
     
     // Inicializa componentes específicos
     initLevelInput();
+    initClassSelector(); // Novo
     renderStats();
     updatePointsDisplay();
 }

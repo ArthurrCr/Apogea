@@ -41,7 +41,7 @@
         <!-- Level and Points Container -->
         <div class="stats-header">
             <!-- Class Icon -->
-            <div class="class-icon-display">
+            <div class="class-icon-display" id="classIconButton">
                 <img id="classIcon" src="" alt="Class Icon" />
             </div>
             
@@ -53,6 +53,32 @@
             <div class="points-display">
                 <span class="points-label" data-i18n="stats.availablePoints">Points</span>: 
                 <span id="availablePoints">0</span>
+            </div>
+        </div>
+        
+        <!-- Class Selector Hologram -->
+        <div id="classHologram" class="class-hologram">
+            <div class="hologram-content">
+                <h3 class="hologram-title" data-i18n="stats.changeClass">Change Class</h3>
+                <div class="hologram-classes">
+                    <div class="hologram-class" data-class="squire">
+                        <img src="../assets/images/icons/squire_icon.png" alt="Squire">
+                        <span data-i18n="class.squire">Squire</span>
+                    </div>
+                    <div class="hologram-class" data-class="knight">
+                        <img src="../assets/images/icons/knight_icon.png" alt="Knight">
+                        <span data-i18n="class.knight">Knight</span>
+                    </div>
+                    <div class="hologram-class" data-class="mage">
+                        <img src="../assets/images/icons/mage_icon.png" alt="Mage">
+                        <span data-i18n="class.mage">Mage</span>
+                    </div>
+                    <div class="hologram-class" data-class="rogue">
+                        <img src="../assets/images/icons/rogue_icon.png" alt="Rogue">
+                        <span data-i18n="class.rogue">Rogue</span>
+                    </div>
+                </div>
+                <button class="hologram-close" id="closeHologram">×</button>
             </div>
         </div>
 
