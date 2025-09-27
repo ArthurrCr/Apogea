@@ -1,5 +1,5 @@
 // ======================
-// TRANSLATION SYSTEM
+// TRANSLATION SYSTEM - ES6 MODULE
 // ======================
 const translations = {
     'en': {
@@ -17,7 +17,7 @@ const translations = {
         'loading': 'Loading...',
         'selected': 'Class selected',
         
-        // PÁGINA DE STATS - NOVO
+        // PÁGINA DE STATS
         'stats.title': 'STATS SIMULATOR',
         'stats.back': '← BACK',
         'stats.availablePoints': 'Points',
@@ -28,6 +28,7 @@ const translations = {
         'stats.bonus': 'Bonus',
         'stats.final': 'Final',
         'stats.level': 'Level',
+        'stats.traits': 'Traits',
         
         // Nomes dos stats
         'stat.health': 'Health',
@@ -70,6 +71,7 @@ const translations = {
         'stats.bonus': 'Bônus',
         'stats.final': 'Final',
         'stats.level': 'Nível',
+        'stats.traits': 'Características',
         
         // Nomes dos stats
         'stat.health': 'Vida',
@@ -91,11 +93,13 @@ const translations = {
 // Idioma atual
 let currentLanguage = localStorage.getItem('gameLanguage') || 'en';
 
-function t(key) {
+// Função de tradução
+export function t(key) {
     return translations[currentLanguage][key] || translations['en'][key] || key;
 }
 
-function applyTranslations() {
+// Aplica traduções na página
+export function applyTranslations() {
     document.documentElement.lang = currentLanguage === 'pt-br' ? 'pt-BR' : 'en';
     
     document.title = t('page.title');
@@ -117,37 +121,41 @@ function applyTranslations() {
     });
 }
 
-function setLanguage(lang) {
+// Define o idioma
+export function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('gameLanguage', lang);
     applyTranslations();
     
-    // Se estiver na página de stats, re-renderiza
-    if (typeof renderStats === 'function') {
-        renderStats();
-    }
+    // Dispara evento customizado
+    window.dispatchEvent(new CustomEvent('languageChanged', { detail: { language: lang } }));
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// Obtém idioma atual
+export function getCurrentLanguage() {
+    return currentLanguage;
+}
+
+// Inicializa o sistema de tradução
+export function initTranslations() {
+    // Aplica traduções iniciais
     applyTranslations();
     
+    // Configura listeners dos botões de idioma
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             setLanguage(btn.dataset.lang);
         });
     });
-});
+}
 
-// Re-renderiza stats quando mudar idioma (se estiver na página de stats)
-window.addEventListener('languageChanged', () => {
-    if (typeof renderStats === 'function') {
-        renderStats();
-    }
-});
+// Auto-inicialização quando DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTranslations);
+} else {
+    initTranslations();
+}
 
-// Dispara evento customizado quando mudar idioma
-const originalSetLanguage = setLanguage;
-window.setLanguage = function(lang) {
-    originalSetLanguage(lang);
-    window.dispatchEvent(new Event('languageChanged'));
-};
+// Exporta também para uso global (compatibilidade)
+window.t = t;
+window.setLanguage = setLanguage;

@@ -5,6 +5,7 @@ import { createStars } from './modules/stars.js';
 import { initLanguageSelector } from './modules/language.js';
 import { getURLParameter, clamp, formatNumber } from './modules/utilities.js';
 import { classMultipliers, baseStats } from './data/stats-config.js';
+import { t, initTranslations } from './translations.js';
 
 // Global variables
 let currentClass = 'knight';
@@ -48,13 +49,13 @@ function renderStats() {
         if (multiplier > 1) multClass = 'high';
         else if (multiplier < 1) multClass = 'low';
         
-        const statName = (typeof t !== 'undefined') ? t(`stat.${stat.key}`) : stat.key;
+        const statName = t(`stat.${stat.key}`);
         
         const controlsHTML = stat.editable ? 
             `<div class="controls">
-                <button class="btn-adjust" onclick="adjustStat('${key}', -1)">-</button>
+                <button class="btn-adjust" data-stat="${key}" data-action="decrease">-</button>
                 <span class="pts-value">${stat.points}</span>
-                <button class="btn-adjust" onclick="adjustStat('${key}', 1)">+</button>
+                <button class="btn-adjust" data-stat="${key}" data-action="increase">+</button>
             </div>` : 
             `<span class="pts-value disabled">-</span>`;
         
@@ -69,6 +70,16 @@ function renderStats() {
         
         tbody.appendChild(row);
     }
+    
+    // Add event listeners to buttons
+    document.querySelectorAll('.btn-adjust').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const statKey = this.dataset.stat;
+            const action = this.dataset.action;
+            const change = action === 'increase' ? 1 : -1;
+            adjustStat(statKey, change);
+        });
+    });
 }
 
 // Adjust stat points
@@ -256,18 +267,25 @@ function init() {
     
     // Inicializa componentes compartilhados
     createStars();
+    initTranslations();
     initLanguageSelector(() => renderStats());
     
     // Inicializa componentes específicos
     initLevelInput();
     initClassSelector();
-    initTraitsArrow(); // Novo
+    initTraitsArrow();
     renderStats();
     updatePointsDisplay();
+    
+    // Listener para mudança de idioma
+    window.addEventListener('languageChanged', () => {
+        renderStats();
+    });
 }
 
 // Start when DOM is ready
 document.addEventListener('DOMContentLoaded', init);
 
-// Expõe globalmente para onclick dos botões
+// Expõe globalmente para compatibilidade se necessário
+window.renderStats = renderStats;
 window.adjustStat = adjustStat;
