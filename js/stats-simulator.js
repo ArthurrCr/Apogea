@@ -144,13 +144,8 @@ function initClassSelector() {
             selectorOpen = !selectorOpen;
             
             if (selectorOpen) {
-                // Show options first
-                classOptions.style.display = 'flex';
-                // Then trigger animation
-                setTimeout(() => {
-                    classOptions.classList.add('active');
-                    classIconButton.classList.add('active');
-                }, 10);
+                classOptions.classList.add('active');
+                classIconButton.classList.add('active');
                 
                 // Hide current class option
                 optionElements.forEach(option => {
@@ -163,10 +158,6 @@ function initClassSelector() {
             } else {
                 classOptions.classList.remove('active');
                 classIconButton.classList.remove('active');
-                // Hide after animation
-                setTimeout(() => {
-                    classOptions.style.display = 'none';
-                }, 400);
             }
         });
     }
@@ -203,9 +194,6 @@ function initClassSelector() {
                 // Close selector
                 classOptions.classList.remove('active');
                 classIconButton.classList.remove('active');
-                setTimeout(() => {
-                    classOptions.style.display = 'none';
-                }, 400);
                 selectorOpen = false;
             }
         });
@@ -227,9 +215,6 @@ function initClassSelector() {
         if (selectorOpen && !classIconButton.contains(e.target) && !classOptions.contains(e.target)) {
             classOptions.classList.remove('active');
             classIconButton.classList.remove('active');
-            setTimeout(() => {
-                classOptions.style.display = 'none';
-            }, 400);
             selectorOpen = false;
         }
     });

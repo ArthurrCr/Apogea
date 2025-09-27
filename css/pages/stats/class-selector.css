@@ -12,20 +12,20 @@
 
 /* Container das opções */
 .class-options {
-    display: none; /* Escondido por padrão */
+    display: flex;
     gap: 0.5rem;
     position: absolute;
     right: 70px;
+    visibility: hidden;
     opacity: 0;
-    transform: translateX(20px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(30px) scale(0.8);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 .class-options.active {
-    display: flex; /* Mostra quando ativo */
+    visibility: visible;
     opacity: 1;
-    transform: translateX(0);
-    pointer-events: all;
+    transform: translateX(0) scale(1);
 }
 
 /* Opções individuais */
@@ -39,31 +39,28 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     box-sizing: border-box;
-    opacity: 0;
-    transform: translateX(10px);
 }
 
+/* Animação de entrada mais suave */
 .class-options.active .class-option {
-    opacity: 1;
-    transform: translateX(0);
-    animation: slideIn 0.3s ease-out forwards;
+    animation: fadeSlideIn 0.4s ease-out forwards;
 }
 
-.class-options.active .class-option:nth-child(1) { animation-delay: 0.1s; }
-.class-options.active .class-option:nth-child(2) { animation-delay: 0.15s; }
-.class-options.active .class-option:nth-child(3) { animation-delay: 0.2s; }
-.class-options.active .class-option:nth-child(4) { animation-delay: 0.25s; }
+.class-options.active .class-option:nth-child(1) { animation-delay: 0s; }
+.class-options.active .class-option:nth-child(2) { animation-delay: 0.05s; }
+.class-options.active .class-option:nth-child(3) { animation-delay: 0.1s; }
+.class-options.active .class-option:nth-child(4) { animation-delay: 0.15s; }
 
-@keyframes slideIn {
-    from {
+@keyframes fadeSlideIn {
+    0% {
         opacity: 0;
-        transform: translateX(20px) scale(0.8);
+        transform: translateX(15px);
     }
-    to {
+    100% {
         opacity: 1;
-        transform: translateX(0) scale(1);
+        transform: translateX(0);
     }
 }
 
