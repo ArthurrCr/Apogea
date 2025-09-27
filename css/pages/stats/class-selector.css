@@ -1,0 +1,156 @@
+/* ======================
+   CLASS SELECTOR
+   ====================== */
+
+/* Container do seletor */
+.class-selector-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* Container das opções */
+.class-options {
+    display: flex;
+    gap: 0.5rem;
+    position: absolute;
+    right: 70px;
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.class-options.active {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Opções individuais */
+.class-option {
+    width: 50px;
+    height: 50px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+.class-options.active .class-option {
+    opacity: 1;
+    transform: translateX(0);
+    animation: slideIn 0.3s ease-out forwards;
+}
+
+.class-options.active .class-option:nth-child(1) { animation-delay: 0.1s; }
+.class-options.active .class-option:nth-child(2) { animation-delay: 0.15s; }
+.class-options.active .class-option:nth-child(3) { animation-delay: 0.2s; }
+.class-options.active .class-option:nth-child(4) { animation-delay: 0.25s; }
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+/* Hover nas opções */
+.class-option:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+    transform: scale(1.1) translateY(-2px);
+    background: rgba(0, 0, 0, 0.95);
+}
+
+/* Classe atual */
+.class-option.current {
+    border-color: rgba(0, 255, 0, 0.4);
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.class-option.current:hover {
+    border-color: rgba(0, 255, 0, 0.6);
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+}
+
+/* Esconde opção da classe atual */
+.class-option.hidden {
+    display: none;
+}
+
+/* Imagens das opções */
+.class-option img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.2));
+    transition: filter 0.3s ease;
+}
+
+.class-option:hover img {
+    filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.5))
+            brightness(1.2);
+}
+
+/* Make class icon clickable */
+.class-icon-display {
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.class-icon-display.active {
+    border-color: rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .class-options {
+        right: 60px;
+        gap: 0.3rem;
+    }
+    
+    .class-option {
+        width: 40px;
+        height: 40px;
+        padding: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .class-selector-container {
+        justify-content: center;
+    }
+    
+    .class-options {
+        position: static;
+        flex-wrap: nowrap;
+        transform: none;
+    }
+    
+    .class-options.active {
+        margin-right: 0.5rem;
+    }
+    
+    .class-option {
+        width: 35px;
+        height: 35px;
+    }
+}

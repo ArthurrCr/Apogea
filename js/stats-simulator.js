@@ -130,49 +130,44 @@ function initLevelInput() {
     }
 }
 
-// Initialize class selector hologram
+// Initialize class selector
 function initClassSelector() {
     const classIconButton = document.getElementById('classIconButton');
-    const classHologram = document.getElementById('classHologram');
-    const closeButton = document.getElementById('closeHologram');
-    const classOptions = document.querySelectorAll('.hologram-class');
+    const classOptions = document.getElementById('classOptions');
+    const optionElements = document.querySelectorAll('.class-option');
+    let selectorOpen = false;
     
-    // Open hologram on icon click
+    // Toggle selector on icon click
     if (classIconButton) {
-        classIconButton.addEventListener('click', function() {
-            classHologram.classList.add('active');
+        classIconButton.addEventListener('click', function(e) {
+            e.stopPropagation();
+            selectorOpen = !selectorOpen;
             
-            // Mark current class
-            classOptions.forEach(option => {
-                if (option.dataset.class === currentClass) {
-                    option.classList.add('current');
-                } else {
-                    option.classList.remove('current');
-                }
-            });
-        });
-    }
-    
-    // Close hologram
-    if (closeButton) {
-        closeButton.addEventListener('click', function() {
-            classHologram.classList.remove('active');
-        });
-    }
-    
-    // Close on backdrop click
-    if (classHologram) {
-        classHologram.addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.remove('active');
+            if (selectorOpen) {
+                classOptions.classList.add('active');
+                classIconButton.classList.add('active');
+                
+                // Hide current class option
+                optionElements.forEach(option => {
+                    if (option.dataset.class === currentClass) {
+                        option.classList.add('hidden');
+                    } else {
+                        option.classList.remove('hidden');
+                    }
+                });
+            } else {
+                classOptions.classList.remove('active');
+                classIconButton.classList.remove('active');
             }
         });
     }
     
     // Handle class selection
-    classOptions.forEach(option => {
-        option.addEventListener('click', function() {
+    optionElements.forEach(option => {
+        option.addEventListener('click', function(e) {
+            e.stopPropagation();
             const selectedClass = this.dataset.class;
+            
             if (selectedClass !== currentClass) {
                 // Change class
                 currentClass = selectedClass;
@@ -196,21 +191,31 @@ function initClassSelector() {
                 renderStats();
                 updatePointsDisplay();
                 
-                // Close hologram
-                classHologram.classList.remove('active');
+                // Close selector
+                classOptions.classList.remove('active');
+                classIconButton.classList.remove('active');
+                selectorOpen = false;
             }
         });
         
-        // Handle image errors in hologram
+        // Handle image errors
         const img = option.querySelector('img');
         if (img) {
             img.onerror = function() {
                 this.style.display = 'none';
-                const iconPlaceholder = document.createElement('div');
-                iconPlaceholder.style.cssText = 'color: #666; font-size: 2rem;';
-                iconPlaceholder.innerHTML = '⚔️';
-                this.parentElement.insertBefore(iconPlaceholder, this);
+                this.parentElement.innerHTML = `
+                    <div style="color: #666; font-size: 1.5rem;">⚔️</div>
+                `;
             };
+        }
+    });
+    
+    // Close selector when clicking outside
+    document.addEventListener('click', function(e) {
+        if (selectorOpen && !classIconButton.contains(e.target) && !classOptions.contains(e.target)) {
+            classOptions.classList.remove('active');
+            classIconButton.classList.remove('active');
+            selectorOpen = false;
         }
     });
 }
