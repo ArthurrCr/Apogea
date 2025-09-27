@@ -2,6 +2,17 @@
    STATS HEADER COMPONENT
    ====================== */
 
+/* Ajuste do logo/título */
+.game-logo {
+    margin-top: 3rem;
+    margin-bottom: 1.5rem;
+}
+
+.game-subtitle {
+    font-size: 1.3rem !important;
+    margin-bottom: 0.8rem;
+}
+
 /* Container principal do header */
 .stats-header {
     display: flex;

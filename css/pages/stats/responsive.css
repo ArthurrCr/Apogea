@@ -194,6 +194,7 @@ body {
 /* Ajuste para o título em telas pequenas */
 @media (max-width: 768px) {
     .game-logo {
+        margin-top: 4rem;
         margin-bottom: 1.2rem;
     }
     
