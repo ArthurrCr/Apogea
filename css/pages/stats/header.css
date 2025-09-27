@@ -1,0 +1,90 @@
+/* ======================
+   STATS HEADER COMPONENT
+   ====================== */
+
+/* Container principal do header */
+.stats-header {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+}
+
+/* Level Container */
+.level-container {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem;
+    animation: fadeIn 0.4s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+/* Input de Level */
+.level-input {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.4rem;
+    font-size: 0.65rem;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    width: 80px;
+    transition: all 0.3s ease;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.level-input:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Points Display */
+.points-display {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    padding: 0.8rem 1.2rem;
+    font-size: 0.7rem;
+    animation: fadeIn 0.5s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.points-display span#availablePoints {
+    color: #0f0;
+    font-size: 1rem;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    font-family: 'Press Start 2P', cursive;
+}
+
+/* Back Button */
+.back-btn {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 8px 12px;
+    font-size: 0.6rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Press Start 2P', cursive;
+    z-index: 100;
+}
+
+.back-btn:hover {
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    transform: scale(1.05);
+}

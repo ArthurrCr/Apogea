@@ -1,0 +1,203 @@
+/* ======================
+   STATS RESPONSIVE
+   ====================== */
+
+/* Telas grandes */
+@media (max-width: 1280px) {
+    .stats-container {
+        max-width: calc(100% - 2rem);
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
+/* Tablets */
+@media (max-width: 1024px) {
+    .stats-container {
+        max-width: 95%;
+        padding: 1rem;
+        margin: 0 auto 1rem auto;
+    }
+    
+    .stats-table {
+        min-width: 700px;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.5rem;
+    }
+    
+    .btn-adjust {
+        width: 24px;
+        height: 24px;
+        font-size: 0.7rem;
+    }
+}
+
+/* Mobile médio */
+@media (max-width: 768px) {
+    .stats-header {
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    
+    .level-container,
+    .points-display {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.55rem;
+    }
+    
+    .level-input {
+        width: 60px;
+        font-size: 0.5rem;
+    }
+    
+    .points-display span#availablePoints {
+        font-size: 0.7rem;
+    }
+    
+    .stats-container {
+        padding: 0.8rem;
+        max-width: 98%;
+        margin: 0 1%;
+    }
+    
+    .stats-container::after {
+        font-size: 1.2rem;
+        right: 5px;
+    }
+    
+    .stats-table {
+        min-width: 650px;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        padding: 0.4rem 0.3rem;
+        font-size: 0.42rem;
+    }
+    
+    .btn-adjust {
+        width: 20px;
+        height: 20px;
+        font-size: 0.6rem;
+    }
+    
+    .pts-value {
+        min-width: 32px;
+        font-size: 0.42rem;
+    }
+    
+    .back-btn {
+        padding: 6px 9px;
+        font-size: 0.45rem;
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 480px) {
+    .stats-header {
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+    
+    .level-container,
+    .points-display {
+        width: auto;
+        justify-content: center;
+        padding: 0.5rem 0.7rem;
+        font-size: 0.5rem;
+    }
+    
+    .hide-mobile {
+        display: none;
+    }
+    
+    .stats-container {
+        padding: 0.5rem;
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    .stats-table {
+        min-width: 600px;
+    }
+    
+    .stats-table th {
+        font-size: 0.38rem;
+        padding: 0.35rem 0.2rem;
+    }
+    
+    .stats-table td {
+        font-size: 0.38rem;
+        padding: 0.32rem 0.2rem;
+    }
+    
+    .stat-name,
+    .multiplier,
+    .value {
+        font-size: 0.38rem;
+    }
+    
+    .btn-adjust {
+        width: 18px;
+        height: 18px;
+        font-size: 0.5rem;
+    }
+    
+    .pts-value {
+        font-size: 0.35rem;
+        min-width: 28px;
+    }
+}
+
+/* Mobile muito pequeno */
+@media (max-width: 360px) {
+    .stats-container {
+        padding: 0.4rem;
+    }
+    
+    .stats-table {
+        min-width: 580px;
+    }
+    
+    .stats-table th,
+    .stats-table td {
+        font-size: 0.35rem;
+        padding: 0.3rem 0.15rem;
+    }
+    
+    .game-subtitle {
+        font-size: 0.9rem !important;
+    }
+    
+    .back-btn {
+        font-size: 0.4rem;
+        padding: 5px 8px;
+    }
+}
+
+/* Ajuste para o título em telas pequenas */
+@media (max-width: 768px) {
+    .game-logo {
+        margin-bottom: 1.2rem;
+    }
+    
+    .game-subtitle {
+        font-size: 1rem !important;
+        margin-bottom: 0.8rem;
+    }
+}
+
+/* Landscape mobile */
+@media (max-height: 600px) and (max-width: 900px) {
+    .stats-header {
+        margin-bottom: 0.8rem;
+    }
+    
+    .stats-container {
+        max-height: 70vh;
+        overflow-y: auto;
+    }
+}

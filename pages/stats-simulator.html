@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,21 +13,17 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="../css/main.css">
-
-    <!-- CSS específico desta página -->
-    <link rel="stylesheet" href="../css/pages/stats-simulator.css">
+    <!-- CSS Modularizado do Stats -->
+    <link rel="stylesheet" href="../css/pages/stats-main.css">
 </head>
-
 <body>
-    <!-- Language Selector (igual ao index) -->
+    <!-- Language Selector (compartilhado) -->
     <div class="language-selector">
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="pt-br">PT</button>
     </div>
 
-    <!-- Stars Background -->
+    <!-- Stars Background (compartilhado) -->
     <div class="stars-container" id="stars"></div>
 
     <!-- Back Button -->
@@ -43,7 +38,7 @@
             <p class="game-subtitle" data-i18n="stats.title">STATS SIMULATOR</p>
         </div>
         
-        <!-- Level and Points Container (NOVO LAYOUT) -->
+        <!-- Level and Points Container -->
         <div class="stats-header">
             <div class="level-container">
                 <label for="levelInput" data-i18n="stats.level">Level</label>:
@@ -76,9 +71,10 @@
         </div>
     </div>
 
-    <!-- Scripts -->
+    <!-- Translation System -->
     <script src="../js/translations.js"></script>
-    <script src="../js/stats-simulator.js"></script>
+    
+    <!-- Stats Simulator com módulos -->
+    <script type="module" src="../js/stats-simulator.js"></script>
 </body>
-
 </html>

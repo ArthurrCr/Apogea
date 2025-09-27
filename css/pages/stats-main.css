@@ -1,0 +1,12 @@
+/* ======================
+   STATS SIMULATOR - MAIN CSS
+   ====================== */
+
+/* Importa CSS compartilhado */
+@import url('../main.css');
+
+/* Components específicos do Stats */
+@import url('./stats/header.css');
+@import url('./stats/table.css');
+@import url('./stats/controls.css');
+@import url('./stats/responsive.css');

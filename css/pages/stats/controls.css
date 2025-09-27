@@ -1,0 +1,95 @@
+/* ======================
+   STATS CONTROLS COMPONENT
+   ====================== */
+
+/* Container de controles */
+.controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Botões de ajuste */
+.btn-adjust {
+    width: 28px;
+    height: 28px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.btn-adjust:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.btn-adjust:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Valor de pontos */
+.pts-value {
+    min-width: 45px;
+    text-align: center;
+    color: #fff;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.55rem;
+}
+
+.pts-value.disabled {
+    color: #666;
+    font-style: italic;
+}
+
+/* Reset button (se adicionar) */
+.btn-reset {
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid rgba(255, 0, 0, 0.3);
+    color: #ff6666;
+    padding: 0.5rem 1rem;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    margin-top: 1rem;
+}
+
+.btn-reset:hover {
+    background: rgba(255, 0, 0, 0.2);
+    border-color: #ff0000;
+    color: #ff0000;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5);
+    transform: scale(1.05);
+}
+
+/* Export button (se adicionar) */
+.btn-export {
+    background: rgba(0, 255, 0, 0.1);
+    border: 2px solid rgba(0, 255, 0, 0.3);
+    color: #66ff66;
+    padding: 0.5rem 1rem;
+    font-size: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Press Start 2P', cursive;
+    margin-top: 1rem;
+}
+
+.btn-export:hover {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #00ff00;
+    color: #00ff00;
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    transform: scale(1.05);
+}
