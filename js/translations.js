@@ -88,7 +88,7 @@ const translations = {
     }
 };
 
-// Resto do código continua igual...
+// Idioma atual
 let currentLanguage = localStorage.getItem('gameLanguage') || 'en';
 
 function t(key) {
