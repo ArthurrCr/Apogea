@@ -32,6 +32,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
+    min-width: 200px;
+    justify-content: center;
 }
 
 /* Input de Level */
@@ -39,11 +41,11 @@
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
-    padding: 0.4rem;
-    font-size: 0.65rem;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.7rem;
     font-family: 'Press Start 2P', cursive;
     text-align: center;
-    width: 80px;
+    width: 100px;
     transition: all 0.3s ease;
 }
 
@@ -67,6 +69,8 @@
     display: inline-flex;
     align-items: center;
     gap: 0.6rem;
+    min-width: 200px;
+    justify-content: center;
 }
 
 .points-display span#availablePoints {

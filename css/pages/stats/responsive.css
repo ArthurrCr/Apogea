@@ -65,11 +65,13 @@ body {
     .points-display {
         padding: 0.6rem 0.8rem;
         font-size: 0.55rem;
+        min-width: 170px;
     }
     
     .level-input {
-        width: 60px;
-        font-size: 0.5rem;
+        width: 80px;
+        font-size: 0.55rem;
+        padding: 0.4rem 0.5rem;
     }
     
     .points-display span#availablePoints {
