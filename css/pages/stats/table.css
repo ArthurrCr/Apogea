@@ -10,58 +10,13 @@
     border: 2px solid rgba(255, 255, 255, 0.2);
     padding: 1.5rem;
     animation: fadeIn 0.6s ease 0.2s both;
-    overflow-x: auto;
-    overflow-y: hidden;
     position: relative;
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.3) rgba(255, 255, 255, 0.1);
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-}
-
-/* Customização da scrollbar */
-.stats-container::-webkit-scrollbar {
-    height: 10px;
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.stats-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 5px;
-}
-
-.stats-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 5px;
-    transition: background 0.3s;
-}
-
-.stats-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
-
-/* Indicador de scroll */
-.stats-container::after {
-    content: '→';
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: rgba(255, 255, 255, 0.3);
-    font-size: 1.5rem;
-    animation: pulse 2s infinite;
-    pointer-events: none;
-}
-
-.stats-container:hover::after {
-    opacity: 0;
 }
 
 /* Tabela de Stats */
 .stats-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
 }
 
 /* Headers da tabela */

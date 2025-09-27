@@ -2,6 +2,25 @@
    STATS RESPONSIVE
    ====================== */
 
+/* Base - permite scroll horizontal e vertical quando necessário */
+body {
+    overflow-x: auto;
+    overflow-y: auto;
+    min-width: 320px;
+}
+
+.main-content {
+    width: 100%;
+    min-width: fit-content;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+/* Garante largura mínima para a tabela */
+.stats-container {
+    min-width: 800px;
+}
+
 /* Telas grandes */
 @media (max-width: 1280px) {
     .stats-container {
@@ -59,13 +78,7 @@
     
     .stats-container {
         padding: 0.8rem;
-        max-width: 98%;
         margin: 0 1%;
-    }
-    
-    .stats-container::after {
-        font-size: 1.2rem;
-        right: 5px;
     }
     
     .stats-table {
