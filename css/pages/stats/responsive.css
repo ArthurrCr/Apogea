@@ -57,8 +57,14 @@ body {
 /* Mobile médio */
 @media (max-width: 768px) {
     .stats-header {
-        gap: 1rem;
+        gap: 0.8rem;
         flex-wrap: wrap;
+    }
+    
+    .class-icon-display {
+        width: 50px;
+        height: 50px;
+        padding: 0.4rem;
     }
     
     .level-container,
@@ -117,6 +123,13 @@ body {
     .stats-header {
         flex-direction: column;
         gap: 0.8rem;
+    }
+    
+    .class-icon-display {
+        width: 45px;
+        height: 45px;
+        padding: 0.35rem;
+        margin-bottom: 0.5rem;
     }
     
     .level-container,

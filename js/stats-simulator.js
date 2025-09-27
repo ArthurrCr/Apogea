@@ -135,6 +135,21 @@ function init() {
     // Obtém classe da URL
     currentClass = getURLParameter('class') || 'knight';
     
+    // Define o ícone da classe
+    const classIcon = document.getElementById('classIcon');
+    if (classIcon) {
+        classIcon.src = `../assets/images/icons/${currentClass}_icon.png`;
+        classIcon.alt = `${currentClass} icon`;
+        
+        // Tratamento de erro para ícone não encontrado
+        classIcon.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = `
+                <div style="color: #666; font-size: 2rem;">⚔️</div>
+            `;
+        };
+    }
+    
     // Inicializa componentes compartilhados
     createStars();
     initLanguageSelector(() => renderStats());
