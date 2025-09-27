@@ -231,17 +231,35 @@ function initClassSelector() {
     });
 }
 
-// Initialize traits arrow
-function initTraitsArrow() {
-    const traitsArrow = document.getElementById('traitsArrow');
-    const traitsLabel = document.getElementById('traitsLabel');
+// Initialize traits button
+function initTraitsButton() {
+    const traitsButton = document.getElementById('traitsButton');
+    const traitsIcon = document.getElementById('traitsIcon');
     
-    if (traitsLabel) {
-        traitsLabel.addEventListener('click', function() {
+    if (traitsButton) {
+        traitsButton.addEventListener('click', function() {
             console.log('Traits clicked - Feature coming soon!');
             // Aqui você pode adicionar a funcionalidade de traits futuramente
             // Por exemplo: abrir um modal, navegar para outra página, etc.
+            
+            // Animação de feedback ao clicar
+            this.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                this.style.transform = '';
+            }, 100);
         });
+    }
+    
+    // Tratamento de erro para o ícone de traits
+    if (traitsIcon) {
+        traitsIcon.onerror = function() {
+            this.style.display = 'none';
+            this.parentElement.innerHTML = `
+                <div class="traits-icon-fallback">★</div>
+                <span class="traits-coming-soon">SOON</span>
+                <div class="traits-tooltip" data-i18n="stats.traits">Traits</div>
+            `;
+        };
     }
 }
 
@@ -273,7 +291,7 @@ function init() {
     // Inicializa componentes específicos
     initLevelInput();
     initClassSelector();
-    initTraitsArrow();
+    initTraitsButton();
     renderStats();
     updatePointsDisplay();
     
