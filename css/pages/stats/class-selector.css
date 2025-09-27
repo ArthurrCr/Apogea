@@ -12,17 +12,17 @@
 
 /* Container das opções */
 .class-options {
-    display: flex;
+    display: none; /* Escondido por padrão */
     gap: 0.5rem;
     position: absolute;
     right: 70px;
     opacity: 0;
     transform: translateX(20px);
-    pointer-events: none;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .class-options.active {
+    display: flex; /* Mostra quando ativo */
     opacity: 1;
     transform: translateX(0);
     pointer-events: all;
