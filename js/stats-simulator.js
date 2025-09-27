@@ -220,6 +220,20 @@ function initClassSelector() {
     });
 }
 
+// Initialize traits arrow
+function initTraitsArrow() {
+    const traitsArrow = document.getElementById('traitsArrow');
+    const traitsLabel = document.getElementById('traitsLabel');
+    
+    if (traitsLabel) {
+        traitsLabel.addEventListener('click', function() {
+            console.log('Traits clicked - Feature coming soon!');
+            // Aqui você pode adicionar a funcionalidade de traits futuramente
+            // Por exemplo: abrir um modal, navegar para outra página, etc.
+        });
+    }
+}
+
 // Initialize
 function init() {
     // Obtém classe da URL
@@ -246,7 +260,8 @@ function init() {
     
     // Inicializa componentes específicos
     initLevelInput();
-    initClassSelector(); // Novo
+    initClassSelector();
+    initTraitsArrow(); // Novo
     renderStats();
     updatePointsDisplay();
 }

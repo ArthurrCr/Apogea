@@ -1,0 +1,136 @@
+/* ======================
+   TRAITS ARROW
+   ====================== */
+
+/* Container do Traits */
+.traits-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+/* Seta Pixelada */
+.traits-arrow {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Ícone da seta */
+.arrow-icon {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    transition: all 0.3s ease;
+    display: block;
+    transform: rotate(0deg);
+}
+
+/* Label Traits */
+.traits-label {
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1rem;
+    margin-left: -2px;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.6rem;
+    color: #fff;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(-10px);
+    pointer-events: none;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+}
+
+/* Hover Effects */
+.traits-arrow:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+    background: rgba(0, 0, 0, 0.95);
+    box-shadow: 
+        0 0 10px rgba(255, 255, 255, 0.3),
+        inset 0 0 10px rgba(255, 255, 255, 0.05);
+}
+
+.traits-arrow:hover .arrow-icon {
+    color: #fff;
+    transform: rotate(90deg);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+}
+
+.traits-arrow:hover + .traits-label {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Label hover mantém visível */
+.traits-label:hover {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+}
+
+/* Pulse animation on arrow */
+.traits-arrow {
+    animation: subtlePulse 3s ease-in-out infinite;
+}
+
+@keyframes subtlePulse {
+    0%, 100% {
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* Active state */
+.traits-arrow.active {
+    border-color: rgba(0, 255, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.5);
+}
+
+.traits-arrow.active .arrow-icon {
+    color: #00ffff;
+    transform: rotate(90deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .traits-arrow {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .arrow-icon {
+        font-size: 0.7rem;
+    }
+    
+    .traits-label {
+        font-size: 0.5rem;
+        padding: 0.4rem 0.8rem;
+        height: 35px;
+    }
+}
+
+@media (max-width: 480px) {
+    .traits-container {
+        display: none; /* Esconde em mobile muito pequeno */
+    }
+}
