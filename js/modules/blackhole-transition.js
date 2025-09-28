@@ -1,5 +1,5 @@
 // ======================
-// BLACKHOLE TRANSITION MODULE
+// BLACKHOLE TRANSITION MODULE - MP4 ONLY VERSION
 // ======================
 
 export class BlackholeTransition {
@@ -18,17 +18,21 @@ export class BlackholeTransition {
     createBlackhole() {
         const container = document.createElement('div');
         container.className = 'blackhole-container';
+        
         container.innerHTML = `
-            <div class="blackhole">
-                <div class="event-horizon"></div>
-                <div class="accretion-disk"></div>
-                <div class="gravitational-ring ring-1"></div>
-                <div class="gravitational-ring ring-2"></div>
-                <div class="gravitational-ring ring-3"></div>
-                <div class="space-distortion"></div>
+            <div class="blackhole-wrapper">
+                <video class="blackhole-video" id="blackholeVideo" loop muted playsinline>
+                    <source src="../assets/videos/blackhole.mp4" type="video/mp4">
+                </video>
             </div>
         `;
         document.body.appendChild(container);
+        
+        // Pre-carrega o vídeo
+        const video = document.getElementById('blackholeVideo');
+        if (video) {
+            video.load();
+        }
     }
     
     async execute(targetUrl) {
@@ -38,16 +42,24 @@ export class BlackholeTransition {
         const container = document.querySelector('.blackhole-container');
         const mainContent = document.querySelector('.main-content');
         const stars = document.querySelector('.stars-container');
+        const video = document.getElementById('blackholeVideo');
         const allElements = document.querySelectorAll('.main-content > *');
         
         // Calcula o centro da tela
         const centerX = window.innerWidth / 2;
         const centerY = window.innerHeight / 2;
         
-        // Fase 1: Ativa o buraco negro
+        // Fase 1: Ativa o buraco negro e inicia vídeo
         container.classList.add('active');
         
-        // Fase 2: Distorce o espaço-tempo
+        if (video) {
+            video.currentTime = 0;
+            video.play().catch(e => {
+                console.log('Erro ao reproduzir vídeo:', e);
+            });
+        }
+        
+        // Fase 2: Distorce o espaço
         if (stars) {
             stars.classList.add('space-warping');
         }
@@ -64,30 +76,27 @@ export class BlackholeTransition {
             const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
             
             // Aplica a animação com delay baseado na distância
-            const delay = (distance / 1000) * 200;
+            const delay = Math.min((distance / 1000) * 200, 400);
             
             setTimeout(() => {
-                element.style.transition = 'all 1.5s cubic-bezier(0.55, 0.055, 0.675, 0.19)';
+                element.style.transition = 'all 1.2s cubic-bezier(0.55, 0.055, 0.675, 0.19)';
                 element.style.transform = `
                     translate(${deltaX}px, ${deltaY}px) 
-                    rotate(${720 + index * 45}deg) 
+                    rotate(${540 + index * 30}deg) 
                     scale(0)
                 `;
                 element.style.opacity = '0';
+                element.style.filter = 'blur(5px)';
             }, delay);
         });
         
-        // Fase 4: Colapso final
+        // Fase 4: Intensifica o efeito
         setTimeout(() => {
-            mainContent.style.transition = 'all 0.8s ease-in';
-            mainContent.style.transform = 'scale(0) rotate(1080deg)';
-            mainContent.style.opacity = '0';
-        }, 800);
+            container.classList.add('collapsing');
+        }, 1500);
         
         // Fase 5: Flash e navegação
         setTimeout(() => {
-            container.classList.add('collapsing');
-            
             // Cria flash branco
             const flash = document.createElement('div');
             flash.className = 'singularity-flash';

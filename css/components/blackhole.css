@@ -1,5 +1,5 @@
 /* ======================
-   BLACKHOLE TRANSITION STYLES
+   BLACKHOLE TRANSITION - MP4 SIMPLE VERSION
    ====================== */
 
 /* Container principal */
@@ -10,244 +10,182 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 10000;
+    z-index: 1; /* BEM BAIXO - apenas acima do background */
     display: flex;
     align-items: center;
     justify-content: center;
     opacity: 0;
     visibility: hidden;
+    /* REMOVIDO O BACKGROUND ESCURO QUE COBRIA TUDO */
     transition: opacity 0.5s ease;
+    /* backdrop-filter: blur(2px); REMOVIDO */
 }
 
 .blackhole-container.active {
     opacity: 1;
     visibility: visible;
-    pointer-events: all;
+    pointer-events: none; /* Mantém none para não bloquear cliques */
 }
 
-/* Buraco Negro Central */
-.blackhole {
+/* Wrapper do buraco negro - TAMANHO REDUZIDO */
+.blackhole-wrapper {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 400px;  /* Reduzido de 600px */
+    height: 400px; /* Reduzido de 600px */
     transform: scale(0);
-    transition: transform 2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    transition: transform 1.5s cubic-bezier(0.4, 0.0, 0.2, 1);
 }
 
-.blackhole-container.active .blackhole {
-    transform: scale(1);
-}
-
-/* Horizonte de Eventos */
-.event-horizon {
+/* Adiciona uma sombra escura APENAS ao redor do vídeo */
+.blackhole-wrapper::before {
+    content: '';
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 100px;
-    height: 100px;
+    width: 150%;
+    height: 150%;
     background: radial-gradient(circle at center,
-        rgba(0, 0, 0, 1) 0%,
-        rgba(0, 0, 0, 0.9) 30%,
-        rgba(10, 0, 20, 0.8) 50%,
-        transparent 70%);
+        transparent 30%,
+        rgba(0, 0, 0, 0.3) 50%,
+        rgba(0, 0, 0, 0.7) 70%,
+        rgba(0, 0, 0, 0.9) 100%);
+    z-index: -2;
+    pointer-events: none;
+}
+
+.blackhole-container.active .blackhole-wrapper {
+    transform: scale(1); /* Removido rotate - só escala */
+}
+
+/* Vídeo do buraco negro */
+.blackhole-video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
     border-radius: 50%;
-    animation: pulseHorizon 2s ease-in-out infinite;
-    box-shadow: 
-        inset 0 0 50px rgba(138, 43, 226, 0.8),
-        0 0 100px rgba(138, 43, 226, 0.4);
+    /* Sem brilho roxo, apenas vídeo limpo */
 }
 
-/* Disco de Acreção */
-.accretion-disk {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotateX(75deg);
-    width: 300px;
-    height: 300px;
-    border: 3px solid transparent;
-    border-radius: 50%;
-    background: conic-gradient(from 0deg,
-        transparent,
-        rgba(255, 100, 0, 0.1),
-        rgba(255, 200, 0, 0.2),
-        rgba(138, 43, 226, 0.3),
-        rgba(75, 0, 130, 0.2),
-        transparent);
-    animation: rotateDisk 3s linear infinite;
-    opacity: 0;
+/* Estado de colapso - mais dramático */
+.blackhole-container.collapsing .blackhole-wrapper {
+    transform: scale(1.5); /* Removido rotate */
+    transition: all 0.5s ease-in;
 }
 
-.blackhole-container.active .accretion-disk {
-    opacity: 1;
-    transition: opacity 1s ease 0.5s;
+.blackhole-container.collapsing .blackhole-video {
+    /* Sem filtros de brilho, apenas o vídeo puro */
 }
 
-/* Anéis Gravitacionais */
-.gravitational-ring {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border: 2px solid rgba(138, 43, 226, 0.3);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: expandRing 2s ease-out infinite;
+/* Distorção das estrelas */
+.stars-container.space-warping {
+    animation: spaceDistortion 2s ease-in-out forwards;
 }
 
-.ring-1 {
-    width: 200px;
-    height: 200px;
-    animation-delay: 0s;
-}
-
-.ring-2 {
-    width: 300px;
-    height: 300px;
-    animation-delay: 0.6s;
-}
-
-.ring-3 {
-    width: 400px;
-    height: 400px;
-    animation-delay: 1.2s;
-}
-
-/* Distorção Espacial */
-.space-distortion {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle at center,
-        transparent 0%,
-        transparent 20%,
-        rgba(138, 43, 226, 0.05) 40%,
-        transparent 60%);
-    animation: distortSpace 3s ease-in-out infinite;
-    filter: blur(2px);
-}
-
-/* Distorção das Estrelas */
 .stars-container.space-warping .star {
-    animation: starWarp 2s ease-in forwards;
+    animation: starWarp 1.5s ease-in forwards;
 }
 
-@keyframes starWarp {
-    to {
-        transform: 
-            translateX(calc(50vw - var(--star-x, 0px)))
-            translateY(calc(50vh - var(--star-y, 0px)))
-            scale(0);
-        opacity: 0;
-    }
-}
-
-/* Flash da Singularidade */
+/* Flash da singularidade */
 .singularity-flash {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: white;
+    background: white; /* Apenas flash branco, sem roxo */
     z-index: 10001;
     opacity: 0;
     pointer-events: none;
-    animation: flashBurst 0.5s ease-out forwards;
+    animation: flashBurst 0.4s ease-out forwards;
 }
 
-/* Estado de Colapso */
-.blackhole-container.collapsing .blackhole {
-    transform: scale(0.1);
-    transition: transform 0.3s ease-in;
+/* CORREÇÃO: Elementos sendo sugados ficam acima do buraco negro */
+.main-content > * {
+    transform-origin: center;
+    will-change: transform, opacity, filter;
+    position: relative !important;
+    z-index: 9999 !important; /* Força elementos ACIMA do buraco negro */
 }
 
-.blackhole-container.collapsing .event-horizon {
-    background: radial-gradient(circle at center,
-        rgba(255, 255, 255, 1) 0%,
-        rgba(138, 43, 226, 0.8) 20%,
-        transparent 50%);
-    box-shadow: 
-        0 0 200px rgba(255, 255, 255, 1),
-        0 0 400px rgba(138, 43, 226, 1);
+/* Força elementos específicos da página a ficarem acima */
+.stats-header,
+.stats-container,
+.stats-table,
+.level-container,
+.points-display,
+.class-selector-container,
+.traits-container {
+    position: relative !important;
+    z-index: 9999 !important;
+}
+
+/* Garante que a tabela e seus elementos filhos fiquem visíveis */
+.stats-container * {
+    position: relative;
+    z-index: 9999 !important;
 }
 
 /* Animações */
-@keyframes pulseHorizon {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
-    }
-    50% {
-        transform: translate(-50%, -50%) scale(1.1);
-    }
-}
-
-@keyframes rotateDisk {
-    from {
-        transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg);
-    }
-    to {
-        transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg);
-    }
-}
-
-@keyframes expandRing {
+@keyframes spaceDistortion {
     0% {
-        transform: translate(-50%, -50%) scale(0.5);
-        opacity: 1;
-        border-color: rgba(138, 43, 226, 0.6);
+        transform: scale(1) rotate(0deg);
+        filter: blur(0px);
     }
     100% {
-        transform: translate(-50%, -50%) scale(2);
-        opacity: 0;
-        border-color: rgba(138, 43, 226, 0);
+        transform: scale(0.95) rotate(5deg);
+        filter: blur(1px);
     }
 }
 
-@keyframes distortSpace {
-    0%, 100% {
-        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+@keyframes starWarp {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
     }
-    50% {
-        transform: translate(-50%, -50%) scale(1.2) rotate(180deg);
+    100% {
+        transform: scale(0);
+        opacity: 0;
     }
 }
 
 @keyframes flashBurst {
     0% {
         opacity: 0;
+        transform: scale(0.8);
     }
     50% {
-        opacity: 1;
+        opacity: 0.8;
+        transform: scale(1);
     }
     100% {
         opacity: 0;
+        transform: scale(1.2);
     }
 }
 
-/* Elementos sendo sugados */
-.main-content > * {
-    transform-origin: center;
-    will-change: transform, opacity;
-}
-
-/* Mobile adjustments */
+/* Mobile responsivo - tamanhos ainda menores */
 @media (max-width: 768px) {
-    .event-horizon {
-        width: 80px;
-        height: 80px;
+    .blackhole-wrapper {
+        width: 300px;
+        height: 300px;
     }
-    
-    .accretion-disk {
+}
+
+@media (max-width: 480px) {
+    .blackhole-wrapper {
         width: 250px;
         height: 250px;
     }
     
-    .space-distortion {
-        width: 400px;
-        height: 400px;
+    .blackhole-video {
+        /* Sem filtros, vídeo limpo */
     }
+}
+
+/* Otimizações de performance */
+.blackhole-video {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    transform: translateZ(0);
 }
