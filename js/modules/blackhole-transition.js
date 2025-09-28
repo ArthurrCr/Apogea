@@ -40,10 +40,23 @@ export class BlackholeTransition {
         this.transitioning = true;
         
         const container = document.querySelector('.blackhole-container');
-        const mainContent = document.querySelector('.main-content');
         const stars = document.querySelector('.stars-container');
         const video = document.getElementById('blackholeVideo');
-        const allElements = document.querySelectorAll('.main-content > *');
+        
+        // SIMPLIFICADO: Pega TODOS elementos visíveis, exceto o próprio buraco negro
+        const elementsToSuck = Array.from(
+            document.querySelectorAll('body > *:not(.blackhole-container):not(.stars-container):not(script):not(style)')
+        );
+        
+        // Adiciona elementos dentro de main-content se não foram pegos
+        const mainContentElements = Array.from(
+            document.querySelectorAll('.main-content > *, .main-content')
+        );
+        
+        // Combina todos, removendo duplicatas
+        const allElements = [...new Set([...elementsToSuck, ...mainContentElements])];
+        
+        console.log('Total de elementos para sugar:', allElements.length);
         
         // Calcula o centro da tela
         const centerX = window.innerWidth / 2;
@@ -66,6 +79,8 @@ export class BlackholeTransition {
         
         // Fase 3: Suga todos os elementos para o centro
         allElements.forEach((element, index) => {
+            if (!element || element === container || element === stars) return;
+            
             const rect = element.getBoundingClientRect();
             const elementX = rect.left + rect.width / 2;
             const elementY = rect.top + rect.height / 2;
@@ -79,6 +94,17 @@ export class BlackholeTransition {
             const delay = Math.min((distance / 1000) * 200, 400);
             
             setTimeout(() => {
+                // Salva position original
+                const originalPosition = window.getComputedStyle(element).position;
+                
+                // Para elementos fixed, ajusta o cálculo
+                if (originalPosition === 'fixed') {
+                    element.style.transformOrigin = 'center';
+                } else {
+                    // Adiciona classe para elementos não-fixed
+                    element.classList.add('being-sucked');
+                }
+                
                 element.style.transition = 'all 1.2s cubic-bezier(0.55, 0.055, 0.675, 0.19)';
                 element.style.transform = `
                     translate(${deltaX}px, ${deltaY}px) 
@@ -87,6 +113,7 @@ export class BlackholeTransition {
                 `;
                 element.style.opacity = '0';
                 element.style.filter = 'blur(5px)';
+                element.style.pointerEvents = 'none'; // Previne cliques durante animação
             }, delay);
         });
         

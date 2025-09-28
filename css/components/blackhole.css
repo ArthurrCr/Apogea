@@ -104,26 +104,31 @@
 .main-content > * {
     transform-origin: center;
     will-change: transform, opacity, filter;
-    position: relative !important;
-    z-index: 9999 !important; /* Força elementos ACIMA do buraco negro */
 }
 
-/* Força elementos específicos da página a ficarem acima */
+/* NÃO muda position dos elementos fixos */
+.back-btn {
+    z-index: 9999 !important;
+}
+
+.language-selector {
+    z-index: 9999 !important;
+}
+
+/* Força tabela e elementos específicos a ficarem acima SEM mudar position */
 .stats-header,
 .stats-container,
-.stats-table,
 .level-container,
 .points-display,
 .class-selector-container,
 .traits-container {
-    position: relative !important;
     z-index: 9999 !important;
 }
 
-/* Garante que a tabela e seus elementos filhos fiquem visíveis */
-.stats-container * {
-    position: relative;
+/* Classe adicionada durante a animação de sucção */
+.being-sucked {
     z-index: 9999 !important;
+    position: relative !important; /* Só aplica position durante animação */
 }
 
 /* Animações */
