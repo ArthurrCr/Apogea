@@ -30,6 +30,12 @@ const translations = {
         'stats.level': 'Level',
         'stats.traits': 'Traits',
         
+        // PÁGINA DE TRAITS
+        'traits.title': 'TRAITS SYSTEM',
+        'traits.comingSoon': 'Coming Soon...',
+        'traits.placeholder': '[TRAITS GRID]',
+        'traits.back': '← BACK TO STATS',
+        
         // Nomes dos stats
         'stat.health': 'Health',
         'stat.mana': 'Mana',
@@ -72,6 +78,12 @@ const translations = {
         'stats.final': 'Final',
         'stats.level': 'Nível',
         'stats.traits': 'Características',
+        
+        // PÁGINA DE TRAITS
+        'traits.title': 'SISTEMA DE CARACTERÍSTICAS',
+        'traits.comingSoon': 'Em Breve...',
+        'traits.placeholder': '[GRADE DE CARACTERÍSTICAS]',
+        'traits.back': '← VOLTAR PARA STATUS',
         
         // Nomes dos stats
         'stat.health': 'Vida',

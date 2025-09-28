@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APOGEA - Traits</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+    <!-- Pixelated Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/blackhole.css">
+    
+    <style>
+        /* Estilos específicos da página Traits */
+        body {
+            background: #000;
+            overflow: hidden;
+        }
+        
+        .main-content {
+            opacity: 0;
+            animation: fadeInFromBlackhole 1.5s ease-out 0.5s forwards;
+        }
+        
+        @keyframes fadeInFromBlackhole {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(-720deg);
+            }
+            50% {
+                opacity: 0.5;
+                transform: scale(1.1) rotate(-360deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+        
+        .coming-soon-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .coming-soon-title {
+            font-size: 2rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            text-shadow: 
+                0 0 20px rgba(138, 43, 226, 0.8),
+                2px 2px 0 #333;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        
+        .coming-soon-subtitle {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 3rem;
+            animation: blink 2s ease-in-out infinite;
+        }
+        
+        @keyframes glowPulse {
+            0%, 100% {
+                text-shadow: 
+                    0 0 20px rgba(138, 43, 226, 0.8),
+                    2px 2px 0 #333;
+            }
+            50% {
+                text-shadow: 
+                    0 0 40px rgba(138, 43, 226, 1),
+                    2px 2px 0 #333;
+            }
+        }
+        
+        /* Botão voltar especial */
+        .back-btn-traits {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            color: #fff;
+            padding: 12px 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: 'Press Start 2P', cursive;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .back-btn-traits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(138, 43, 226, 0.4), 
+                transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .back-btn-traits:hover::before {
+            left: 100%;
+        }
+        
+        .back-btn-traits:hover {
+            border-color: rgba(138, 43, 226, 1);
+            box-shadow: 
+                0 0 20px rgba(138, 43, 226, 0.8),
+                inset 0 0 10px rgba(138, 43, 226, 0.3);
+            transform: scale(1.05);
+        }
+        
+        /* Placeholder de conteúdo futuro */
+        .traits-grid-placeholder {
+            width: 80%;
+            max-width: 800px;
+            height: 400px;
+            margin: 2rem auto;
+            border: 2px dashed rgba(138, 43, 226, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.6rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .traits-grid-placeholder::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg,
+                transparent 40%,
+                rgba(138, 43, 226, 0.1) 50%,
+                transparent 60%);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt-br">PT</button>
+    </div>
+
+    <!-- Stars Background -->
+    <div class="stars-container" id="stars"></div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="coming-soon-container">
+            <h1 class="coming-soon-title" data-i18n="traits.title">TRAITS SYSTEM</h1>
+            <p class="coming-soon-subtitle" data-i18n="traits.comingSoon">Coming Soon...</p>
+            
+            <div class="traits-grid-placeholder">
+                <span data-i18n="traits.placeholder">[TRAITS GRID]</span>
+            </div>
+            
+            <a href="../pages/stats-simulator.html" class="back-btn-traits" id="backButton">
+                <span data-i18n="traits.back">← BACK TO STATS</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module">
+        import { createStars } from '../js/modules/stars.js';
+        import { initTranslations, setLanguage } from '../js/translations.js';
+        import { blackholeTransition } from '../js/modules/blackhole-transition.js';
+        
+        // Inicializa
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            initTranslations();
+            
+            // Adiciona transição ao botão de voltar
+            const backButton = document.getElementById('backButton');
+            if (backButton) {
+                backButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const targetUrl = this.href;
+                    
+                    // Usa a mesma transição de buraco negro
+                    blackholeTransition.execute(targetUrl);
+                });
+            }
+            
+            // Adiciona classe de retorno da URL se vier do stats
+            const urlParams = new URLSearchParams(window.location.search);
+            const fromStats = urlParams.get('from');
+            if (fromStats === 'stats') {
+                // Adiciona parâmetro de classe se existir
+                const classParam = urlParams.get('class');
+                if (classParam && backButton) {
+                    backButton.href += '?class=' + classParam;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

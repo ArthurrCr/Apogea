@@ -6,6 +6,7 @@ import { initLanguageSelector } from './modules/language.js';
 import { getURLParameter, clamp, formatNumber } from './modules/utilities.js';
 import { classMultipliers, baseStats } from './data/stats-config.js';
 import { t, initTranslations } from './translations.js';
+import { blackholeTransition } from './modules/blackhole-transition.js';
 
 // Global variables
 let currentClass = 'knight';
@@ -237,16 +238,20 @@ function initTraitsButton() {
     const traitsIcon = document.getElementById('traitsIcon');
     
     if (traitsButton) {
-        traitsButton.addEventListener('click', function() {
-            console.log('Traits clicked - Feature coming soon!');
-            // Aqui você pode adicionar a funcionalidade de traits futuramente
-            // Por exemplo: abrir um modal, navegar para outra página, etc.
+        traitsButton.addEventListener('click', function(e) {
+            e.preventDefault();
             
-            // Animação de feedback ao clicar
-            this.style.transform = 'scale(0.95)';
-            setTimeout(() => {
-                this.style.transform = '';
-            }, 100);
+            // Remove o badge "SOON" se existir
+            const soonBadge = this.querySelector('.traits-coming-soon');
+            if (soonBadge) {
+                soonBadge.style.display = 'none';
+            }
+            
+            // Prepara a URL com parâmetros
+            const traitsUrl = `traits.html?from=stats&class=${currentClass}`;
+            
+            // Executa a transição de buraco negro
+            blackholeTransition.execute(traitsUrl);
         });
     }
     
