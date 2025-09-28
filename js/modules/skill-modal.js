@@ -15,6 +15,21 @@ export class SkillModal {
     init() {
         this.createModal();
         this.setupEventListeners();
+        
+        // Listener para mudança de idioma
+        window.addEventListener('languageChanged', () => {
+            // Atualiza textos dos botões
+            const upgradeBtn = this.modal.querySelector('.modal-upgrade .btn-text');
+            const learnBtn = this.modal.querySelector('.modal-learn .btn-text');
+            
+            if (upgradeBtn) upgradeBtn.textContent = t('skill.upgrade');
+            if (learnBtn) learnBtn.textContent = t('skill.learn');
+            
+            // Se o modal estiver aberto, re-renderiza
+            if (this.isOpen && this.currentSkill) {
+                this.populateModal(this.currentSkill);
+            }
+        });
     }
     
     // Cria a estrutura do modal
@@ -40,10 +55,10 @@ export class SkillModal {
                 <div class="modal-levels"></div>
                 <div class="modal-actions">
                     <button class="modal-btn modal-upgrade" style="display: none;">
-                        <span data-i18n="skill.upgrade">UPGRADE</span>
+                        <span class="btn-text">${t('skill.upgrade')}</span>
                     </button>
                     <button class="modal-btn modal-learn" style="display: none;">
-                        <span data-i18n="skill.learn">LEARN</span>
+                        <span class="btn-text">${t('skill.learn')}</span>
                     </button>
                 </div>
             </div>
@@ -99,7 +114,7 @@ export class SkillModal {
     
     // Preenche o modal com dados
     populateModal(skill) {
-        // Ícone e título
+        // Ícone e título - USA TRADUÇÃO
         const icon = this.modal.querySelector('.modal-skill-icon');
         if (icon) {
             icon.src = skill.icon;
@@ -109,29 +124,35 @@ export class SkillModal {
             };
         }
         
-        this.modal.querySelector('.modal-title').textContent = skill.name;
+        // Traduz o nome da skill
+        const translatedName = t(`skill.${skill.id}`) || skill.name;
+        this.modal.querySelector('.modal-title').textContent = translatedName;
         
-        // Requisitos
+        // Requisitos - COM TRADUÇÃO
         const reqDiv = this.modal.querySelector('.modal-requirements');
         if (skill.requires && skill.requires.length > 0) {
             const requirementsList = skill.requires.map(req => {
                 const [skillId, level] = req.split(':');
-                return `${this.getSkillName(skillId)} Lv.${level || 1}`;
+                const skillName = t(`skill.${skillId}`) || this.getSkillName(skillId);
+                return `${skillName} Lv.${level || 1}`;
             }).join(', ');
             
             reqDiv.innerHTML = `
-                <strong>${t('skill.requires') || 'Requires'}:</strong> ${requirementsList}
+                <strong>${t('skill.requires')}:</strong> ${requirementsList}
             `;
             reqDiv.style.display = 'block';
         } else {
             reqDiv.style.display = 'none';
         }
         
-        // Descrição
+        // Descrição - USA TRADUÇÃO
+        const translatedDesc = t(`skill.${skill.id}.desc`) || skill.description;
+        const translatedEffect = t(`skill.${skill.id}.effect`) || skill.effect;
+        
         this.modal.querySelector('.modal-description').innerHTML = `
-            <p>${skill.description}</p>
+            <p>${translatedDesc}</p>
             <p class="skill-effect">
-                <strong>${t('skill.effect') || 'Effect'}:</strong> ${skill.effect}
+                <strong>${t('skill.effect')}:</strong> ${translatedEffect}
             </p>
         `;
         
@@ -144,16 +165,16 @@ export class SkillModal {
             statsDiv.style.display = 'none';
         }
         
-        // Níveis
+        // Níveis - COM TRADUÇÃO
         const levelsDiv = this.modal.querySelector('.modal-levels');
         if (typeof skill.levelRequirements[0] === 'number') {
             levelsDiv.innerHTML = `
                 <div class="level-info">
-                    <strong>${t('skill.levelReq') || 'Level requirements'}:</strong> 
+                    <strong>${t('skill.levelReq')}:</strong> 
                     ${skill.levelRequirements.join(' / ')}
                 </div>
                 <div class="level-progress">
-                    <strong>${t('skill.current') || 'Current'}:</strong> 
+                    <strong>${t('skill.current')}:</strong> 
                     ${skill.currentLevel} / ${skill.maxLevel}
                     <div class="level-bar">
                         <div class="level-fill" style="width: ${(skill.currentLevel / skill.maxLevel) * 100}%"></div>
@@ -163,7 +184,7 @@ export class SkillModal {
         } else {
             levelsDiv.innerHTML = `
                 <div class="skill-type-badge">
-                    ${t('skill.active') || 'Active Skill'}
+                    ${t('skill.active')}
                 </div>
             `;
         }

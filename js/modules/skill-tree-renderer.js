@@ -98,10 +98,11 @@ export class SkillTreeRenderer {
         img.onerror = () => this.handleImageError(img, skill.name);
         node.appendChild(img);
         
-        // Adiciona nome
+        // Adiciona nome - TRADUZIDO
         const nameElement = document.createElement('span');
         nameElement.className = 'skill-name';
-        nameElement.textContent = skill.name;
+        const translatedName = t(`skill.${skill.id}`) || skill.name;
+        nameElement.textContent = translatedName;
         node.appendChild(nameElement);
         
         // Adiciona indicadores de nível
@@ -142,10 +143,14 @@ export class SkillTreeRenderer {
         img.parentElement.appendChild(placeholder);
     }
     
-    // Callback de clique na skill
+    // Callback de clique na skill - SISTEMA INLINE
     onSkillClick(skill) {
-        if (this.skillClickCallback) {
-            this.skillClickCallback(skill);
+        // Usa o sistema inline em vez de callback
+        if (window.skillInlineSystem) {
+            const node = document.querySelector(`[data-skill="${skill.id}"]`);
+            if (node) {
+                window.skillInlineSystem.toggleSkill(node, skill, this);
+            }
         }
     }
     

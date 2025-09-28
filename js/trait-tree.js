@@ -8,7 +8,7 @@ import { initTranslations, t } from './translations.js';
 import { traitTrees, traitOrder, traitIndexMap } from './data/trait-trees-config.js';
 import { SkillTreeRenderer } from './modules/skill-tree-renderer.js';
 import { TreeNavigation } from './modules/tree-navigation.js';
-import { skillModal } from './modules/skill-modal.js';
+import { skillInlineSystem } from './modules/skill-inline-system.js';  // Novo sistema inline
 
 class TraitTreeController {
     constructor() {
@@ -17,6 +17,9 @@ class TraitTreeController {
         this.renderers = {};
         this.navigation = null;
         this.initialized = false;
+        
+        // Expõe o sistema inline globalmente para o renderer acessar
+        window.skillInlineSystem = skillInlineSystem;
     }
     
     // Inicializa o sistema
@@ -61,7 +64,7 @@ class TraitTreeController {
             
             panel.innerHTML = `
                 <h2 class="tree-title" data-i18n="trait.${traitKey}">
-                    ${tree.name}
+                    ${t(`trait.${traitKey}`)}
                 </h2>
                 <div class="tree-content" id="tree-${traitKey}">
                     <!-- Árvore será renderizada aqui -->
@@ -81,7 +84,7 @@ class TraitTreeController {
             if (container && tree.skills && Object.keys(tree.skills).length > 0) {
                 // Cria renderer para esta árvore
                 const renderer = new SkillTreeRenderer(container, tree);
-                renderer.setSkillClickCallback((skill) => this.onSkillClick(skill, traitKey));
+                // Não precisa mais de callback - usa sistema inline diretamente
                 renderer.render();
                 
                 this.renderers[traitKey] = renderer;
@@ -92,21 +95,12 @@ class TraitTreeController {
                         <img src="${tree.icon}" alt="${tree.name}" 
                              onerror="this.style.display='none'">
                         <p class="coming-soon" data-i18n="tree.comingSoon">
-                            [${tree.name} Skill Tree - Coming Soon]
+                            ${t('tree.comingSoon')}
                         </p>
                     </div>
                 `;
             }
         });
-    }
-    
-    // Callback quando uma skill é clicada
-    onSkillClick(skill, treeKey) {
-        // Adiciona informação da árvore à skill
-        skill.tree = treeKey;
-        
-        // Abre o modal
-        skillModal.open(skill);
     }
     
     // Callback quando muda de árvore
@@ -147,18 +141,39 @@ class TraitTreeController {
             });
         }
         
-        // Teclas de atalho para skills (1-9)
+        // Teclas de atalho
         document.addEventListener('keydown', (e) => {
-            if (e.key >= '1' && e.key <= '9' && !e.ctrlKey && !e.altKey) {
-                const skillIndex = parseInt(e.key) - 1;
-                const currentRenderer = this.renderers[this.currentTree];
-                
-                if (currentRenderer) {
-                    const skills = Object.values(this.trees[this.currentTree].skills);
-                    if (skills[skillIndex]) {
-                        this.onSkillClick(skills[skillIndex], this.currentTree);
+            // ESC para sair do zoom
+            if (e.key === 'Escape' && document.body.classList.contains('skill-zoomed')) {
+                e.preventDefault();
+                skillInlineSystem.exitZoom();
+            }
+            
+            // Tab para navegar entre skills
+            if (e.key === 'Tab' && !e.shiftKey) {
+                e.preventDefault();
+                // Se estiver em zoom, sai primeiro
+                if (document.body.classList.contains('skill-zoomed')) {
+                    skillInlineSystem.exitZoom();
+                } else {
+                    // Navega para próxima skill
+                    const skills = document.querySelectorAll('.skill-node');
+                    const selected = document.querySelector('.skill-node.selected');
+                    if (selected) {
+                        const index = Array.from(skills).indexOf(selected);
+                        const nextIndex = (index + 1) % skills.length;
+                        skills[nextIndex].click();
+                    } else if (skills.length > 0) {
+                        skills[0].click();
                     }
                 }
+            }
+            
+            // Espaço para dar upgrade quando em zoom
+            if (e.key === ' ' && document.body.classList.contains('skill-zoomed')) {
+                e.preventDefault();
+                const upgradeBtn = document.querySelector('.upgrade-button');
+                if (upgradeBtn) upgradeBtn.click();
             }
         });
         
@@ -167,6 +182,26 @@ class TraitTreeController {
             if (e.key === 'r' && e.ctrlKey) {
                 e.preventDefault();
                 this.resetCurrentTree();
+            }
+        });
+        
+        // Listener para mudança de idioma
+        window.addEventListener('languageChanged', () => {
+            // Re-renderiza os títulos das árvores
+            traitOrder.forEach(traitKey => {
+                const titleElement = document.querySelector(`.tree-panel[data-trait="${traitKey}"] .tree-title`);
+                if (titleElement) {
+                    titleElement.textContent = t(`trait.${traitKey}`);
+                }
+            });
+            
+            // Re-renderiza as skills atuais
+            this.renderAllTrees();
+            
+            // Atualiza o sistema inline
+            const pointsLabel = document.querySelector('.points-label');
+            if (pointsLabel) {
+                pointsLabel.textContent = t('tree.availablePoints');
             }
         });
     }
@@ -192,6 +227,18 @@ class TraitTreeController {
         if (currentRenderer) {
             if (confirm(t('tree.confirmReset') || 'Reset all skills in this tree?')) {
                 currentRenderer.reset();
+                // Reseta pontos no sistema inline
+                skillInlineSystem.resetPoints();
+                
+                // Remove seleções visuais
+                document.querySelectorAll('.skill-node.selected').forEach(node => {
+                    node.classList.remove('selected');
+                    const info = node.querySelector('.skill-info-inline');
+                    if (info) info.remove();
+                    const upgrader = node.querySelector('.skill-upgrader');
+                    if (upgrader) upgrader.remove();
+                });
+                
                 console.log(`Árvore ${this.currentTree} resetada`);
             }
         }
