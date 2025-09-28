@@ -36,6 +36,18 @@ const translations = {
         'traits.placeholder': '[TRAITS GRID]',
         'traits.back': '← BACK TO STATS',
         
+        // Nomes dos traits/equipamentos
+        'trait.axe': 'Axe',
+        'trait.sword': 'Sword',
+        'trait.staff': 'Staff',
+        'trait.orb': 'Orb',
+        'trait.shield': 'Shield',
+        'trait.glove': 'Glove',
+        'trait.bow': 'Bow',
+        'trait.light_armor': 'Light Armor',
+        'trait.heavy_armor': 'Heavy Armor',
+        'trait.dagger': 'Dagger',
+        
         // Nomes dos stats
         'stat.health': 'Health',
         'stat.mana': 'Mana',
@@ -84,6 +96,18 @@ const translations = {
         'traits.comingSoon': 'Em Breve...',
         'traits.placeholder': '[GRADE DE CARACTERÍSTICAS]',
         'traits.back': '← VOLTAR PARA STATUS',
+        
+        // Nomes dos traits/equipamentos
+        'trait.axe': 'Machado',
+        'trait.sword': 'Espada',
+        'trait.staff': 'Cajado',
+        'trait.orb': 'Orbe',
+        'trait.shield': 'Escudo',
+        'trait.glove': 'Luva',
+        'trait.bow': 'Arco',
+        'trait.light_armor': 'Armadura Leve',
+        'trait.heavy_armor': 'Armadura Pesada',
+        'trait.dagger': 'Adaga',
         
         // Nomes dos stats
         'stat.health': 'Vida',

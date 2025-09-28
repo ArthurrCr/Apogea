@@ -179,6 +179,11 @@
             text-align: center;
             margin-top: 0.5rem;
             transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-shadow: 
+                2px 2px 0px #333,
+                3px 3px 0px #222;
+            transform: scale(1); /* Estado inicial */
         }
         
         /* Hover effect - QUADRADO APARECE APENAS NO HOVER */
@@ -198,9 +203,39 @@
                 brightness(1.3);
         }
         
+        /* Nome também faz zoom junto com a imagem */
         .trait-block:hover .trait-name {
             color: #fff;
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+            transform: scale(1.1) translateY(-2px); /* Mesmo scale da imagem */
+            animation: glitch 0.2s infinite;
+        }
+        
+        /* Animação glitch dos nomes */
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    3px 3px 0px rgba(255, 0, 255, 0.5);
+            }
+            25% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    -1px 0px 0px rgba(0, 255, 255, 0.8);
+            }
+            50% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    1px 0px 0px rgba(255, 255, 0, 0.8);
+            }
+            75% {
+                text-shadow: 
+                    2px 2px 0px #333,
+                    3px 3px 0px #222,
+                    0px -1px 0px rgba(255, 0, 0, 0.8);
+            }
         }
         
         /* Active/Selected state */
@@ -336,45 +371,45 @@
                 <!-- Linha Superior -->
                 <div class="trait-block" data-trait="axe">
                     <img src="../assets/images/traits/axe.png" alt="Axe">
-                    <span class="trait-name">Axe</span>
+                    <span class="trait-name" data-i18n="trait.axe">Axe</span>
                 </div>
                 <div class="trait-block" data-trait="sword">
                     <img src="../assets/images/traits/sword.png" alt="Sword">
-                    <span class="trait-name">Sword</span>
+                    <span class="trait-name" data-i18n="trait.sword">Sword</span>
                 </div>
                 <div class="trait-block" data-trait="staff">
                     <img src="../assets/images/traits/staff.png" alt="Staff">
-                    <span class="trait-name">Staff</span>
+                    <span class="trait-name" data-i18n="trait.staff">Staff</span>
                 </div>
                 <div class="trait-block" data-trait="orb">
                     <img src="../assets/images/traits/orb.png" alt="Orb">
-                    <span class="trait-name">Orb</span>
+                    <span class="trait-name" data-i18n="trait.orb">Orb</span>
                 </div>
                 <div class="trait-block" data-trait="shield">
                     <img src="../assets/images/traits/shield.png" alt="Shield">
-                    <span class="trait-name">Shield</span>
+                    <span class="trait-name" data-i18n="trait.shield">Shield</span>
                 </div>
                 
                 <!-- Linha Inferior -->
                 <div class="trait-block" data-trait="glove">
                     <img src="../assets/images/traits/glove.png" alt="Glove">
-                    <span class="trait-name">Glove</span>
+                    <span class="trait-name" data-i18n="trait.glove">Glove</span>
                 </div>
                 <div class="trait-block" data-trait="bow">
                     <img src="../assets/images/traits/bow.png" alt="Bow">
-                    <span class="trait-name">Bow</span>
+                    <span class="trait-name" data-i18n="trait.bow">Bow</span>
                 </div>
                 <div class="trait-block" data-trait="light_armor">
                     <img src="../assets/images/traits/light_armor.png" alt="Light Armor">
-                    <span class="trait-name">Light Armor</span>
+                    <span class="trait-name" data-i18n="trait.light_armor">Light Armor</span>
                 </div>
                 <div class="trait-block" data-trait="heavy_armor">
                     <img src="../assets/images/traits/heavy_armor.png" alt="Heavy Armor">
-                    <span class="trait-name">Heavy Armor</span>
+                    <span class="trait-name" data-i18n="trait.heavy_armor">Heavy Armor</span>
                 </div>
                 <div class="trait-block" data-trait="dagger">
                     <img src="../assets/images/traits/dagger.png" alt="Dagger">
-                    <span class="trait-name">Dagger</span>
+                    <span class="trait-name" data-i18n="trait.dagger">Dagger</span>
                 </div>
             </div>
             
