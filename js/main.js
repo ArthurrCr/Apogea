@@ -3,7 +3,7 @@
 // ======================
 import { createStars } from './modules/stars.js';
 import { initAudioSystem, stopMusic } from './modules/audio.js';
-import { initLanguageSelector } from './modules/language.js';
+import { initTranslations, setLanguage } from './translations.js'; // Importa traduções
 import { handleImageErrors, navigateToPage } from './modules/utilities.js';
 
 // ======================
@@ -37,9 +37,22 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializa componentes compartilhados
     createStars();
     initAudioSystem();
-    initLanguageSelector();
     handleImageErrors();
+    
+    // Inicializa sistema de traduções - IMPORTANTE
+    initTranslations();
+    
+    // Garante que os botões de idioma funcionem
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const lang = this.dataset.lang;
+            setLanguage(lang);
+            console.log('Idioma alterado para:', lang);
+        });
+    });
     
     // Inicializa funcionalidades específicas da página
     initClassSelection();
+    
+    console.log('Página index inicializada com sucesso');
 });
