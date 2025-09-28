@@ -430,6 +430,15 @@
             createStars();
             initTranslations();
             
+            // Adiciona navegação para árvore de traits
+            document.querySelectorAll('.trait-block').forEach(block => {
+                block.addEventListener('click', function() {
+                    const trait = this.dataset.trait;
+                    // Navega para a página de árvore com o trait específico
+                    window.location.href = `trait-tree.html?trait=${trait}`;
+                });
+            });
+            
             // Adiciona transição ao botão de voltar
             const backButton = document.getElementById('backButton');
             if (backButton) {

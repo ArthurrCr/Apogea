@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APOGEA - Trait Trees</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../favicon.ico">
+
+    <!-- Pixelated Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!-- CSS Modularizado -->
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/components/blackhole.css">
+    <link rel="stylesheet" href="../css/pages/trait-tree.css">
+</head>
+<body>
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn" data-lang="en">EN</button>
+        <button class="lang-btn" data-lang="pt-br">PT</button>
+    </div>
+
+    <!-- Stars Background -->
+    <div class="stars-container" id="stars"></div>
+
+    <!-- Back Button -->
+    <a href="../pages/traits.html" class="back-btn">
+        <span data-i18n="tree.back">← BACK</span>
+    </a>
+
+    <!-- Container de todas as árvores -->
+    <div class="trees-container" id="treesContainer">
+        <!-- Árvores serão criadas dinamicamente pelo JavaScript -->
+    </div>
+
+    <!-- Setas de navegação -->
+    <button class="nav-arrow left" id="navLeft">‹</button>
+    <button class="nav-arrow right" id="navRight">›</button>
+
+    <!-- Pontos de navegação -->
+    <div class="navigation-dots" id="navDots">
+        <span class="nav-dot active" data-index="0"></span>
+        <span class="nav-dot" data-index="1"></span>
+        <span class="nav-dot" data-index="2"></span>
+        <span class="nav-dot" data-index="3"></span>
+        <span class="nav-dot" data-index="4"></span>
+        <span class="nav-dot" data-index="5"></span>
+        <span class="nav-dot" data-index="6"></span>
+        <span class="nav-dot" data-index="7"></span>
+        <span class="nav-dot" data-index="8"></span>
+        <span class="nav-dot" data-index="9"></span>
+    </div>
+
+    <!-- Dica de scroll -->
+    <div class="scroll-hint" data-i18n="tree.scrollHint">DRAG OR USE ARROWS</div>
+    
+    <!-- Dicas de teclado -->
+    <div class="keyboard-hints">
+        <div class="keyboard-hint">
+            <span class="key-badge">←→</span>
+            <span data-i18n="tree.navigate">Navigate</span>
+        </div>
+        <div class="keyboard-hint">
+            <span class="key-badge">1-9</span>
+            <span data-i18n="tree.selectSkill">Select Skill</span>
+        </div>
+        <div class="keyboard-hint">
+            <span class="key-badge">Ctrl+R</span>
+            <span data-i18n="tree.reset">Reset Tree</span>
+        </div>
+        <div class="keyboard-hint">
+            <span class="key-badge">ESC</span>
+            <span data-i18n="tree.close">Close Modal</span>
+        </div>
+    </div>
+
+    <!-- Script principal com módulos -->
+    <script type="module" src="../js/trait-tree.js"></script>
+</body>
+</html>

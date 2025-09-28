@@ -62,6 +62,7 @@ const translations = {
         'stat.armor': 'Armor',
         'stat.defense': 'Defense',
         'stat.capacity': 'Capacity'
+        
     },
     'pt-br': {
         // Página principal
