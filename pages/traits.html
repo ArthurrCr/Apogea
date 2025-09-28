@@ -62,7 +62,7 @@
             color: #fff;
             margin-bottom: 1rem;
             text-shadow: 
-                0 0 20px rgba(138, 43, 226, 0.8),
+                0 0 20px rgba(255, 255, 255, 0.5),
                 2px 2px 0 #333;
             animation: glowPulse 3s ease-in-out infinite;
         }
@@ -77,20 +77,20 @@
         @keyframes glowPulse {
             0%, 100% {
                 text-shadow: 
-                    0 0 20px rgba(138, 43, 226, 0.8),
+                    0 0 20px rgba(255, 255, 255, 0.5),
                     2px 2px 0 #333;
             }
             50% {
                 text-shadow: 
-                    0 0 40px rgba(138, 43, 226, 1),
+                    0 0 40px rgba(255, 255, 255, 0.8),
                     2px 2px 0 #333;
             }
         }
         
-        /* Back button especial - tamanho intermediário */
+        /* Botão voltar especial - tamanho intermediário */
         .back-btn-traits {
             background: rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(138, 43, 226, 0.5);
+            border: 2px solid rgba(255, 255, 255, 0.3); /* Borda branca */
             color: #fff;
             padding: 11px 18px; /* Ajustado para valor intermediário */
             font-size: 0.65rem; /* Ajustado de 0.6rem para 0.65rem */
@@ -112,7 +112,7 @@
             height: 100%;
             background: linear-gradient(90deg, 
                 transparent, 
-                rgba(138, 43, 226, 0.4), 
+                rgba(255, 255, 255, 0.2), /* Branco */
                 transparent);
             transition: left 0.5s ease;
         }
@@ -122,41 +122,187 @@
         }
         
         .back-btn-traits:hover {
-            border-color: rgba(138, 43, 226, 1);
+            border-color: rgba(255, 255, 255, 0.8); /* Borda branca */
             box-shadow: 
-                0 0 20px rgba(138, 43, 226, 0.8),
-                inset 0 0 10px rgba(138, 43, 226, 0.3);
+                0 0 20px rgba(255, 255, 255, 0.5),
+                inset 0 0 10px rgba(255, 255, 255, 0.1);
             transform: scale(1.05);
         }
         
-        /* Placeholder de conteúdo futuro - tamanho intermediário */
-        .traits-grid-placeholder {
-            width: 75%; /* Ajustado de 70% para 75% */
-            max-width: 700px; /* Ajustado de 600px para 700px */
-            height: 350px; /* Ajustado de 300px para 350px */
-            margin: 1.8rem auto; /* Ajustado de 1.5rem para 1.8rem */
-            border: 2px dashed rgba(138, 43, 226, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: rgba(255, 255, 255, 0.3);
-            font-size: 0.6rem; /* Ajustado de 0.55rem para 0.6rem */
-            position: relative;
-            overflow: hidden;
+        /* Grade de Traits - 10 blocos */
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 90%;
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
         }
         
-        .traits-grid-placeholder::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(45deg,
-                transparent 40%,
-                rgba(138, 43, 226, 0.1) 50%,
-                transparent 60%);
-            animation: shimmer 3s infinite;
+        /* Bloco individual de trait - SEM BORDA */
+        .trait-block {
+            background: transparent; /* Sem fundo */
+            border: 2px solid transparent; /* Borda invisível */
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            aspect-ratio: 1 / 1;
+            min-height: 140px; /* Aumentado para dar mais espaço */
+        }
+        
+        /* Imagem do trait - MAIOR e SEM EFEITOS */
+        .trait-block img {
+            width: 72px; /* Aumentado de 48px */
+            height: 72px; /* Aumentado de 48px */
+            object-fit: contain;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            filter: none; /* Sem glow padrão */
+            transition: all 0.3s ease;
+        }
+        
+        /* Nome do trait */
+        .trait-name {
+            font-size: 0.5rem; /* Levemente maior */
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            font-family: 'Press Start 2P', cursive;
+            text-align: center;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        /* Hover effect - QUADRADO APARECE APENAS NO HOVER */
+        .trait-block:hover {
+            background: rgba(0, 0, 0, 0.9); /* Fundo aparece */
+            border-color: rgba(255, 255, 255, 0.5); /* Borda branca */
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 5px 15px rgba(255, 255, 255, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.05);
+        }
+        
+        .trait-block:hover img {
+            transform: scale(1.1);
+            filter: 
+                drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)) /* Glow branco */
+                brightness(1.3);
+        }
+        
+        .trait-block:hover .trait-name {
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+        
+        /* Active/Selected state */
+        .trait-block.active {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: rgba(255, 215, 0, 0.6);
+        }
+        
+        .trait-block.active img {
+            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+        }
+        
+        /* Animação de entrada */
+        .trait-block {
+            opacity: 0;
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+        
+        /* Delays para entrada em cascata */
+        .trait-block:nth-child(1) { animation-delay: 0.1s; }
+        .trait-block:nth-child(2) { animation-delay: 0.15s; }
+        .trait-block:nth-child(3) { animation-delay: 0.2s; }
+        .trait-block:nth-child(4) { animation-delay: 0.25s; }
+        .trait-block:nth-child(5) { animation-delay: 0.3s; }
+        .trait-block:nth-child(6) { animation-delay: 0.35s; }
+        .trait-block:nth-child(7) { animation-delay: 0.4s; }
+        .trait-block:nth-child(8) { animation-delay: 0.45s; }
+        .trait-block:nth-child(9) { animation-delay: 0.5s; }
+        .trait-block:nth-child(10) { animation-delay: 0.55s; }
+        
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Responsive - Tablet */
+        @media (max-width: 768px) {
+            .traits-grid {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 1rem;
+                width: 95%;
+            }
+            
+            .trait-block {
+                min-height: 100px;
+                padding: 0.7rem;
+            }
+            
+            .trait-block img {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .trait-name {
+                font-size: 0.4rem;
+            }
+        }
+        
+        /* Responsive - Mobile */
+        @media (max-width: 480px) {
+            .traits-grid {
+                grid-template-columns: repeat(3, 1fr);
+                grid-template-rows: auto;
+                gap: 0.8rem;
+            }
+            
+            .trait-block {
+                min-height: 90px;
+                padding: 0.5rem;
+            }
+            
+            .trait-block img {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .trait-name {
+                font-size: 0.35rem;
+            }
+        }
+        
+        /* Fallback para quando não tem imagem */
+        .trait-block img[src*="undefined"],
+        .trait-block img:not([src]),
+        .trait-block img[src=""] {
+            display: none;
+        }
+        
+        .trait-block img[src*="undefined"] + .trait-name::before,
+        .trait-block img:not([src]) + .trait-name::before,
+        .trait-block img[src=""] + .trait-name::before {
+            content: "⬢";
+            display: block;
+            font-size: 3rem;
+            color: rgba(255, 255, 255, 0.3); /* Branco */
+            margin-bottom: 0.5rem;
         }
         
         @keyframes shimmer {
@@ -185,8 +331,51 @@
             <h1 class="coming-soon-title" data-i18n="traits.title">TRAITS SYSTEM</h1>
             <p class="coming-soon-subtitle" data-i18n="traits.comingSoon">Coming Soon...</p>
             
-            <div class="traits-grid-placeholder">
-                <span data-i18n="traits.placeholder">[TRAITS GRID]</span>
+            <!-- Grade de Traits -->
+            <div class="traits-grid">
+                <!-- Linha Superior -->
+                <div class="trait-block" data-trait="axe">
+                    <img src="../assets/images/traits/axe.png" alt="Axe">
+                    <span class="trait-name">Axe</span>
+                </div>
+                <div class="trait-block" data-trait="sword">
+                    <img src="../assets/images/traits/sword.png" alt="Sword">
+                    <span class="trait-name">Sword</span>
+                </div>
+                <div class="trait-block" data-trait="staff">
+                    <img src="../assets/images/traits/staff.png" alt="Staff">
+                    <span class="trait-name">Staff</span>
+                </div>
+                <div class="trait-block" data-trait="orb">
+                    <img src="../assets/images/traits/orb.png" alt="Orb">
+                    <span class="trait-name">Orb</span>
+                </div>
+                <div class="trait-block" data-trait="shield">
+                    <img src="../assets/images/traits/shield.png" alt="Shield">
+                    <span class="trait-name">Shield</span>
+                </div>
+                
+                <!-- Linha Inferior -->
+                <div class="trait-block" data-trait="glove">
+                    <img src="../assets/images/traits/glove.png" alt="Glove">
+                    <span class="trait-name">Glove</span>
+                </div>
+                <div class="trait-block" data-trait="bow">
+                    <img src="../assets/images/traits/bow.png" alt="Bow">
+                    <span class="trait-name">Bow</span>
+                </div>
+                <div class="trait-block" data-trait="light_armor">
+                    <img src="../assets/images/traits/light_armor.png" alt="Light Armor">
+                    <span class="trait-name">Light Armor</span>
+                </div>
+                <div class="trait-block" data-trait="heavy_armor">
+                    <img src="../assets/images/traits/heavy_armor.png" alt="Heavy Armor">
+                    <span class="trait-name">Heavy Armor</span>
+                </div>
+                <div class="trait-block" data-trait="dagger">
+                    <img src="../assets/images/traits/dagger.png" alt="Dagger">
+                    <span class="trait-name">Dagger</span>
+                </div>
             </div>
             
             <a href="../pages/stats-simulator.html" class="back-btn-traits" id="backButton">
