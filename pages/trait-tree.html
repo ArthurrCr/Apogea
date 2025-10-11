@@ -31,15 +31,15 @@
                 <span data-i18n="tree.back">← BACK</span>
             </a>
 
-            <!-- Level Input -->
+            <!-- Level Display -->
             <div class="level-container">
-                <label for="levelInput" data-i18n="stats.level">Level</label>:
-                <input type="number" id="levelInput" min="1" max="100" value="1" class="level-input" autocomplete="off">
+                <span class="level-label" data-i18n="stats.level">Level</span>: 
+                <span id="currentLevel">1</span>
             </div>
 
             <!-- Points Display -->
             <div class="points-display">
-                <span class="points-label" data-i18n="tree.availablePoints">Available Points</span>: 
+                <span class="points-label" data-i18n="tree.availablePoints">Available<br>Points</span>: 
                 <span id="availablePoints">0</span>
             </div>
         </div>

@@ -28,7 +28,7 @@ body {
 .tree-header-left {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 0.5rem;
 }
 
@@ -39,12 +39,19 @@ body {
     gap: 1rem;
 }
 
-/* Estilos base para Back Button, Level e Points */
-.tree-header .back-btn,
+/* Back Button - USA O ESTILO PADRÃO do back-button.css */
+.tree-header .back-btn {
+    /* Remove todos os overrides - usa estilo padrão */
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+}
+
+/* Level e Points - SEM BOUNDING BOX */
 .tree-header .level-container,
 .tree-header .points-display {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    background: transparent;
+    border: none;
     color: #fff;
     padding: 10px 16px;
     font-size: 0.6rem;
@@ -53,118 +60,110 @@ body {
     align-items: center;
     height: 44px;
     box-sizing: border-box;
-    transition: all 0.3s ease;
     margin: 0;
-    /* OVERRIDE do back-button.css */
-    position: relative !important;
-    top: auto !important;
-    left: auto !important;
 }
 
-/* Back Button - TAMANHO COMPACTO */
-.tree-header .back-btn {
-    text-decoration: none;
-    cursor: pointer;
-    justify-content: center;
-    width: auto !important;
-    min-width: 120px !important;
-    max-width: fit-content !important;
-    overflow: hidden;
-}
-
-/* Level e Points - LARGURA TOTAL */
-.tree-header .level-container,
-.tree-header .points-display {
-    width: 100% !important;
-}
-
-/* Garante que o shimmer effect funcione dentro do flexbox */
-.tree-header .back-btn::before {
-    position: absolute;
-}
-
-.tree-header .back-btn:hover {
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    transform: scale(1.05);
-}
-
-/* Level Container */
+/* Level - TAMANHO AJUSTADO */
 .tree-header .level-container {
     gap: 0.6rem;
     justify-content: space-between;
 }
 
-.level-input {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 0.4rem 0.3rem;
-    font-size: 0.6rem;
-    font-family: 'Press Start 2P', cursive;
-    text-align: center;
-    width: 70px;
-    height: 28px;
-    transition: all 0.3s ease;
-}
-
-.level-input:focus {
-    outline: none;
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
-
-.level-input:hover {
-    border-color: rgba(255, 255, 255, 0.5);
-}
-
-/* Points Display */
+/* Points - TAMANHO AJUSTADO COM QUEBRA */
 .tree-header .points-display {
+    height: auto;
+    min-height: 44px;
     gap: 0.6rem;
     justify-content: space-between;
 }
 
+/* Level e Points labels */
+.level-label,
 .points-label {
     color: rgba(255, 255, 255, 0.7);
+    line-height: 1.3;
+    text-align: left;
 }
 
+/* Level valor - BRANCO com animações SUPER RÁPIDAS */
+#currentLevel {
+    color: #fff;
+    font-size: 0.8rem;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+    transition: none;
+}
+
+/* Animação de level aumentando - BRILHO NEON BRANCO - 0.15s */
+#currentLevel.level-increase {
+    animation: levelIncreaseGlow 0.15s ease-out;
+}
+
+@keyframes levelIncreaseGlow {
+    0% {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        transform: scale(1);
+    }
+    50% {
+        color: #fff;
+        text-shadow: 
+            0 0 20px rgba(255, 255, 255, 1),
+            0 0 30px rgba(255, 255, 255, 0.8),
+            0 0 40px rgba(255, 255, 255, 0.6);
+        transform: scale(1.2);
+    }
+    100% {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        transform: scale(1);
+    }
+}
+
+/* Animação de level diminuindo - BRILHO NEON VERMELHO - 0.15s */
+#currentLevel.level-decrease {
+    animation: levelDecreaseGlow 0.15s ease-out;
+}
+
+@keyframes levelDecreaseGlow {
+    0% {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        transform: scale(1);
+    }
+    50% {
+        color: #ff0000;
+        text-shadow: 
+            0 0 20px rgba(255, 0, 0, 1),
+            0 0 30px rgba(255, 0, 0, 0.8),
+            0 0 40px rgba(255, 0, 0, 0.6);
+        transform: scale(1.2);
+    }
+    100% {
+        color: #fff;
+        text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        transform: scale(1);
+    }
+}
+
+/* Points valor - VERDE */
 #availablePoints {
     color: #0f0;
     font-size: 0.8rem;
     text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
 }
 
-/* Language Selector - Tamanho original */
-.language-selector {
+/* Language Selector - USA O ESTILO PADRÃO */
+.tree-header .language-selector {
+    /* Remove override de posicionamento */
     position: relative !important;
     top: auto !important;
     right: auto !important;
-    display: flex;
-    gap: 0.3rem;
-}
-
-.language-selector .lang-btn {
-    background: rgba(0, 0, 0, 0.8);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 6px 10px;
-    font-size: 0.5rem;
-    font-family: 'Press Start 2P', cursive;
-    cursor: pointer;
-    height: auto;
-    min-width: auto;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
-
-.language-selector .lang-btn:hover,
-.language-selector .lang-btn.active {
-    border-color: #fff;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
 /* ======================
    FIM DO HEADER
+   (Back button e Language Selector usam estilos padrões 
+   de back-button.css e language-selector do main.css)
    ====================== */
 
 /* Container principal horizontal */
@@ -174,6 +173,7 @@ body {
     height: 100vh;
     transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform;
+    overflow: visible; /* Permite que o brilho ultrapasse */
 }
 
 .trees-container.dragging {
@@ -195,12 +195,13 @@ body {
     padding: 4rem;
     flex-shrink: 0;
     user-select: none;
+    overflow: visible; /* Permite que o brilho ultrapasse os limites */
 }
 
-/* Título da árvore - CENTRALIZADO */
+/* Título da árvore - CENTRALIZADO E MAIS ACIMA */
 .tree-title {
     position: absolute;
-    top: 3rem;
+    top: 1.5rem;
     left: 50%;
     transform: translateX(-50%);
     font-size: 1.2rem;
@@ -210,10 +211,11 @@ body {
         0 0 20px rgba(255, 255, 255, 0.5),
         2px 2px 0 #333;
     font-family: 'Press Start 2P', cursive;
-    z-index: 10;
+    z-index: 1;
     animation: titleGlow 3s ease-in-out infinite;
     text-align: center;
     white-space: nowrap;
+    pointer-events: none;
 }
 
 @keyframes titleGlow {
@@ -233,6 +235,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: visible; /* Permite que o brilho ultrapasse os limites */
 }
 
 /* ======================
@@ -243,6 +246,7 @@ body {
     position: relative;
     width: 100%;
     height: 100%;
+    overflow: visible; /* Permite que o brilho ultrapasse */
 }
 
 /* Linhas SVG de conexão */
@@ -253,52 +257,102 @@ body {
     top: 0;
     left: 0;
     pointer-events: none;
-    z-index: 1;
+    z-index: 2;
+    overflow: visible; /* Permite que o brilho ultrapasse */
 }
 
+/* Linhas - ESTADO APAGADO (padrão) */
 .skill-line {
     stroke: rgba(255, 255, 255, 0.2);
-    stroke-width: 2;
+    stroke-width: 0.8;
+    stroke-linecap: round;
     fill: none;
-    stroke-dasharray: 5, 5;
-    animation: dash 20s linear infinite;
+    opacity: 0.3;
+    filter: none;
+    transition: all 0.5s ease;
+}
+
+/* Linhas - ESTADO ATIVO (quando ambas skills estão upadas) */
+.skill-line.active {
+    stroke: rgba(255, 255, 255, 1);
+    opacity: 1;
+    filter: 
+        drop-shadow(0 0 1px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 3px rgba(255, 215, 0, 0.8))
+        drop-shadow(0 0 6px rgba(255, 215, 0, 0.4))
+        drop-shadow(0 0 12px rgba(255, 215, 0, 0.3));
+    animation: constellationGlow 3s ease-in-out infinite;
 }
 
 .skill-line.strong {
-    stroke: rgba(255, 215, 0, 0.3);
-    stroke-width: 3;
-    animation: dashStrong 15s linear infinite;
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 1;
+    opacity: 0.3;
+}
+
+.skill-line.strong.active {
+    stroke: rgba(255, 255, 255, 1);
+    opacity: 1;
+    filter: 
+        drop-shadow(0 0 1px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 4px rgba(255, 215, 0, 1))
+        drop-shadow(0 0 8px rgba(255, 215, 0, 0.6))
+        drop-shadow(0 0 16px rgba(255, 215, 0, 0.4));
+    animation: constellationGlow 3s ease-in-out infinite;
 }
 
 .skill-line.secondary {
-    stroke: rgba(255, 255, 255, 0.1);
-    stroke-dasharray: 2, 8;
-    stroke-width: 1;
+    stroke: rgba(255, 255, 255, 0.15);
+    stroke-width: 0.6;
+    opacity: 0.25;
+}
+
+.skill-line.secondary.active {
+    stroke: rgba(255, 255, 255, 0.8);
+    opacity: 1;
+    filter: 
+        drop-shadow(0 0 1px rgba(255, 255, 255, 0.8))
+        drop-shadow(0 0 2px rgba(255, 215, 0, 0.6))
+        drop-shadow(0 0 4px rgba(255, 215, 0, 0.3))
+        drop-shadow(0 0 8px rgba(255, 215, 0, 0.2));
+    animation: constellationGlow 3s ease-in-out infinite;
 }
 
 .skill-line.ultimate {
-    stroke: rgba(255, 100, 255, 0.4);
-    stroke-width: 3;
-    stroke-dasharray: none;
-    animation: pulseUltimate 2s ease-in-out infinite;
+    stroke: rgba(255, 255, 255, 0.25);
+    stroke-width: 1.2;
+    opacity: 0.3;
 }
 
-@keyframes dash {
-    to { stroke-dashoffset: -100; }
+.skill-line.ultimate.active {
+    stroke: rgba(255, 255, 255, 1);
+    opacity: 1;
+    filter: 
+        drop-shadow(0 0 2px rgba(255, 255, 255, 1))
+        drop-shadow(0 0 5px rgba(255, 215, 0, 1))
+        drop-shadow(0 0 10px rgba(255, 215, 0, 0.8))
+        drop-shadow(0 0 15px rgba(255, 215, 0, 0.4))
+        drop-shadow(0 0 20px rgba(255, 215, 0, 0.2));
+    animation: constellationGlowUltimate 2s ease-in-out infinite;
 }
 
-@keyframes dashStrong {
-    to { stroke-dashoffset: -80; }
-}
-
-@keyframes pulseUltimate {
+/* Animação de brilho suave - constelação */
+@keyframes constellationGlow {
     0%, 100% { 
-        opacity: 0.4;
-        filter: drop-shadow(0 0 5px rgba(255, 100, 255, 0.5));
+        opacity: 0.7;
     }
     50% { 
+        opacity: 1;
+    }
+}
+
+/* Animação de brilho ultimate - mais intensa */
+@keyframes constellationGlowUltimate {
+    0%, 100% { 
         opacity: 0.8;
-        filter: drop-shadow(0 0 15px rgba(255, 100, 255, 0.8));
+    }
+    50% { 
+        opacity: 1;
     }
 }
 
@@ -316,19 +370,7 @@ body {
     transition: all 0.3s ease;
 }
 
-.skill-node img {
-    width: 60px;
-    height: 60px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    object-fit: contain;
-    image-rendering: pixelated;
-    filter: brightness(0.3) grayscale(1);
-    transition: filter 0.3s ease, transform 0.3s ease;
-    z-index: 2;
-}
+/* Container da imagem é definido em skill-tree-renderer.js */
 
 /* Efeito de brilho estrelado */
 .skill-glow {
@@ -372,10 +414,6 @@ body {
 }
 
 /* Estados da skill */
-.skill-node.active img {
-    filter: brightness(1) grayscale(0) drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
-}
-
 .skill-node.active .skill-glow::before {
     animation: starPulseActive 2s ease-in-out infinite;
 }
@@ -385,17 +423,12 @@ body {
     z-index: 10;
 }
 
-.skill-node:hover img {
-    filter: brightness(1.2) drop-shadow(0 0 15px rgba(255, 255, 255, 0.9));
-    transform: translate(-50%, -50%) scale(1.1);
-}
-
 .skill-node.zoomed {
     transform: translate(-50%, -50%) scale(1.5) !important;
     z-index: 100 !important;
 }
 
-/* Tipos especiais de skills */
+/* Tipos especiais de skills - cores dos glows */
 .skill-node.base .skill-glow::before {
     background: radial-gradient(circle,
         rgba(100, 255, 100, 0.8) 0%,
@@ -561,7 +594,7 @@ body {
    
 .navigation-dots {
     position: fixed;
-    bottom: 2rem;
+    bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -625,7 +658,7 @@ body {
 /* Scroll hint - ACIMA das keyboard hints */
 .scroll-hint {
     position: fixed;
-    bottom: 5rem;
+    bottom: 4rem;
     left: 50%;
     transform: translateX(-50%);
     color: rgba(255, 255, 255, 0.5);
@@ -643,7 +676,7 @@ body {
 /* Keyboard hints - ABAIXO do scroll hint */
 .keyboard-hints {
     position: fixed;
-    bottom: 3rem;
+    bottom: 2rem;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -726,7 +759,7 @@ body {
     
     .tree-title {
         font-size: 0.9rem;
-        top: 5rem;
+        top: 4rem;
     }
     
     .tree-header {
@@ -744,40 +777,20 @@ body {
         gap: 0.4rem;
     }
     
-    .back-btn,
-    .level-container,
-    .points-display {
+    .tree-header .level-container,
+    .tree-header .points-display {
         padding: 8px 12px;
         font-size: 0.5rem;
         height: 38px;
     }
     
-    .back-btn {
-        min-width: 100px;
-        width: auto;
+    .tree-header .points-display {
+        min-height: 38px;
     }
     
-    .level-container,
-    .points-display {
-        width: 100%;
-    }
-    
-    .level-input {
-        width: 60px;
-        height: 24px;
-        font-size: 0.5rem;
-        padding: 0.3rem 0.2rem;
-    }
-    
+    #currentLevel,
     #availablePoints {
         font-size: 0.7rem;
-    }
-    
-    .language-selector .lang-btn {
-        padding: 5px 8px;
-        font-size: 0.45rem;
-        height: auto;
-        min-width: auto;
     }
     
     .nav-arrow {
@@ -794,11 +807,6 @@ body {
         height: 60px;
     }
     
-    .skill-node img {
-        width: 45px;
-        height: 45px;
-    }
-    
     .skill-name {
         font-size: 0.35rem;
         bottom: -20px;
@@ -809,7 +817,7 @@ body {
     }
     
     .scroll-hint {
-        bottom: 5rem;
+        bottom: 4rem;
         font-size: 0.35rem;
     }
 }
@@ -821,7 +829,7 @@ body {
     
     .tree-title {
         font-size: 0.7rem;
-        top: 10rem;
+        top: 8rem;
     }
     
     .tree-header {
@@ -839,53 +847,25 @@ body {
         gap: 0.3rem;
     }
     
-    .back-btn,
-    .level-container,
-    .points-display {
+    .tree-header .level-container,
+    .tree-header .points-display {
         padding: 8px 12px;
         font-size: 0.45rem;
         height: 36px;
     }
     
-    .back-btn {
-        min-width: 90px;
-        width: auto;
+    .tree-header .points-display {
+        min-height: 36px;
     }
     
-    .level-container,
-    .points-display {
-        width: 100%;
-    }
-    
-    .level-input {
-        width: 55px;
-        height: 22px;
-        font-size: 0.45rem;
-    }
-    
+    #currentLevel,
     #availablePoints {
         font-size: 0.6rem;
-    }
-    
-    .language-selector {
-        flex: 0;
-    }
-    
-    .language-selector .lang-btn {
-        padding: 5px 8px;
-        font-size: 0.4rem;
-        height: auto;
-        min-width: auto;
     }
     
     .skill-node {
         width: 50px;
         height: 50px;
-    }
-    
-    .skill-node img {
-        width: 35px;
-        height: 35px;
     }
     
     .skill-name {
@@ -899,6 +879,6 @@ body {
     
     .scroll-hint {
         font-size: 0.35rem;
-        bottom: 5rem;
+        bottom: 4rem;
     }
 }

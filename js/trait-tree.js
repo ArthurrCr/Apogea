@@ -60,53 +60,107 @@ class TraitTreeController {
                 pointsElement.title = '';
             }
         }
+        
+        // DISPARA EVENTO para atualizar upgrader em tempo real
+        window.dispatchEvent(new CustomEvent('pointsChanged'));
     }
     
-    // Inicializa input de level
-    initLevelInput() {
-        const levelInput = document.getElementById('levelInput');
-        if (levelInput) {
-            levelInput.addEventListener('input', () => {
-                const newLevel = Math.max(1, Math.min(100, parseInt(levelInput.value) || 1));
-                if (newLevel !== this.currentLevel) {
-                    const oldLevel = this.currentLevel;
-                    const newTotalPoints = this.calculatePointsFromLevel(newLevel);
-                    const usedPoints = skillInlineSystem.usedPoints;
-                    
-                    // Verifica se a mudança resultaria em pontos negativos
-                    if (newTotalPoints < usedPoints) {
-                        const deficit = usedPoints - newTotalPoints;
-                        const confirmReset = confirm(
-                            `Changing to level ${newLevel} would result in ${deficit} insufficient points.\n\n` +
-                            `Current: ${usedPoints} points used\n` +
-                            `New total: ${newTotalPoints} points\n\n` +
-                            `Do you want to reset all skills?`
-                        );
-                        
-                        if (confirmReset) {
-                            // Reseta todas as árvores
-                            this.resetAllTrees();
-                            this.currentLevel = newLevel;
-                            levelInput.value = newLevel;
-                            this.updatePointsDisplay();
-                        } else {
-                            // Cancela a mudança, volta ao level anterior
-                            levelInput.value = oldLevel;
-                            return;
-                        }
-                    } else {
-                        // Mudança permitida
-                        this.currentLevel = newLevel;
-                        levelInput.value = newLevel;
-                        this.updatePointsDisplay();
-                        
-                        // Mostra aviso se passou do cap
-                        if (newLevel > this.maxLevelForPoints) {
-                            console.log(`Level ${newLevel}: Points capped at level ${this.maxLevelForPoints} (${this.totalPoints} points)`);
-                        }
-                    }
-                }
-            });
+    // Atualiza display de level
+    updateLevelDisplay() {
+        const levelElement = document.getElementById('currentLevel');
+        if (levelElement) {
+            levelElement.textContent = this.currentLevel;
+        }
+    }
+    
+    // Manipula mudança de level
+    handleLevelChange(newLevel) {
+        const oldLevel = this.currentLevel;
+        const newTotalPoints = this.calculatePointsFromLevel(newLevel);
+        const usedPoints = skillInlineSystem.usedPoints;
+        
+        // Verifica se a mudança resultaria em pontos negativos
+        if (newTotalPoints < usedPoints) {
+            const deficit = usedPoints - newTotalPoints;
+            const confirmReset = confirm(
+                `Changing to level ${newLevel} would result in ${deficit} insufficient points.\n\n` +
+                `Current: ${usedPoints} points used\n` +
+                `New total: ${newTotalPoints} points\n\n` +
+                `Do you want to reset all skills?`
+            );
+            
+            if (confirmReset) {
+                // Reseta todas as árvores
+                this.resetAllTrees();
+                this.currentLevel = newLevel;
+                this.updateLevelDisplay();
+                this.updatePointsDisplay();
+            } else {
+                // Cancela a mudança, volta ao level anterior
+                return;
+            }
+        } else {
+            // Mudança permitida
+            this.currentLevel = newLevel;
+            this.updateLevelDisplay();
+            this.updatePointsDisplay();
+            
+            // Mostra aviso se passou do cap
+            if (newLevel > this.maxLevelForPoints) {
+                console.log(`Level ${newLevel}: Points capped at level ${this.maxLevelForPoints} (${this.totalPoints} points)`);
+            }
+        }
+    }
+    
+    // Aumenta level com teclas (W ou ↑)
+    increaseLevelByKey() {
+        const newLevel = Math.min(100, this.currentLevel + 1);
+        if (newLevel !== this.currentLevel) {
+            this.handleLevelChange(newLevel);
+            
+            // Adiciona animação de aumento (brilho branco) - SUPER RÁPIDA
+            const levelElement = document.getElementById('currentLevel');
+            if (levelElement) {
+                // Remove ambas as classes
+                levelElement.classList.remove('level-increase', 'level-decrease');
+                
+                // Força reflow para reiniciar a animação
+                void levelElement.offsetWidth;
+                
+                // Adiciona a classe de aumento
+                levelElement.classList.add('level-increase');
+                
+                // Remove após a animação (150ms)
+                setTimeout(() => {
+                    levelElement.classList.remove('level-increase');
+                }, 150);
+            }
+        }
+    }
+    
+    // Diminui level com teclas (S ou ↓)
+    decreaseLevelByKey() {
+        const newLevel = Math.max(1, this.currentLevel - 1);
+        if (newLevel !== this.currentLevel) {
+            this.handleLevelChange(newLevel);
+            
+            // Adiciona animação de diminuição (brilho vermelho) - SUPER RÁPIDA
+            const levelElement = document.getElementById('currentLevel');
+            if (levelElement) {
+                // Remove ambas as classes
+                levelElement.classList.remove('level-increase', 'level-decrease');
+                
+                // Força reflow para reiniciar a animação
+                void levelElement.offsetWidth;
+                
+                // Adiciona a classe de diminuição
+                levelElement.classList.add('level-decrease');
+                
+                // Remove após a animação (150ms)
+                setTimeout(() => {
+                    levelElement.classList.remove('level-decrease');
+                }, 150);
+            }
         }
     }
     
@@ -118,8 +172,8 @@ class TraitTreeController {
         createStars();
         initTranslations();
         
-        // Inicializa level input
-        this.initLevelInput();
+        // Inicializa displays
+        this.updateLevelDisplay();
         this.updatePointsDisplay();
         
         // Cria containers das árvores
@@ -234,10 +288,27 @@ class TraitTreeController {
         
         // Teclas de atalho
         document.addEventListener('keydown', (e) => {
+            // Verifica se está em modo zoom
+            const isZoomed = document.body.classList.contains('skill-zoomed');
+            
             // ESC para sair do zoom
-            if (e.key === 'Escape' && document.body.classList.contains('skill-zoomed')) {
+            if (e.key === 'Escape' && isZoomed) {
                 e.preventDefault();
                 skillInlineSystem.exitZoom();
+                return;
+            }
+            
+            // W/S e ↑/↓ para controlar level (FUNCIONA EM QUALQUER MODO)
+            if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') {
+                e.preventDefault();
+                this.increaseLevelByKey();
+                return;
+            }
+            
+            if (e.key === 's' || e.key === 'S' || e.key === 'ArrowDown') {
+                e.preventDefault();
+                this.decreaseLevelByKey();
+                return;
             }
             
             // Tab para navegar entre skills
@@ -247,7 +318,7 @@ class TraitTreeController {
                 const skills = document.querySelectorAll('.skill-node');
                 const selected = document.querySelector('.skill-node.selected');
                 
-                if (document.body.classList.contains('skill-zoomed')) {
+                if (isZoomed) {
                     // Se já está em zoom, vai para a próxima skill
                     if (selected) {
                         const index = Array.from(skills).indexOf(selected);
@@ -272,14 +343,42 @@ class TraitTreeController {
             }
             
             // Espaço para dar upgrade quando em zoom
-            if (e.key === ' ' && document.body.classList.contains('skill-zoomed')) {
+            if (e.key === ' ' && isZoomed) {
                 e.preventDefault();
                 const upgradeBtn = document.querySelector('.upgrade-button');
-                if (upgradeBtn) upgradeBtn.click();
+                if (upgradeBtn) {
+                    upgradeBtn.click();
+                } else {
+                    // Se não há botão de upgrade, tenta de qualquer forma
+                    // para mostrar o feedback visual (piscar requisitos)
+                    if (skillInlineSystem.selectedSkill && skillInlineSystem.selectedRenderer) {
+                        skillInlineSystem.tryUpgrade(
+                            skillInlineSystem.selectedSkill,
+                            skillInlineSystem.selectedRenderer
+                        );
+                    }
+                }
+            }
+            
+            // X para remover ponto quando em zoom
+            if ((e.key === 'x' || e.key === 'X') && isZoomed) {
+                e.preventDefault();
+                const downgradeBtn = document.querySelector('.downgrade-button');
+                if (downgradeBtn) {
+                    downgradeBtn.click();
+                } else {
+                    // Se não há botão de downgrade, tenta de qualquer forma
+                    if (skillInlineSystem.selectedSkill && skillInlineSystem.selectedRenderer) {
+                        skillInlineSystem.tryDowngrade(
+                            skillInlineSystem.selectedSkill,
+                            skillInlineSystem.selectedRenderer
+                        );
+                    }
+                }
             }
         });
         
-        // Atalho R para resetar árvore atual
+        // Atalho Ctrl+R para resetar árvore atual
         document.addEventListener('keydown', (e) => {
             if (e.key === 'r' && e.ctrlKey) {
                 e.preventDefault();
@@ -300,16 +399,38 @@ class TraitTreeController {
             // Re-renderiza as skills atuais
             this.renderAllTrees();
             
-            // Atualiza o sistema inline
+            // Atualiza labels
+            const levelLabel = document.querySelector('.level-label');
+            if (levelLabel) {
+                levelLabel.textContent = t('stats.level');
+            }
+            
             const pointsLabel = document.querySelector('.points-label');
             if (pointsLabel) {
-                pointsLabel.textContent = t('tree.availablePoints');
+                pointsLabel.innerHTML = t('tree.availablePoints').replace(' ', '<br>');
             }
         });
         
-        // Listener para quando pontos forem usados
+        // Listener para quando pontos forem usados (NÃO DUPLICA O EVENTO!)
+        // O updatePointsDisplay já dispara o evento, então aqui só precisamos reagir
         window.addEventListener('pointsChanged', () => {
-            this.updatePointsDisplay();
+            // Apenas atualiza o display se necessário
+            // O skillInlineSystem já cuida de atualizar o upgrader
+            const pointsElement = document.getElementById('availablePoints');
+            if (pointsElement) {
+                const usedPoints = skillInlineSystem.usedPoints;
+                const availablePoints = this.totalPoints - usedPoints;
+                pointsElement.textContent = availablePoints;
+                
+                // Atualiza cor baseado no estado
+                if (availablePoints < 0) {
+                    pointsElement.style.color = '#ff0000';
+                    pointsElement.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.8)';
+                } else {
+                    pointsElement.style.color = '#0f0';
+                    pointsElement.style.textShadow = '0 0 10px rgba(0, 255, 0, 0.5)';
+                }
+            }
         });
     }
     

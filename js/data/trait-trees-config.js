@@ -4,7 +4,7 @@
 
 export const traitTrees = {
     axe: {
-        name: 'Axe',
+        name: 'Heavy Weapon',
         icon: '../assets/images/traits/axe.png',
         skills: {
             'going-big': {
@@ -107,13 +107,12 @@ export const traitTrees = {
             }
         },
         connections: [
+            // Árvore limpa sem ciclos - estrutura hierárquica
             { from: 'going-big', to: 'steady-bloodflow', type: 'normal' },
             { from: 'steady-bloodflow', to: 'berserker', type: 'normal' },
-            { from: 'berserker', to: 'overwhelming-force', type: 'strong' },
-            { from: 'going-big', to: 'overwhelming-force', type: 'secondary' },
             { from: 'steady-bloodflow', to: 'wrecking-it', type: 'normal' },
+            { from: 'berserker', to: 'overwhelming-force', type: 'strong' },
             { from: 'wrecking-it', to: 'magic-blade', type: 'strong' },
-            { from: 'going-big', to: 'magic-blade', type: 'secondary' },
             { from: 'magic-blade', to: 'unfathomable-rage', type: 'ultimate' }
         ]
     },

@@ -37,7 +37,7 @@ const translations = {
         'traits.back': '← BACK TO STATS',
         
         // Nomes dos traits/equipamentos
-        'trait.axe': 'Axe',
+        'trait.axe': 'Heavy Weapon',
         'trait.sword': 'Sword',
         'trait.staff': 'Staff',
         'trait.orb': 'Orb',
@@ -144,7 +144,8 @@ const translations = {
         'tree.exportCode': 'Export Code',
         'tree.importCode': 'Import Code',
         'tree.selectNext': 'Select Next',
-        'tree.selectUpgrade': 'Upgrade'
+        'tree.selectUpgrade': 'Upgrade',
+        'tree.removePoint': 'Remove'
     },
 
     'pt-br': {
@@ -182,7 +183,7 @@ const translations = {
         'traits.back': '← VOLTAR PARA STATUS',
         
         // Nomes dos traits/equipamentos
-        'trait.axe': 'Machado',
+        'trait.axe': 'Arma Pesada',
         'trait.sword': 'Espada',
         'trait.staff': 'Cajado',
         'trait.orb': 'Orbe',
@@ -289,7 +290,8 @@ const translations = {
         'tree.exportCode': 'Exportar Código',
         'tree.importCode': 'Importar Código',
         'tree.selectNext': 'Selecionar Próximo',
-        'tree.selectUpgrade': 'Melhorar'
+        'tree.selectUpgrade': 'Melhorar',
+        'tree.removePoint': 'Remover'
 
     }
 };
