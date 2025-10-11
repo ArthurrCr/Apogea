@@ -243,13 +243,24 @@ class TraitTreeController {
             // Tab para navegar entre skills
             if (e.key === 'Tab' && !e.shiftKey) {
                 e.preventDefault();
-                // Se estiver em zoom, sai primeiro
+                
+                const skills = document.querySelectorAll('.skill-node');
+                const selected = document.querySelector('.skill-node.selected');
+                
                 if (document.body.classList.contains('skill-zoomed')) {
-                    skillInlineSystem.exitZoom();
+                    // Se já está em zoom, vai para a próxima skill
+                    if (selected) {
+                        const index = Array.from(skills).indexOf(selected);
+                        const nextIndex = (index + 1) % skills.length;
+                        
+                        // Sai do zoom e seleciona a próxima
+                        skillInlineSystem.exitZoom();
+                        setTimeout(() => {
+                            skills[nextIndex].click();
+                        }, 300);
+                    }
                 } else {
-                    // Navega para próxima skill
-                    const skills = document.querySelectorAll('.skill-node');
-                    const selected = document.querySelector('.skill-node.selected');
+                    // Se não está em zoom, navega normalmente
                     if (selected) {
                         const index = Array.from(skills).indexOf(selected);
                         const nextIndex = (index + 1) % skills.length;

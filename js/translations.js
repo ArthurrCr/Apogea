@@ -67,9 +67,10 @@ const translations = {
         'tree.back': '← BACK',
         'tree.scrollHint': 'DRAG OR USE ARROWS',
         'tree.navigate': 'Navigate',
+        'tree.levelUpDown': 'Level Up/Down',
         'tree.selectSkill': 'Select Skill', 
         'tree.reset': 'Reset Tree',
-        'tree.close': 'Close Modal',
+        'tree.close': 'Close',
         'tree.confirmReset': 'Reset all skills in this tree?',
         'tree.comingSoon': 'Skill Tree - Coming Soon',
 
@@ -79,6 +80,7 @@ const translations = {
         'skill.requires': 'Requires',
         'skill.effect': 'Effect',
         'skill.levelReq': 'Level requirements',
+        'skill.levelBonus': 'Level Bonus',
         'skill.current': 'Current',
         'skill.active': 'Active Skill',
         'skill.passive': 'Passive Skill',
@@ -142,7 +144,7 @@ const translations = {
         'tree.exportCode': 'Export Code',
         'tree.importCode': 'Import Code',
         'tree.selectNext': 'Select Next',
-        'tree.selectUpgrade': 'Select Upgrade'
+        'tree.selectUpgrade': 'Upgrade'
     },
 
     'pt-br': {
@@ -210,6 +212,7 @@ const translations = {
         'tree.back': '← VOLTAR',
         'tree.scrollHint': 'ARRASTE OU USE AS SETAS',
         'tree.navigate': 'Navegar',
+        'tree.levelUpDown': 'Subir/Descer Nível',
         'tree.selectSkill': 'Selecionar Habilidade',
         'tree.reset': 'Resetar Árvore',
         'tree.close': 'Fechar',
@@ -222,6 +225,7 @@ const translations = {
         'skill.requires': 'Requer',
         'skill.effect': 'Efeito',
         'skill.levelReq': 'Requisitos de nível',
+        'skill.levelBonus': 'Bônus de Nível',
         'skill.current': 'Atual',
         'skill.active': 'Habilidade Ativa',
         'skill.passive': 'Habilidade Passiva',
@@ -285,7 +289,7 @@ const translations = {
         'tree.exportCode': 'Exportar Código',
         'tree.importCode': 'Importar Código',
         'tree.selectNext': 'Selecionar Próximo',
-        'tree.selectUpgrade': 'Selecionar Upgrade'
+        'tree.selectUpgrade': 'Melhorar'
 
     }
 };

@@ -111,6 +111,10 @@ export class SkillInlineSystem {
         const closeBtn = document.querySelector('.zoom-close-btn');
         if (closeBtn) closeBtn.remove();
         
+        // Remove dicas de teclado
+        const hints = document.querySelector('.zoom-keyboard-hints');
+        if (hints) hints.remove();
+        
         // Remove seleção
         document.querySelectorAll('.skill-node.selected').forEach(node => {
             node.classList.remove('selected');
@@ -126,7 +130,6 @@ export class SkillInlineSystem {
     // Esconde elementos da UI (NÃO esconde o título!)
     hideUIElements() {
         const elements = [
-            '.keyboard-hints',
             '.nav-arrow',
             '.navigation-dots',
             '.scroll-hint',
@@ -143,7 +146,6 @@ export class SkillInlineSystem {
     // Mostra elementos da UI
     showUIElements() {
         const elements = [
-            '.keyboard-hints',
             '.nav-arrow',
             '.navigation-dots',
             '.scroll-hint',
@@ -190,6 +192,34 @@ export class SkillInlineSystem {
         `;
         closeBtn.addEventListener('click', () => this.exitZoom());
         document.body.appendChild(closeBtn);
+        
+        // Adiciona dicas de teclado durante zoom
+        this.addZoomKeyboardHints();
+    }
+    
+    // Adiciona dicas de teclado durante zoom
+    addZoomKeyboardHints() {
+        const hints = document.createElement('div');
+        hints.className = 'zoom-keyboard-hints';
+        hints.innerHTML = `
+            <div class="zoom-hint">
+                <span class="zoom-key">W/S ↑↓</span>
+                <span>${t('tree.levelUpDown') || 'Level Up/Down'}</span>
+            </div>
+            <div class="zoom-hint">
+                <span class="zoom-key">Space</span>
+                <span>${t('tree.selectUpgrade') || 'Upgrade'}</span>
+            </div>
+            <div class="zoom-hint">
+                <span class="zoom-key">Tab</span>
+                <span>${t('tree.selectNext') || 'Next Skill'}</span>
+            </div>
+            <div class="zoom-hint">
+                <span class="zoom-key">ESC</span>
+                <span>${t('tree.close') || 'Close'}</span>
+            </div>
+        `;
+        document.body.appendChild(hints);
     }
     
     // Seleciona/Toggle skill - MODIFICADO
@@ -252,22 +282,17 @@ export class SkillInlineSystem {
         skillNode.appendChild(upgrader);
     }
     
-    // Cria info inline embaixo da skill
+    // Cria info inline embaixo da skill (SEM nome e contagem)
     createInfoInline(skillNode, skillData) {
         const info = document.createElement('div');
         info.className = 'skill-info-inline';
         
         // Traduz textos
-        const name = t(`skill.${skillData.id}`) || skillData.name;
         const desc = t(`skill.${skillData.id}.desc`) || skillData.description;
         const effect = t(`skill.${skillData.id}.effect`) || skillData.effect;
         
-        // Cria HTML da info
+        // Cria HTML da info (SEM info-name e info-level)
         info.innerHTML = `
-            <div class="info-name">${name}</div>
-            <div class="info-level">
-                ${skillData.currentLevel}/${skillData.maxLevel}
-            </div>
             <div class="info-desc">${desc}</div>
             <div class="info-effect">${effect}</div>
             ${this.renderRequirements(skillData)}
@@ -295,16 +320,23 @@ export class SkillInlineSystem {
         `;
     }
     
-    // Renderiza requisitos de nível
+    // Renderiza requisitos de nível (agora Level Bonus com cores)
     renderLevelReqs(skillData) {
         if (typeof skillData.levelRequirements[0] !== 'number') {
             return `<div class="info-active-skill">${t('skill.active') || 'Active Skill'}</div>`;
         }
         
+        // Renderiza cada número com cor baseada no nível atual
+        const bonusList = skillData.levelRequirements.map((levelReq, index) => {
+            const isActive = index < skillData.currentLevel;
+            const colorClass = isActive ? 'bonus-active' : 'bonus-inactive';
+            return `<span class="${colorClass}">${levelReq}</span>`;
+        }).join(' / ');
+        
         return `
             <div class="info-level-reqs">
-                <span class="level-label">${t('skill.levelReq') || 'Level Req'}:</span>
-                <span class="level-list">${skillData.levelRequirements.join(' / ')}</span>
+                <span class="level-label">${t('skill.levelBonus') || 'Level Bonus'}:</span>
+                <span class="level-list">${bonusList}</span>
             </div>
         `;
     }
@@ -395,7 +427,7 @@ export class SkillInlineSystem {
                 transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
-            /* Skill em zoom (apenas ela cresce) */
+            /* Skill em zoom (bolinha MENOR para caber descrição) */
             .skill-node.zoomed {
                 z-index: 110 !important;
                 transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -403,13 +435,13 @@ export class SkillInlineSystem {
             
             .skill-node.zoomed img {
                 filter: brightness(1.8) drop-shadow(0 0 40px rgba(255, 215, 0, 1)) !important;
-                transform: translate(-50%, -50%) scale(2.5);
+                transform: translate(-50%, -50%) scale(1.5); /* Reduzido de 2.5 para 1.5 */
                 transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             }
             
             .skill-node.zoomed .skill-glow::before {
                 animation: zoomedPulse 1s ease-in-out infinite !important;
-                transform: scale(4) !important;
+                transform: scale(2.5) !important; /* Reduzido de 4 para 2.5 */
             }
             
             @keyframes zoomedPulse {
@@ -505,7 +537,54 @@ export class SkillInlineSystem {
                 font-size: 1rem;
             }
             
-            /* Upgrader em cima */
+            /* Dicas de teclado durante zoom - COLUNA ESQUERDA */
+            .zoom-keyboard-hints {
+                position: fixed;
+                bottom: 2rem;
+                left: 2rem;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+                background: rgba(0, 0, 0, 0.9);
+                padding: 1rem;
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                border-radius: 4px;
+                z-index: 150;
+                animation: fadeInLeft 0.3s ease;
+            }
+            
+            .zoom-hint {
+                display: flex;
+                align-items: center;
+                gap: 0.6rem;
+                font-family: 'Press Start 2P', cursive;
+                font-size: 0.35rem;
+                color: rgba(255, 255, 255, 0.7);
+            }
+            
+            .zoom-key {
+                padding: 0.3rem 0.6rem;
+                background: rgba(255, 255, 255, 0.1);
+                border: 2px solid rgba(255, 255, 255, 0.3);
+                color: #fff;
+                font-size: 0.4rem;
+                border-radius: 2px;
+                min-width: 70px;
+                text-align: center;
+            }
+            
+            @keyframes fadeInLeft {
+                from {
+                    opacity: 0;
+                    transform: translateX(-20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+            }
+            
+            /* Upgrader em cima - REDUZIDO */
             .skill-upgrader {
                 position: absolute;
                 top: -60px;
@@ -515,20 +594,20 @@ export class SkillInlineSystem {
                 animation: fadeInUp 0.3s ease;
             }
             
-            /* Durante zoom, ajusta posição do upgrader */
+            /* Durante zoom, ajusta posição do upgrader - MENOR */
             .skill-node.zoomed .skill-upgrader {
-                top: -100px;
-                transform: translateX(-50%) scale(1.5);
+                top: -70px;
+                transform: translateX(-50%) scale(0.9); /* Reduzido de 1.5 para 0.9 */
             }
             
             .upgrade-button {
                 background: rgba(0, 255, 0, 0.2);
                 border: 2px solid rgba(0, 255, 0, 0.8);
-                padding: 0.5rem 0.7rem;
+                padding: 0.4rem 0.5rem; /* Reduzido padding */
                 cursor: pointer;
                 display: flex;
                 align-items: center;
-                gap: 0.4rem;
+                gap: 0.3rem; /* Reduzido gap */
                 transition: all 0.2s ease;
                 font-family: 'Press Start 2P', cursive;
             }
@@ -542,43 +621,43 @@ export class SkillInlineSystem {
             
             .upgrade-icon {
                 color: #0f0;
-                font-size: 1.2rem;
+                font-size: 1rem; /* Reduzido de 1.2rem */
                 font-weight: bold;
             }
             
             .upgrade-cost {
                 color: #fff;
-                font-size: 0.6rem;
+                font-size: 0.5rem; /* Reduzido de 0.6rem */
             }
             
             .upgrade-locked {
-                padding: 0.5rem;
+                padding: 0.4rem; /* Reduzido */
                 opacity: 0.5;
             }
             
             .lock-icon {
-                font-size: 1.2rem;
+                font-size: 1rem; /* Reduzido de 1.2rem */
             }
             
             .upgrade-max {
                 color: #ffd700;
-                font-size: 0.5rem;
-                padding: 0.4rem 0.6rem;
+                font-size: 0.45rem; /* Reduzido de 0.5rem */
+                padding: 0.3rem 0.5rem; /* Reduzido padding */
                 background: rgba(255, 215, 0, 0.1);
                 border: 1px solid rgba(255, 215, 0, 0.3);
                 font-family: 'Press Start 2P', cursive;
                 white-space: nowrap;
             }
             
-            /* Info inline embaixo */
+            /* Info inline embaixo - AINDA MAIS PRÓXIMA */
             .skill-info-inline {
                 position: absolute;
-                top: calc(100% + 60px);
+                top: calc(100% + 20px); /* Reduzido de 30px para 20px */
                 left: 50%;
                 transform: translateX(-50%);
                 background: rgba(0, 0, 0, 0.98);
                 border: 2px solid rgba(255, 215, 0, 0.6);
-                padding: 1.2rem;
+                padding: 1rem;
                 min-width: 320px;
                 max-width: 400px;
                 z-index: 125;
@@ -589,28 +668,20 @@ export class SkillInlineSystem {
                     0 0 20px rgba(255, 215, 0, 0.3);
             }
             
-            /* Durante zoom, ajusta posição e escala da info */
+            /* Durante zoom, bem próxima */
             .skill-node.zoomed .skill-info-inline {
-                top: calc(100% + 100px);
-                transform: translateX(-50%) scale(1.2);
+                top: calc(100% + 25px); /* Reduzido de 40px para 25px */
+                transform: translateX(-50%) scale(1);
             }
             
-            .info-name {
-                color: #ffd700;
-                font-size: 0.8rem;
-                margin-bottom: 0.5rem;
-                text-transform: uppercase;
-                text-align: center;
-                text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            /* Esconde o nome da skill durante zoom */
+            .skill-node.zoomed .skill-name {
+                opacity: 0;
+                visibility: hidden;
+                transition: opacity 0.3s ease, visibility 0.3s ease;
             }
             
-            .info-level {
-                color: #0f0;
-                font-size: 0.7rem;
-                text-align: center;
-                margin-bottom: 0.8rem;
-                text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-            }
+            /* Removidos: .info-name e .info-level (não são mais usados) */
             
             .info-desc {
                 color: rgba(255, 255, 255, 0.9);
@@ -636,6 +707,17 @@ export class SkillInlineSystem {
             .info-level-reqs {
                 color: rgba(255, 255, 255, 0.7);
                 font-size: 0.45rem;
+            }
+            
+            /* Bônus de nível - cores dinâmicas */
+            .bonus-active {
+                color: #0f0;
+                text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
+                font-weight: bold;
+            }
+            
+            .bonus-inactive {
+                color: rgba(255, 255, 255, 0.4);
             }
             
             .info-active-skill {
@@ -716,17 +798,32 @@ export class SkillInlineSystem {
                 .skill-info-inline {
                     min-width: 260px;
                     max-width: 320px;
-                    padding: 1rem;
+                    padding: 0.8rem;
                 }
                 
-                .info-name { font-size: 0.7rem; }
-                .info-level { font-size: 0.6rem; }
                 .info-desc, .info-effect { font-size: 0.45rem; }
                 .info-requires, .info-level-reqs { font-size: 0.4rem; }
                 
                 .zoom-close-btn {
                     padding: 0.6rem 0.8rem;
                     font-size: 0.5rem;
+                }
+                
+                .zoom-keyboard-hints {
+                    bottom: 1rem;
+                    left: 1rem;
+                    gap: 0.6rem;
+                    padding: 0.8rem;
+                }
+                
+                .zoom-hint {
+                    font-size: 0.3rem;
+                }
+                
+                .zoom-key {
+                    font-size: 0.35rem;
+                    padding: 0.2rem 0.4rem;
+                    min-width: 60px;
                 }
                 
                 .upgrade-button {
