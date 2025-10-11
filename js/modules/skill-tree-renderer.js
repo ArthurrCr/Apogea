@@ -320,7 +320,7 @@ style.textContent = `
     
     .skill-node.active .skill-icon-container {
         background: rgba(120, 120, 120, 0.5);
-        border-color: rgba(255, 215, 0, 0.5);
+        border-color: rgba(255, 255, 255, 0.6);
     }
     
     .skill-node.active .skill-icon-container img {
