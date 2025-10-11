@@ -140,7 +140,9 @@ const translations = {
         'tree.saveTree': 'Save Tree',
         'tree.loadTree': 'Load Tree',
         'tree.exportCode': 'Export Code',
-        'tree.importCode': 'Import Code'
+        'tree.importCode': 'Import Code',
+        'tree.selectNext': 'Select Next',
+        'tree.selectUpgrade': 'Select Upgrade'
     },
 
     'pt-br': {
@@ -281,7 +283,9 @@ const translations = {
         'tree.saveTree': 'Salvar Árvore',
         'tree.loadTree': 'Carregar Árvore',
         'tree.exportCode': 'Exportar Código',
-        'tree.importCode': 'Importar Código'
+        'tree.importCode': 'Importar Código',
+        'tree.selectNext': 'Selecionar Próximo',
+        'tree.selectUpgrade': 'Selecionar Upgrade'
 
     }
 };

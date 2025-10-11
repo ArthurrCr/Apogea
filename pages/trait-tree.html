@@ -19,19 +19,40 @@
     <link rel="stylesheet" href="../css/pages/trait-tree.css">
 </head>
 <body>
-    <!-- Language Selector -->
-    <div class="language-selector">
-        <button class="lang-btn" data-lang="en">EN</button>
-        <button class="lang-btn" data-lang="pt-br">PT</button>
-    </div>
-
     <!-- Stars Background -->
     <div class="stars-container" id="stars"></div>
 
-    <!-- Back Button -->
-    <a href="../pages/traits.html" class="back-btn">
-        <span data-i18n="tree.back">← BACK</span>
-    </a>
+    <!-- Header com Back, Level e Points - LAYOUT VERTICAL -->
+    <div class="tree-header">
+        <!-- Grupo Esquerdo: Back + Level + Points (VERTICAL) -->
+        <div class="tree-header-left">
+            <!-- Back Button -->
+            <a href="../pages/traits.html" class="back-btn">
+                <span data-i18n="tree.back">← BACK</span>
+            </a>
+
+            <!-- Level Input -->
+            <div class="level-container">
+                <label for="levelInput" data-i18n="stats.level">Level</label>:
+                <input type="number" id="levelInput" min="1" max="100" value="1" class="level-input" autocomplete="off">
+            </div>
+
+            <!-- Points Display -->
+            <div class="points-display">
+                <span class="points-label" data-i18n="tree.availablePoints">Available Points</span>: 
+                <span id="availablePoints">0</span>
+            </div>
+        </div>
+
+        <!-- Grupo Direito: Language Selector -->
+        <div class="tree-header-right">
+            <!-- Language Selector -->
+            <div class="language-selector">
+                <button class="lang-btn" data-lang="en">EN</button>
+                <button class="lang-btn" data-lang="pt-br">PT</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Container de todas as árvores -->
     <div class="trees-container" id="treesContainer">

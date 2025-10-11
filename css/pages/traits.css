@@ -1,0 +1,305 @@
+/* ======================
+   TRAITS PAGE STYLES
+   ====================== */
+
+/* Base overrides */
+body {
+    background: #000;
+    overflow: hidden;
+}
+
+/* Fade in animation from blackhole */
+.main-content {
+    opacity: 0;
+    animation: fadeInFromBlackhole 1.5s ease-out 0.5s forwards;
+    transform: scale(0.95);
+}
+
+@keyframes fadeInFromBlackhole {
+    0% {
+        opacity: 0;
+        transform: scale(0) rotate(-720deg);
+    }
+    50% {
+        opacity: 0.5;
+        transform: scale(1.05) rotate(-360deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(0.95) rotate(0deg);
+    }
+}
+
+/* Coming Soon Container */
+.coming-soon-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 95vh;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    padding: 1rem;
+}
+
+.coming-soon-title {
+    font-size: 1.8rem;
+    color: #fff;
+    margin-bottom: 1rem;
+    text-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.5),
+        2px 2px 0 #333;
+    animation: glowPulse 3s ease-in-out infinite;
+}
+
+.coming-soon-subtitle {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2.5rem;
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% {
+        text-shadow: 
+            0 0 20px rgba(255, 255, 255, 0.5),
+            2px 2px 0 #333;
+    }
+    50% {
+        text-shadow: 
+            0 0 40px rgba(255, 255, 255, 0.8),
+            2px 2px 0 #333;
+    }
+}
+
+/* Back Button - Traits specific */
+.back-btn-traits {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 11px 18px;
+    font-size: 0.65rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+    font-family: 'Press Start 2P', cursive;
+    position: relative;
+    overflow: hidden;
+}
+
+.back-btn-traits::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent, 
+        rgba(255, 255, 255, 0.2), 
+        transparent);
+    transition: left 0.5s ease;
+}
+
+.back-btn-traits:hover::before {
+    left: 100%;
+}
+
+.back-btn-traits:hover {
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 
+        0 0 20px rgba(255, 255, 255, 0.5),
+        inset 0 0 10px rgba(255, 255, 255, 0.1);
+    transform: scale(1.05);
+}
+
+/* Traits Grid */
+.traits-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 1.5rem;
+    width: 90%;
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+/* Trait Block */
+.trait-block {
+    background: transparent;
+    border: 2px solid transparent;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    aspect-ratio: 1 / 1;
+    min-height: 140px;
+    opacity: 0;
+    animation: fadeInScale 0.5s ease-out forwards;
+}
+
+/* Trait Image */
+.trait-block img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+    filter: none;
+    transition: all 0.3s ease;
+}
+
+/* Trait Name */
+.trait-name {
+    font-size: 0.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    margin-top: 0.5rem;
+    transition: all 0.3s ease;
+    letter-spacing: 1px;
+    text-shadow: 
+        2px 2px 0px #333,
+        3px 3px 0px #222;
+    transform: scale(1);
+}
+
+/* Hover Effects */
+.trait-block:hover {
+    background: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 
+        0 5px 15px rgba(255, 255, 255, 0.3),
+        inset 0 0 20px rgba(255, 255, 255, 0.05);
+}
+
+.trait-block:hover img {
+    transform: scale(1.1);
+    filter: 
+        drop-shadow(0 0 12px rgba(255, 255, 255, 0.6))
+        brightness(1.3);
+}
+
+.trait-block:hover .trait-name {
+    color: #fff;
+    transform: scale(1.1) translateY(-2px);
+    animation: glitch 0.2s infinite;
+}
+
+/* Active State */
+.trait-block.active {
+    background: rgba(255, 215, 0, 0.05);
+    border-color: rgba(255, 215, 0, 0.6);
+}
+
+.trait-block.active img {
+    filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
+}
+
+/* Cascade animation delays */
+.trait-block:nth-child(1) { animation-delay: 0.1s; }
+.trait-block:nth-child(2) { animation-delay: 0.15s; }
+.trait-block:nth-child(3) { animation-delay: 0.2s; }
+.trait-block:nth-child(4) { animation-delay: 0.25s; }
+.trait-block:nth-child(5) { animation-delay: 0.3s; }
+.trait-block:nth-child(6) { animation-delay: 0.35s; }
+.trait-block:nth-child(7) { animation-delay: 0.4s; }
+.trait-block:nth-child(8) { animation-delay: 0.45s; }
+.trait-block:nth-child(9) { animation-delay: 0.5s; }
+.trait-block:nth-child(10) { animation-delay: 0.55s; }
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Fallback for missing images */
+.trait-block img[src*="undefined"],
+.trait-block img:not([src]),
+.trait-block img[src=""] {
+    display: none;
+}
+
+/* Responsive - Tablet */
+@media (max-width: 768px) {
+    .traits-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 1rem;
+        width: 95%;
+    }
+    
+    .trait-block {
+        min-height: 100px;
+        padding: 0.7rem;
+    }
+    
+    .trait-block img {
+        width: 56px;
+        height: 56px;
+    }
+    
+    .trait-name {
+        font-size: 0.4rem;
+    }
+    
+    .coming-soon-title {
+        font-size: 1.4rem;
+    }
+    
+    .coming-soon-subtitle {
+        font-size: 0.65rem;
+    }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 480px) {
+    .traits-grid {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: auto;
+        gap: 0.8rem;
+    }
+    
+    .trait-block {
+        min-height: 90px;
+        padding: 0.5rem;
+    }
+    
+    .trait-block img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .trait-name {
+        font-size: 0.35rem;
+    }
+    
+    .coming-soon-title {
+        font-size: 1.1rem;
+    }
+    
+    .coming-soon-subtitle {
+        font-size: 0.55rem;
+    }
+    
+    .back-btn-traits {
+        padding: 9px 14px;
+        font-size: 0.55rem;
+    }
+}

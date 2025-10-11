@@ -4,11 +4,10 @@
 
 import { createStars } from './modules/stars.js';
 import { initTranslations, t } from './translations.js';
-// Removido: import blackholeTransition - não usado nesta página
 import { traitTrees, traitOrder, traitIndexMap } from './data/trait-trees-config.js';
 import { SkillTreeRenderer } from './modules/skill-tree-renderer.js';
 import { TreeNavigation } from './modules/tree-navigation.js';
-import { skillInlineSystem } from './modules/skill-inline-system.js';  // Novo sistema inline
+import { skillInlineSystem } from './modules/skill-inline-system.js';
 
 class TraitTreeController {
     constructor() {
@@ -17,9 +16,98 @@ class TraitTreeController {
         this.renderers = {};
         this.navigation = null;
         this.initialized = false;
+        this.currentLevel = 1;
+        this.totalPoints = 0;
+        this.maxLevelForPoints = 80; // Nível máximo para ganhar pontos
         
         // Expõe o sistema inline globalmente para o renderer acessar
         window.skillInlineSystem = skillInlineSystem;
+    }
+    
+    // Calcula pontos baseado no nível (1 ponto a cada 2 níveis)
+    // Limitado ao nível 80 (máximo 40 pontos)
+    calculatePointsFromLevel(level) {
+        const cappedLevel = Math.min(level, this.maxLevelForPoints);
+        return Math.floor(cappedLevel / 2);
+    }
+    
+    // Atualiza display de pontos
+    updatePointsDisplay() {
+        this.totalPoints = this.calculatePointsFromLevel(this.currentLevel);
+        skillInlineSystem.setTotalPoints(this.totalPoints);
+        
+        const pointsElement = document.getElementById('availablePoints');
+        if (pointsElement) {
+            const usedPoints = skillInlineSystem.usedPoints;
+            const availablePoints = this.totalPoints - usedPoints;
+            pointsElement.textContent = availablePoints;
+            
+            // Visual feedback baseado no estado dos pontos
+            if (availablePoints < 0) {
+                // Pontos negativos - ERRO (vermelho)
+                pointsElement.style.color = '#ff0000';
+                pointsElement.style.textShadow = '0 0 10px rgba(255, 0, 0, 0.8)';
+                pointsElement.title = 'Insufficient points! Reduce level or reset skills.';
+            } else if (this.currentLevel > this.maxLevelForPoints) {
+                // Cap atingido (laranja)
+                pointsElement.style.color = '#ffa500';
+                pointsElement.style.textShadow = '0 0 10px rgba(255, 165, 0, 0.5)';
+                pointsElement.title = `Maximum points reached at level ${this.maxLevelForPoints}`;
+            } else {
+                // Normal (verde)
+                pointsElement.style.color = '#0f0';
+                pointsElement.style.textShadow = '0 0 10px rgba(0, 255, 0, 0.5)';
+                pointsElement.title = '';
+            }
+        }
+    }
+    
+    // Inicializa input de level
+    initLevelInput() {
+        const levelInput = document.getElementById('levelInput');
+        if (levelInput) {
+            levelInput.addEventListener('input', () => {
+                const newLevel = Math.max(1, Math.min(100, parseInt(levelInput.value) || 1));
+                if (newLevel !== this.currentLevel) {
+                    const oldLevel = this.currentLevel;
+                    const newTotalPoints = this.calculatePointsFromLevel(newLevel);
+                    const usedPoints = skillInlineSystem.usedPoints;
+                    
+                    // Verifica se a mudança resultaria em pontos negativos
+                    if (newTotalPoints < usedPoints) {
+                        const deficit = usedPoints - newTotalPoints;
+                        const confirmReset = confirm(
+                            `Changing to level ${newLevel} would result in ${deficit} insufficient points.\n\n` +
+                            `Current: ${usedPoints} points used\n` +
+                            `New total: ${newTotalPoints} points\n\n` +
+                            `Do you want to reset all skills?`
+                        );
+                        
+                        if (confirmReset) {
+                            // Reseta todas as árvores
+                            this.resetAllTrees();
+                            this.currentLevel = newLevel;
+                            levelInput.value = newLevel;
+                            this.updatePointsDisplay();
+                        } else {
+                            // Cancela a mudança, volta ao level anterior
+                            levelInput.value = oldLevel;
+                            return;
+                        }
+                    } else {
+                        // Mudança permitida
+                        this.currentLevel = newLevel;
+                        levelInput.value = newLevel;
+                        this.updatePointsDisplay();
+                        
+                        // Mostra aviso se passou do cap
+                        if (newLevel > this.maxLevelForPoints) {
+                            console.log(`Level ${newLevel}: Points capped at level ${this.maxLevelForPoints} (${this.totalPoints} points)`);
+                        }
+                    }
+                }
+            });
+        }
     }
     
     // Inicializa o sistema
@@ -29,6 +117,10 @@ class TraitTreeController {
         // Componentes básicos
         createStars();
         initTranslations();
+        
+        // Inicializa level input
+        this.initLevelInput();
+        this.updatePointsDisplay();
         
         // Cria containers das árvores
         this.createTreeContainers();
@@ -84,7 +176,6 @@ class TraitTreeController {
             if (container && tree.skills && Object.keys(tree.skills).length > 0) {
                 // Cria renderer para esta árvore
                 const renderer = new SkillTreeRenderer(container, tree);
-                // Não precisa mais de callback - usa sistema inline diretamente
                 renderer.render();
                 
                 this.renderers[traitKey] = renderer;
@@ -204,6 +295,11 @@ class TraitTreeController {
                 pointsLabel.textContent = t('tree.availablePoints');
             }
         });
+        
+        // Listener para quando pontos forem usados
+        window.addEventListener('pointsChanged', () => {
+            this.updatePointsDisplay();
+        });
     }
     
     // Verifica parâmetros da URL
@@ -239,9 +335,35 @@ class TraitTreeController {
                     if (upgrader) upgrader.remove();
                 });
                 
+                this.updatePointsDisplay();
                 console.log(`Árvore ${this.currentTree} resetada`);
             }
         }
+    }
+    
+    // Reseta todas as árvores
+    resetAllTrees() {
+        Object.keys(this.renderers).forEach(treeKey => {
+            const renderer = this.renderers[treeKey];
+            if (renderer) {
+                renderer.reset();
+            }
+        });
+        
+        // Reseta pontos no sistema inline
+        skillInlineSystem.resetPoints();
+        
+        // Remove seleções visuais
+        document.querySelectorAll('.skill-node.selected').forEach(node => {
+            node.classList.remove('selected');
+            const info = node.querySelector('.skill-info-inline');
+            if (info) info.remove();
+            const upgrader = node.querySelector('.skill-upgrader');
+            if (upgrader) upgrader.remove();
+        });
+        
+        this.updatePointsDisplay();
+        console.log('Todas as árvores resetadas');
     }
     
     // Métodos de utilidade
@@ -328,31 +450,7 @@ style.textContent = `
         50% { opacity: 0.7; }
     }
     
-    /* Dica de atalhos */
-    .keyboard-hints {
-        position: fixed;
-        bottom: 8rem;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 2rem;
-        font-size: 0.35rem;
-        color: rgba(255, 255, 255, 0.3);
-        font-family: 'Press Start 2P', cursive;
-    }
-    
-    .keyboard-hint {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-    
-    .key-badge {
-        padding: 0.2rem 0.4rem;
-        background: rgba(255, 255, 255, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        border-radius: 2px;
-    }
+    /* Dica de atalhos - agora no trait-tree.css */
 `;
 document.head.appendChild(style);
 

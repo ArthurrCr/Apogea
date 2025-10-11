@@ -8,29 +8,164 @@ body {
     overflow: hidden;
 }
 
-/* Botão de voltar estilizado */
-.back-btn {
+/* ======================
+   HEADER COM LEVEL E POINTS - LAYOUT VERTICAL
+   ====================== */
+
+.tree-header {
     position: fixed;
     top: 20px;
     left: 20px;
+    right: 20px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    z-index: 100;
+}
+
+/* Grupo da esquerda: Back + Level + Points (VERTICAL) */
+.tree-header-left {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+/* Grupo da direita: Language (no topo) */
+.tree-header-right {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+/* Estilos base para Back Button, Level e Points */
+.tree-header .back-btn,
+.tree-header .level-container,
+.tree-header .points-display {
     background: rgba(0, 0, 0, 0.8);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: #fff;
     padding: 10px 16px;
     font-size: 0.6rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    display: inline-block;
     font-family: 'Press Start 2P', cursive;
-    z-index: 100;
+    display: inline-flex;
+    align-items: center;
+    height: 44px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    margin: 0;
+    /* OVERRIDE do back-button.css */
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
 }
 
-.back-btn:hover {
+/* Back Button - TAMANHO COMPACTO */
+.tree-header .back-btn {
+    text-decoration: none;
+    cursor: pointer;
+    justify-content: center;
+    width: auto !important;
+    min-width: 120px !important;
+    max-width: fit-content !important;
+    overflow: hidden;
+}
+
+/* Level e Points - LARGURA TOTAL */
+.tree-header .level-container,
+.tree-header .points-display {
+    width: 100% !important;
+}
+
+/* Garante que o shimmer effect funcione dentro do flexbox */
+.tree-header .back-btn::before {
+    position: absolute;
+}
+
+.tree-header .back-btn:hover {
     border-color: #fff;
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     transform: scale(1.05);
 }
+
+/* Level Container */
+.tree-header .level-container {
+    gap: 0.6rem;
+    justify-content: space-between;
+}
+
+.level-input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 0.4rem 0.3rem;
+    font-size: 0.6rem;
+    font-family: 'Press Start 2P', cursive;
+    text-align: center;
+    width: 70px;
+    height: 28px;
+    transition: all 0.3s ease;
+}
+
+.level-input:focus {
+    outline: none;
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.level-input:hover {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Points Display */
+.tree-header .points-display {
+    gap: 0.6rem;
+    justify-content: space-between;
+}
+
+.points-label {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#availablePoints {
+    color: #0f0;
+    font-size: 0.8rem;
+    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+}
+
+/* Language Selector - Tamanho original */
+.language-selector {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    display: flex;
+    gap: 0.3rem;
+}
+
+.language-selector .lang-btn {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 6px 10px;
+    font-size: 0.5rem;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    height: auto;
+    min-width: auto;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.language-selector .lang-btn:hover,
+.language-selector .lang-btn.active {
+    border-color: #fff;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+/* ======================
+   FIM DO HEADER
+   ====================== */
 
 /* Container principal horizontal */
 .trees-container {
@@ -487,7 +622,7 @@ body {
     pointer-events: none;
 }
 
-/* Scroll hint */
+/* Scroll hint - ACIMA das keyboard hints */
 .scroll-hint {
     position: fixed;
     bottom: 5rem;
@@ -503,6 +638,33 @@ body {
 @keyframes hintPulse {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
+}
+
+/* Keyboard hints - ABAIXO do scroll hint */
+.keyboard-hints {
+    position: fixed;
+    bottom: 3rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 2rem;
+    font-size: 0.35rem;
+    color: rgba(255, 255, 255, 0.3);
+    font-family: 'Press Start 2P', cursive;
+    z-index: 90;
+}
+
+.keyboard-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.key-badge {
+    padding: 0.2rem 0.4rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 2px;
 }
 
 /* ======================
@@ -564,12 +726,58 @@ body {
     
     .tree-title {
         font-size: 0.9rem;
-        top: 4rem;
+        top: 5rem;
+    }
+    
+    .tree-header {
+        gap: 0.6rem;
+        top: 15px;
+        left: 15px;
+        right: 15px;
+    }
+    
+    .tree-header-left {
+        gap: 0.4rem;
+    }
+    
+    .tree-header-right {
+        gap: 0.4rem;
+    }
+    
+    .back-btn,
+    .level-container,
+    .points-display {
+        padding: 8px 12px;
+        font-size: 0.5rem;
+        height: 38px;
     }
     
     .back-btn {
-        padding: 8px 12px;
+        min-width: 100px;
+        width: auto;
+    }
+    
+    .level-container,
+    .points-display {
+        width: 100%;
+    }
+    
+    .level-input {
+        width: 60px;
+        height: 24px;
         font-size: 0.5rem;
+        padding: 0.3rem 0.2rem;
+    }
+    
+    #availablePoints {
+        font-size: 0.7rem;
+    }
+    
+    .language-selector .lang-btn {
+        padding: 5px 8px;
+        font-size: 0.45rem;
+        height: auto;
+        min-width: auto;
     }
     
     .nav-arrow {
@@ -599,6 +807,11 @@ body {
     .keyboard-hints {
         display: none;
     }
+    
+    .scroll-hint {
+        bottom: 5rem;
+        font-size: 0.35rem;
+    }
 }
 
 @media (max-width: 480px) {
@@ -608,7 +821,61 @@ body {
     
     .tree-title {
         font-size: 0.7rem;
-        top: 1rem;
+        top: 10rem;
+    }
+    
+    .tree-header {
+        gap: 0.4rem;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+    }
+    
+    .tree-header-left {
+        gap: 0.3rem;
+    }
+    
+    .tree-header-right {
+        gap: 0.3rem;
+    }
+    
+    .back-btn,
+    .level-container,
+    .points-display {
+        padding: 8px 12px;
+        font-size: 0.45rem;
+        height: 36px;
+    }
+    
+    .back-btn {
+        min-width: 90px;
+        width: auto;
+    }
+    
+    .level-container,
+    .points-display {
+        width: 100%;
+    }
+    
+    .level-input {
+        width: 55px;
+        height: 22px;
+        font-size: 0.45rem;
+    }
+    
+    #availablePoints {
+        font-size: 0.6rem;
+    }
+    
+    .language-selector {
+        flex: 0;
+    }
+    
+    .language-selector .lang-btn {
+        padding: 5px 8px;
+        font-size: 0.4rem;
+        height: auto;
+        min-width: auto;
     }
     
     .skill-node {
@@ -632,6 +899,6 @@ body {
     
     .scroll-hint {
         font-size: 0.35rem;
-        bottom: 4rem;
+        bottom: 5rem;
     }
 }

@@ -13,351 +13,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!-- CSS -->
+    <!-- CSS Modular -->
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../css/components/blackhole.css">
-    
-    <style>
-        /* Estilos específicos da página Traits */
-        body {
-            background: #000;
-            overflow: hidden;
-        }
-        
-        .main-content {
-            opacity: 0;
-            animation: fadeInFromBlackhole 1.5s ease-out 0.5s forwards;
-            transform: scale(0.95); /* Ajustado de 0.9 para 0.95 - reduz apenas 5% */
-        }
-        
-        @keyframes fadeInFromBlackhole {
-            0% {
-                opacity: 0;
-                transform: scale(0) rotate(-720deg);
-            }
-            50% {
-                opacity: 0.5;
-                transform: scale(1.05) rotate(-360deg);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(0.95) rotate(0deg); /* Mantém scale 0.95 */
-            }
-        }
-        
-        .coming-soon-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 95vh; /* Ajustado de 90vh para 95vh */
-            text-align: center;
-            position: relative;
-            z-index: 2;
-            padding: 1rem;
-        }
-        
-        .coming-soon-title {
-            font-size: 1.8rem; /* Ajustado de 1.5rem para 1.8rem */
-            color: #fff;
-            margin-bottom: 1rem;
-            text-shadow: 
-                0 0 20px rgba(255, 255, 255, 0.5),
-                2px 2px 0 #333;
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-        
-        .coming-soon-subtitle {
-            font-size: 0.75rem; /* Ajustado de 0.7rem para 0.75rem */
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 2.5rem; /* Ajustado de 2rem para 2.5rem */
-            animation: blink 2s ease-in-out infinite;
-        }
-        
-        @keyframes glowPulse {
-            0%, 100% {
-                text-shadow: 
-                    0 0 20px rgba(255, 255, 255, 0.5),
-                    2px 2px 0 #333;
-            }
-            50% {
-                text-shadow: 
-                    0 0 40px rgba(255, 255, 255, 0.8),
-                    2px 2px 0 #333;
-            }
-        }
-        
-        /* Botão voltar especial - tamanho intermediário */
-        .back-btn-traits {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid rgba(255, 255, 255, 0.3); /* Borda branca */
-            color: #fff;
-            padding: 11px 18px; /* Ajustado para valor intermediário */
-            font-size: 0.65rem; /* Ajustado de 0.6rem para 0.65rem */
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-            font-family: 'Press Start 2P', cursive;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .back-btn-traits::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent, 
-                rgba(255, 255, 255, 0.2), /* Branco */
-                transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .back-btn-traits:hover::before {
-            left: 100%;
-        }
-        
-        .back-btn-traits:hover {
-            border-color: rgba(255, 255, 255, 0.8); /* Borda branca */
-            box-shadow: 
-                0 0 20px rgba(255, 255, 255, 0.5),
-                inset 0 0 10px rgba(255, 255, 255, 0.1);
-            transform: scale(1.05);
-        }
-        
-        /* Grade de Traits - 10 blocos */
-        .traits-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            grid-template-rows: repeat(2, 1fr);
-            gap: 1.5rem;
-            width: 90%;
-            max-width: 900px;
-            margin: 2rem auto;
-            padding: 1rem;
-        }
-        
-        /* Bloco individual de trait - SEM BORDA */
-        .trait-block {
-            background: transparent; /* Sem fundo */
-            border: 2px solid transparent; /* Borda invisível */
-            padding: 1rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            aspect-ratio: 1 / 1;
-            min-height: 140px; /* Aumentado para dar mais espaço */
-        }
-        
-        /* Imagem do trait - MAIOR e SEM EFEITOS */
-        .trait-block img {
-            width: 72px; /* Aumentado de 48px */
-            height: 72px; /* Aumentado de 48px */
-            object-fit: contain;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
-            filter: none; /* Sem glow padrão */
-            transition: all 0.3s ease;
-        }
-        
-        /* Nome do trait */
-        .trait-name {
-            font-size: 0.5rem; /* Levemente maior */
-            color: rgba(255, 255, 255, 0.7);
-            text-transform: uppercase;
-            font-family: 'Press Start 2P', cursive;
-            text-align: center;
-            margin-top: 0.5rem;
-            transition: all 0.3s ease;
-            letter-spacing: 1px;
-            text-shadow: 
-                2px 2px 0px #333,
-                3px 3px 0px #222;
-            transform: scale(1); /* Estado inicial */
-        }
-        
-        /* Hover effect - QUADRADO APARECE APENAS NO HOVER */
-        .trait-block:hover {
-            background: rgba(0, 0, 0, 0.9); /* Fundo aparece */
-            border-color: rgba(255, 255, 255, 0.5); /* Borda branca */
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 
-                0 5px 15px rgba(255, 255, 255, 0.3),
-                inset 0 0 20px rgba(255, 255, 255, 0.05);
-        }
-        
-        .trait-block:hover img {
-            transform: scale(1.1);
-            filter: 
-                drop-shadow(0 0 12px rgba(255, 255, 255, 0.6)) /* Glow branco */
-                brightness(1.3);
-        }
-        
-        /* Nome também faz zoom junto com a imagem */
-        .trait-block:hover .trait-name {
-            color: #fff;
-            transform: scale(1.1) translateY(-2px); /* Mesmo scale da imagem */
-            animation: glitch 0.2s infinite;
-        }
-        
-        /* Animação glitch dos nomes */
-        @keyframes glitch {
-            0%, 100% {
-                text-shadow: 
-                    2px 2px 0px #333,
-                    3px 3px 0px #222,
-                    3px 3px 0px rgba(255, 0, 255, 0.5);
-            }
-            25% {
-                text-shadow: 
-                    2px 2px 0px #333,
-                    3px 3px 0px #222,
-                    -1px 0px 0px rgba(0, 255, 255, 0.8);
-            }
-            50% {
-                text-shadow: 
-                    2px 2px 0px #333,
-                    3px 3px 0px #222,
-                    1px 0px 0px rgba(255, 255, 0, 0.8);
-            }
-            75% {
-                text-shadow: 
-                    2px 2px 0px #333,
-                    3px 3px 0px #222,
-                    0px -1px 0px rgba(255, 0, 0, 0.8);
-            }
-        }
-        
-        /* Active/Selected state */
-        .trait-block.active {
-            background: rgba(255, 215, 0, 0.05);
-            border-color: rgba(255, 215, 0, 0.6);
-        }
-        
-        .trait-block.active img {
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.7));
-        }
-        
-        /* Animação de entrada */
-        .trait-block {
-            opacity: 0;
-            animation: fadeInScale 0.5s ease-out forwards;
-        }
-        
-        /* Delays para entrada em cascata */
-        .trait-block:nth-child(1) { animation-delay: 0.1s; }
-        .trait-block:nth-child(2) { animation-delay: 0.15s; }
-        .trait-block:nth-child(3) { animation-delay: 0.2s; }
-        .trait-block:nth-child(4) { animation-delay: 0.25s; }
-        .trait-block:nth-child(5) { animation-delay: 0.3s; }
-        .trait-block:nth-child(6) { animation-delay: 0.35s; }
-        .trait-block:nth-child(7) { animation-delay: 0.4s; }
-        .trait-block:nth-child(8) { animation-delay: 0.45s; }
-        .trait-block:nth-child(9) { animation-delay: 0.5s; }
-        .trait-block:nth-child(10) { animation-delay: 0.55s; }
-        
-        @keyframes fadeInScale {
-            from {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        
-        /* Responsive - Tablet */
-        @media (max-width: 768px) {
-            .traits-grid {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 1rem;
-                width: 95%;
-            }
-            
-            .trait-block {
-                min-height: 100px;
-                padding: 0.7rem;
-            }
-            
-            .trait-block img {
-                width: 56px;
-                height: 56px;
-            }
-            
-            .trait-name {
-                font-size: 0.4rem;
-            }
-        }
-        
-        /* Responsive - Mobile */
-        @media (max-width: 480px) {
-            .traits-grid {
-                grid-template-columns: repeat(3, 1fr);
-                grid-template-rows: auto;
-                gap: 0.8rem;
-            }
-            
-            .trait-block {
-                min-height: 90px;
-                padding: 0.5rem;
-            }
-            
-            .trait-block img {
-                width: 48px;
-                height: 48px;
-            }
-            
-            .trait-name {
-                font-size: 0.35rem;
-            }
-        }
-        
-        /* Fallback para quando não tem imagem */
-        .trait-block img[src*="undefined"],
-        .trait-block img:not([src]),
-        .trait-block img[src=""] {
-            display: none;
-        }
-        
-        .trait-block img[src*="undefined"] + .trait-name::before,
-        .trait-block img:not([src]) + .trait-name::before,
-        .trait-block img[src=""] + .trait-name::before {
-            content: "⬢";
-            display: block;
-            font-size: 3rem;
-            color: rgba(255, 255, 255, 0.3); /* Branco */
-            margin-bottom: 0.5rem;
-        }
-        
-        @keyframes shimmer {
-            0% {
-                transform: translateX(-100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../css/pages/traits.css">
 </head>
 <body>
-    <!-- Language Selector -->
+    <!-- Language Selector (shared component) -->
     <div class="language-selector">
         <button class="lang-btn" data-lang="en">EN</button>
         <button class="lang-btn" data-lang="pt-br">PT</button>
     </div>
 
-    <!-- Stars Background -->
+    <!-- Stars Background (shared component) -->
     <div class="stars-container" id="stars"></div>
 
     <!-- Main Content -->
@@ -366,9 +34,9 @@
             <h1 class="coming-soon-title" data-i18n="traits.title">TRAITS SYSTEM</h1>
             <p class="coming-soon-subtitle" data-i18n="traits.comingSoon">Coming Soon...</p>
             
-            <!-- Grade de Traits -->
+            <!-- Traits Grid -->
             <div class="traits-grid">
-                <!-- Linha Superior -->
+                <!-- Row 1 -->
                 <div class="trait-block" data-trait="axe">
                     <img src="../assets/images/traits/axe.png" alt="Axe">
                     <span class="trait-name" data-i18n="trait.axe">Axe</span>
@@ -390,7 +58,7 @@
                     <span class="trait-name" data-i18n="trait.shield">Shield</span>
                 </div>
                 
-                <!-- Linha Inferior -->
+                <!-- Row 2 -->
                 <div class="trait-block" data-trait="glove">
                     <img src="../assets/images/traits/glove.png" alt="Glove">
                     <span class="trait-name" data-i18n="trait.glove">Glove</span>
@@ -419,49 +87,7 @@
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script type="module">
-        import { createStars } from '../js/modules/stars.js';
-        import { initTranslations, setLanguage } from '../js/translations.js';
-        import { blackholeTransition } from '../js/modules/blackhole-transition.js';
-        
-        // Inicializa
-        document.addEventListener('DOMContentLoaded', function() {
-            createStars();
-            initTranslations();
-            
-            // Adiciona navegação para árvore de traits
-            document.querySelectorAll('.trait-block').forEach(block => {
-                block.addEventListener('click', function() {
-                    const trait = this.dataset.trait;
-                    // Navega para a página de árvore com o trait específico
-                    window.location.href = `trait-tree.html?trait=${trait}`;
-                });
-            });
-            
-            // Adiciona transição ao botão de voltar
-            const backButton = document.getElementById('backButton');
-            if (backButton) {
-                backButton.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetUrl = this.href;
-                    
-                    // Usa a mesma transição de buraco negro
-                    blackholeTransition.execute(targetUrl);
-                });
-            }
-            
-            // Adiciona classe de retorno da URL se vier do stats
-            const urlParams = new URLSearchParams(window.location.search);
-            const fromStats = urlParams.get('from');
-            if (fromStats === 'stats') {
-                // Adiciona parâmetro de classe se existir
-                const classParam = urlParams.get('class');
-                if (classParam && backButton) {
-                    backButton.href += '?class=' + classParam;
-                }
-            }
-        });
-    </script>
+    <!-- Main Script (modular) -->
+    <script type="module" src="../js/pages/traits.js"></script>
 </body>
 </html>
