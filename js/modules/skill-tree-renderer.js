@@ -1,5 +1,5 @@
 // ======================
-// SKILL TREE RENDERER MODULE
+// SKILL TREE RENDERER MODULE - OTIMIZADO
 // ======================
 
 import { t } from '../translations.js';
@@ -10,11 +10,23 @@ export class SkillTreeRenderer {
         this.treeData = treeData;
         this.selectedSkills = new Set();
         this.skillPoints = 0;
+        
+        // CACHE para otimização
+        this.connectionLinesCache = new Map(); // Cacheia linhas SVG
+        this.nodeCache = new Map(); // Cacheia nodes DOM
+        
+        // Batch updates para conexões
+        this.pendingConnectionUpdates = new Set();
+        this.connectionUpdateRAF = null;
     }
     
     // Renderiza a árvore completa
     render() {
         this.container.innerHTML = '';
+        
+        // Limpa caches
+        this.connectionLinesCache.clear();
+        this.nodeCache.clear();
         
         // Cria o SVG para as conexões
         const svg = this.createConnectionsSVG();
@@ -28,6 +40,9 @@ export class SkillTreeRenderer {
         Object.values(this.treeData.skills).forEach(skill => {
             const skillNode = this.createSkillNode(skill);
             skillsContainer.appendChild(skillNode);
+            
+            // Cacheia node
+            this.nodeCache.set(skill.id, skillNode);
         });
         
         this.container.appendChild(skillsContainer);
@@ -36,28 +51,29 @@ export class SkillTreeRenderer {
         this.updateAllConnections();
     }
     
-    // Cria SVG com as linhas de conexão - CORRIGIDO
+    // Cria SVG com as linhas de conexão - OTIMIZADO COM CACHE
     createConnectionsSVG() {
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.classList.add('constellation-lines');
         
-        // ViewBox em porcentagem (0 0 100 100) para trabalhar diretamente com as posições
         svg.setAttribute('viewBox', '0 0 100 100');
-        
-        // Preserva aspect ratio para que as linhas escalem corretamente
         svg.setAttribute('preserveAspectRatio', 'none');
         
         this.treeData.connections.forEach(connection => {
             const line = this.createConnectionLine(connection);
             if (line) {
                 svg.appendChild(line);
+                
+                // CACHEIA a linha para acesso rápido
+                const cacheKey = `${connection.from}-${connection.to}`;
+                this.connectionLinesCache.set(cacheKey, line);
             }
         });
         
         return svg;
     }
     
-    // Cria uma linha de conexão - CORRIGIDO
+    // Cria uma linha de conexão
     createConnectionLine(connection) {
         const fromSkill = this.treeData.skills[connection.from];
         const toSkill = this.treeData.skills[connection.to];
@@ -67,10 +83,8 @@ export class SkillTreeRenderer {
         const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         line.classList.add('skill-line', connection.type);
         
-        // Adiciona atributo data para identificar a conexão
         line.setAttribute('data-connection', `${connection.from}-${connection.to}`);
         
-        // Usa as posições diretamente como porcentagem (viewBox é 0 0 100 100)
         line.setAttribute('x1', fromSkill.position.x);
         line.setAttribute('y1', fromSkill.position.y);
         line.setAttribute('x2', toSkill.position.x);
@@ -79,37 +93,68 @@ export class SkillTreeRenderer {
         return line;
     }
     
-    // Atualiza estado de uma conexão específica
+    // Atualiza estado de uma conexão específica - OTIMIZADO COM CACHE
     updateConnection(fromSkillId, toSkillId) {
         const fromSkill = this.treeData.skills[fromSkillId];
         const toSkill = this.treeData.skills[toSkillId];
         
         if (!fromSkill || !toSkill) return;
         
-        // Encontra a linha no SVG
-        const line = this.container.querySelector(
-            `line[data-connection="${fromSkillId}-${toSkillId}"]`
-        );
+        // USA CACHE em vez de querySelector (muito mais rápido!)
+        const cacheKey = `${fromSkillId}-${toSkillId}`;
+        const line = this.connectionLinesCache.get(cacheKey);
         
         if (!line) return;
         
         // Ativa linha se AMBAS as skills têm nível > 0
-        if (fromSkill.currentLevel > 0 && toSkill.currentLevel > 0) {
-            line.classList.add('active');
-        } else {
-            line.classList.remove('active');
+        const shouldBeActive = fromSkill.currentLevel > 0 && toSkill.currentLevel > 0;
+        const isActive = line.classList.contains('active');
+        
+        // Só atualiza se mudou (evita reflow desnecessário)
+        if (shouldBeActive !== isActive) {
+            if (shouldBeActive) {
+                line.classList.add('active');
+            } else {
+                line.classList.remove('active');
+            }
         }
     }
     
-    // Atualiza TODAS as conexões de uma skill específica
+    // Atualiza TODAS as conexões de uma skill específica - OTIMIZADO COM BATCH
     updateSkillConnections(skillId) {
-        // Verifica todas as conexões da árvore
-        this.treeData.connections.forEach(connection => {
-            // Se a skill é origem ou destino desta conexão, atualiza
-            if (connection.from === skillId || connection.to === skillId) {
-                this.updateConnection(connection.from, connection.to);
-            }
+        // Adiciona à fila de updates em vez de atualizar imediatamente
+        this.pendingConnectionUpdates.add(skillId);
+        
+        // Agenda batch update
+        this.scheduleConnectionUpdate();
+    }
+    
+    // Agenda processamento em batch das conexões
+    scheduleConnectionUpdate() {
+        if (this.connectionUpdateRAF) return; // Já agendado
+        
+        this.connectionUpdateRAF = requestAnimationFrame(() => {
+            this.processPendingConnectionUpdates();
+            this.connectionUpdateRAF = null;
         });
+    }
+    
+    // Processa todas as atualizações de conexões pendentes
+    processPendingConnectionUpdates() {
+        if (this.pendingConnectionUpdates.size === 0) return;
+        
+        // Para cada skill com updates pendentes
+        this.pendingConnectionUpdates.forEach(skillId => {
+            // Encontra todas as conexões relacionadas a esta skill
+            this.treeData.connections.forEach(connection => {
+                if (connection.from === skillId || connection.to === skillId) {
+                    this.updateConnection(connection.from, connection.to);
+                }
+            });
+        });
+        
+        // Limpa fila
+        this.pendingConnectionUpdates.clear();
     }
     
     // Atualiza TODAS as conexões da árvore
@@ -125,16 +170,13 @@ export class SkillTreeRenderer {
         node.className = `skill-node ${skill.type}`;
         node.dataset.skill = skill.id;
         
-        // Define a posição
         node.style.left = `${skill.position.x}%`;
         node.style.top = `${skill.position.y}%`;
         
-        // Adiciona classes baseadas no estado
         if (skill.currentLevel > 0) {
             node.classList.add('active');
         }
         
-        // Verifica requisitos
         if (skill.requires.length > 0) {
             node.dataset.requires = skill.requires.join(',');
         }
@@ -163,7 +205,7 @@ export class SkillTreeRenderer {
         nameElement.textContent = translatedName;
         node.appendChild(nameElement);
         
-        // Adiciona indicadores de nível (TODAS as skills, incluindo maxLevel 1)
+        // Adiciona indicadores de nível
         const levels = this.createLevelIndicators(skill);
         node.appendChild(levels);
         
@@ -192,17 +234,14 @@ export class SkillTreeRenderer {
     
     // Trata erro de imagem
     handleImageError(img, skillName, imgContainer) {
-        // Tenta carregar imagem padrão
-        img.onerror = null; // Remove handler para evitar loop
+        img.onerror = null;
         img.src = '../assets/images/skills/default.png';
         
-        // Se a imagem padrão também falhar, cria placeholder visual
         img.onerror = () => {
             img.style.display = 'none';
             const placeholder = document.createElement('div');
             placeholder.className = 'skill-placeholder';
             
-            // Adiciona ícone SVG genérico em vez de letra
             placeholder.innerHTML = `
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="10"/>
@@ -214,11 +253,20 @@ export class SkillTreeRenderer {
         };
     }
     
-    // Callback de clique na skill - SISTEMA INLINE
+    // Callback de clique na skill
     onSkillClick(skill) {
-        // Usa o sistema inline em vez de callback
         if (window.skillInlineSystem) {
-            const node = document.querySelector(`[data-skill="${skill.id}"]`);
+            // USA CACHE em vez de querySelector
+            let node = this.nodeCache.get(skill.id);
+            
+            // Fallback se cache falhou
+            if (!node) {
+                node = document.querySelector(`[data-skill="${skill.id}"]`);
+                if (node) {
+                    this.nodeCache.set(skill.id, node);
+                }
+            }
+            
             if (node) {
                 window.skillInlineSystem.toggleSkill(node, skill, this);
             }
@@ -230,34 +278,54 @@ export class SkillTreeRenderer {
         this.skillClickCallback = callback;
     }
     
-    // Atualiza o nível de uma skill
+    // Atualiza o nível de uma skill - OTIMIZADO COM CACHE
     updateSkillLevel(skillId, newLevel) {
         const skill = this.treeData.skills[skillId];
         if (!skill) return;
         
         skill.currentLevel = Math.min(newLevel, skill.maxLevel);
-        const node = this.container.querySelector(`[data-skill="${skillId}"]`);
+        
+        // USA CACHE em vez de querySelector
+        let node = this.nodeCache.get(skillId);
+        
+        // Fallback se cache falhou
+        if (!node) {
+            node = this.container.querySelector(`[data-skill="${skillId}"]`);
+            if (node) {
+                this.nodeCache.set(skillId, node);
+            }
+        }
         
         if (node) {
-            // Atualiza classe ativa
-            if (skill.currentLevel > 0) {
-                node.classList.add('active');
-            } else {
-                node.classList.remove('active');
+            // Atualiza classe ativa (só se mudou)
+            const shouldBeActive = skill.currentLevel > 0;
+            const isActive = node.classList.contains('active');
+            
+            if (shouldBeActive !== isActive) {
+                if (shouldBeActive) {
+                    node.classList.add('active');
+                } else {
+                    node.classList.remove('active');
+                }
             }
             
-            // Atualiza pips
+            // Atualiza pips (só os que mudaram)
             const pips = node.querySelectorAll('.level-pip');
             pips.forEach((pip, index) => {
-                if (index < skill.currentLevel) {
-                    pip.classList.add('active');
-                } else {
-                    pip.classList.remove('active');
+                const shouldBeActive = index < skill.currentLevel;
+                const isActive = pip.classList.contains('active');
+                
+                if (shouldBeActive !== isActive) {
+                    if (shouldBeActive) {
+                        pip.classList.add('active');
+                    } else {
+                        pip.classList.remove('active');
+                    }
                 }
             });
         }
         
-        // ATUALIZA AS LINHAS conectadas a esta skill
+        // BATCH UPDATE das conexões (em vez de imediato)
         this.updateSkillConnections(skillId);
     }
     
@@ -283,6 +351,20 @@ export class SkillTreeRenderer {
         // Atualiza todas as conexões após reset
         this.updateAllConnections();
     }
+    
+    // Limpa recursos (útil para destroy)
+    dispose() {
+        // Cancela RAF pendente
+        if (this.connectionUpdateRAF) {
+            cancelAnimationFrame(this.connectionUpdateRAF);
+            this.connectionUpdateRAF = null;
+        }
+        
+        // Limpa caches
+        this.connectionLinesCache.clear();
+        this.nodeCache.clear();
+        this.pendingConnectionUpdates.clear();
+    }
 }
 
 // CSS adicional para o placeholder
@@ -305,6 +387,7 @@ style.textContent = `
         box-sizing: border-box;
         z-index: 2;
         transition: all 0.3s ease;
+        will-change: transform, filter;
     }
     
     .skill-icon-container img {

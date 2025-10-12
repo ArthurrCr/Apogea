@@ -1,5 +1,5 @@
 // ======================
-// SKILL INLINE SYSTEM - Sem Modal
+// SKILL INLINE SYSTEM - OTIMIZADO
 // ======================
 
 import { t } from '../translations.js';
@@ -9,82 +9,172 @@ export class SkillInlineSystem {
         this.selectedSkill = null;
         this.selectedNode = null;
         this.selectedRenderer = null;
-        this.skillPoints = 30; // Pontos disponíveis para teste
+        this.skillPoints = 30;
         this.usedPoints = 0;
+        
+        // Cache de elementos
+        this.cachedElements = {
+            pointsDisplay: null,
+            treeTitle: null,
+            closeButton: null,
+            keyboardHints: null
+        };
+        
+        // Controle de transições
+        this.isTransitioning = false;
+        this.pendingTimeouts = [];
+        this.rafIds = [];
+        
+        // Debounce para refresh
+        this.refreshDebounceTimer = null;
+        
+        // RAF para atualização do upgrader
+        this.upgraderUpdateRAF = null;
+        
+        // Throttle para upgrades (evita spam)
+        this.lastUpgradeTime = 0;
+        this.upgradeThrottle = 60; // ms entre upgrades (reduzido de 80ms para 60ms)
+        
+        // Batch updates
+        this.pendingUpdates = new Set();
+        this.batchUpdateRAF = null;
+        
         this.init();
     }
     
     init() {
-        // NÃO cria display de pontos - agora está no header do trait-tree
         this.setupStyles();
         this.setupEventListeners();
+        this.cacheElements();
     }
     
-    // Configura listeners globais
+    // Cacheia elementos frequentemente acessados
+    cacheElements() {
+        this.cachedElements.pointsDisplay = document.getElementById('availablePoints');
+        this.cachedElements.treeTitle = document.querySelector('.tree-title');
+    }
+    
+    // Limpa todos os timeouts/rafs pendentes
+    clearPending() {
+        this.pendingTimeouts.forEach(id => clearTimeout(id));
+        this.rafIds.forEach(id => cancelAnimationFrame(id));
+        this.pendingTimeouts = [];
+        this.rafIds = [];
+        
+        // Cancela refresh debounce
+        if (this.refreshDebounceTimer) {
+            clearTimeout(this.refreshDebounceTimer);
+            this.refreshDebounceTimer = null;
+        }
+        
+        // Cancela atualização de upgrader
+        if (this.upgraderUpdateRAF) {
+            cancelAnimationFrame(this.upgraderUpdateRAF);
+            this.upgraderUpdateRAF = null;
+        }
+        
+        // Cancela batch update
+        if (this.batchUpdateRAF) {
+            cancelAnimationFrame(this.batchUpdateRAF);
+            this.batchUpdateRAF = null;
+        }
+        
+        // Limpa fila de updates pendentes
+        this.pendingUpdates.clear();
+    }
+    
+    // Adiciona timeout rastreável
+    addTimeout(callback, delay) {
+        const id = setTimeout(() => {
+            callback();
+            this.pendingTimeouts = this.pendingTimeouts.filter(t => t !== id);
+        }, delay);
+        this.pendingTimeouts.push(id);
+        return id;
+    }
+    
+    // Adiciona RAF rastreável
+    addRAF(callback) {
+        const id = requestAnimationFrame(() => {
+            callback();
+            this.rafIds = this.rafIds.filter(r => r !== id);
+        });
+        this.rafIds.push(id);
+        return id;
+    }
+    
     setupEventListeners() {
-        // Escuta mudanças de pontos para atualizar upgrader em tempo real
+        // Debounced refresh - AUMENTADO PARA 150ms
         window.addEventListener('pointsChanged', () => {
-            this.refreshUpgraderIfNeeded();
+            if (this.refreshDebounceTimer) {
+                clearTimeout(this.refreshDebounceTimer);
+            }
+            this.refreshDebounceTimer = setTimeout(() => {
+                this.refreshUpgraderIfNeeded();
+            }, 150); // Aumentado de 100ms para 150ms
         });
     }
     
-    // Atualiza o upgrader se houver skill selecionada
     refreshUpgraderIfNeeded() {
-        if (this.selectedSkill && this.selectedNode && this.selectedRenderer) {
-            // Verifica o estado atual do upgrader
-            const canUpgrade = this.canUpgrade(this.selectedSkill, this.selectedRenderer);
-            const canDowngrade = this.selectedSkill.currentLevel > 0;
-            const isMaxLevel = this.selectedSkill.currentLevel >= this.selectedSkill.maxLevel;
+        if (!this.selectedSkill || !this.selectedNode || !this.selectedRenderer) return;
+        
+        // Verifica se o node ainda existe no DOM
+        if (!document.body.contains(this.selectedNode)) {
+            this.selectedSkill = null;
+            this.selectedNode = null;
+            this.selectedRenderer = null;
+            return;
+        }
+        
+        const canUpgrade = this.canUpgrade(this.selectedSkill, this.selectedRenderer);
+        const canDowngrade = this.selectedSkill.currentLevel > 0;
+        const isMaxLevel = this.selectedSkill.currentLevel >= this.selectedSkill.maxLevel;
+        
+        let newState = 'locked';
+        if (isMaxLevel) newState = 'max';
+        else if (canUpgrade) newState = 'available';
+        
+        const newStateWithDowngrade = `${newState}-${canDowngrade}`;
+        
+        const oldUpgrader = this.selectedNode.querySelector('.skill-upgrader');
+        let currentState = 'none';
+        let currentHasDowngrade = false;
+        
+        if (oldUpgrader) {
+            currentHasDowngrade = !!oldUpgrader.querySelector('.downgrade-button');
             
-            // Determina qual tipo de upgrader deveria existir
-            let newState = 'locked';
-            if (isMaxLevel) {
-                newState = 'max';
-            } else if (canUpgrade) {
-                newState = 'available';
+            if (oldUpgrader.querySelector('.upgrade-max')) currentState = 'max';
+            else if (oldUpgrader.querySelector('.upgrade-button')) currentState = 'available';
+            else if (oldUpgrader.querySelector('.upgrade-locked')) currentState = 'locked';
+        }
+        
+        const currentStateWithDowngrade = `${currentState}-${currentHasDowngrade}`;
+        
+        // SÓ recria se o estado mudou E se passou tempo suficiente desde a última recriação
+        if (currentStateWithDowngrade !== newStateWithDowngrade) {
+            // Usa requestAnimationFrame para evitar thrashing do DOM
+            if (this.upgraderUpdateRAF) {
+                cancelAnimationFrame(this.upgraderUpdateRAF);
             }
             
-            // Adiciona info de downgrade ao estado
-            const newStateWithDowngrade = `${newState}-${canDowngrade}`;
-            
-            // Verifica o estado atual do upgrader existente
-            const oldUpgrader = this.selectedNode.querySelector('.skill-upgrader');
-            let currentState = 'none';
-            let currentHasDowngrade = false;
-            
-            if (oldUpgrader) {
-                currentHasDowngrade = !!oldUpgrader.querySelector('.downgrade-button');
-                
-                if (oldUpgrader.querySelector('.upgrade-max')) {
-                    currentState = 'max';
-                } else if (oldUpgrader.querySelector('.upgrade-button')) {
-                    currentState = 'available';
-                } else if (oldUpgrader.querySelector('.upgrade-locked')) {
-                    currentState = 'locked';
-                }
-            }
-            
-            const currentStateWithDowngrade = `${currentState}-${currentHasDowngrade}`;
-            
-            // SÓ recria se o estado mudou!
-            if (currentStateWithDowngrade !== newStateWithDowngrade) {
-                if (oldUpgrader) {
-                    oldUpgrader.remove();
-                }
+            this.upgraderUpdateRAF = requestAnimationFrame(() => {
+                if (oldUpgrader) oldUpgrader.remove();
                 this.createUpgrader(this.selectedNode, this.selectedSkill, this.selectedRenderer);
-            }
+                this.upgraderUpdateRAF = null;
+            });
         }
     }
     
-    // Atualiza display de pontos (agora no header)
     updatePointsDisplay() {
-        const display = document.querySelector('#availablePoints');
-        if (display) {
-            display.textContent = this.skillPoints - this.usedPoints;
+        if (!this.cachedElements.pointsDisplay) {
+            this.cachedElements.pointsDisplay = document.getElementById('availablePoints');
+        }
+        
+        if (this.cachedElements.pointsDisplay) {
+            this.cachedElements.pointsDisplay.textContent = this.skillPoints - this.usedPoints;
         }
     }
     
-    // Seleciona skill e mostra info
     selectSkill(skillNode, skillData, renderer) {
         this.selectedSkill = skillData;
         this.selectedNode = skillNode;
@@ -92,121 +182,106 @@ export class SkillInlineSystem {
         
         skillNode.classList.add('selected');
         
-        // Faz zoom REAL centralizando a skill
         this.zoomToSkill(skillNode, skillData);
-        
-        // Cria upgrader em cima
         this.createUpgrader(skillNode, skillData, renderer);
-        
-        // Cria info embaixo
         this.createInfoInline(skillNode, skillData);
     }
     
-    // Sistema de zoom centralizado - CORRIGIDO COM OFFSET
+    // Zoom OTIMIZADO - sem duplo RAF
     zoomToSkill(skillNode, skillData) {
+        if (this.isTransitioning) return;
+        
         const treeContent = skillNode.closest('.tree-content');
         if (!treeContent) return;
         
-        // Adiciona classes de zoom
+        this.isTransitioning = true;
+        
         document.body.classList.add('skill-zoomed');
         skillNode.classList.add('zoomed');
         
-        // Esconde elementos da UI
         this.hideUIElements();
-        
-        // Muda o título para o nome da skill
         this.updateTitle(skillData);
         
-        // Remove qualquer transform existente primeiro para obter posição real
-        const currentTransform = treeContent.style.transform;
-        treeContent.style.transform = '';
+        // Pega posição imediatamente
+        const rect = skillNode.getBoundingClientRect();
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        const skillCenterX = rect.left + rect.width / 2;
+        const skillCenterY = rect.top + rect.height / 2;
+        const moveX = centerX - skillCenterX;
+        const moveY = centerY - skillCenterY;
         
-        // Aguarda um frame para o browser recalcular
-        requestAnimationFrame(() => {
-            // Pega a posição real da skill
-            const rect = skillNode.getBoundingClientRect();
-            const treeRect = treeContent.getBoundingClientRect();
-            
-            // Centro da tela
-            const centerX = window.innerWidth / 2;
-            const centerY = window.innerHeight / 2;
-            
-            // Centro da skill
-            const skillCenterX = rect.left + rect.width / 2;
-            const skillCenterY = rect.top + rect.height / 2;
-            
-            // Calcula quanto precisa mover
-            const moveX = centerX - skillCenterX;
-            const moveY = centerY - skillCenterY;
-            
-            // Aplica movimento suave
-            treeContent.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        // Aplica transformação diretamente com RAF único
+        treeContent.style.transition = 'none';
+        treeContent.style.transform = 'translate(-50%, -50%)';
+        
+        this.addRAF(() => {
+            treeContent.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'; // Reduzido de 0.5s
             treeContent.style.transform = `translate(calc(-50% + ${moveX}px), calc(-50% + ${moveY}px))`;
         });
         
-        // Adiciona botão de fechar zoom
         this.addCloseZoomButton();
+        
+        // Libera flag após animação
+        this.addTimeout(() => {
+            this.isTransitioning = false;
+        }, 300); // Reduzido de 500ms
     }
     
-    // Sai do zoom
+    // Exit zoom OTIMIZADO
     exitZoom() {
-        const treeContent = document.querySelector('.tree-content');
-        if (treeContent) {
-            treeContent.style.transform = 'translate(-50%, -50%)';
-            treeContent.style.transition = 'transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-        }
-        
-        document.body.classList.remove('skill-zoomed');
-        
-        // Remove classe zoomed de todas as skills
-        document.querySelectorAll('.skill-node.zoomed').forEach(node => {
-            node.classList.remove('zoomed');
+        return new Promise((resolve) => {
+            if (this.isTransitioning) {
+                resolve();
+                return;
+            }
+            
+            this.isTransitioning = true;
+            this.clearPending();
+            
+            const treeContent = document.querySelector('.tree-content');
+            if (treeContent) {
+                treeContent.style.transform = 'translate(-50%, -50%)';
+                treeContent.style.transition = 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'; // Reduzido
+            }
+            
+            document.body.classList.remove('skill-zoomed');
+            document.querySelectorAll('.skill-node.zoomed').forEach(node => {
+                node.classList.remove('zoomed');
+            });
+            
+            this.showUIElements();
+            this.restoreTitle();
+            
+            // Remove elementos em lote
+            const toRemove = document.querySelectorAll('.zoom-close-btn, .zoom-keyboard-hints');
+            toRemove.forEach(el => el.remove());
+            
+            // Remove seleções em lote
+            const selected = document.querySelectorAll('.skill-node.selected');
+            selected.forEach(node => {
+                node.classList.remove('selected');
+                // Remove filhos de uma vez
+                const children = node.querySelectorAll('.skill-info-inline, .skill-upgrader');
+                children.forEach(child => child.remove());
+            });
+            
+            this.selectedSkill = null;
+            this.selectedNode = null;
+            this.selectedRenderer = null;
+            
+            this.addTimeout(() => {
+                this.isTransitioning = false;
+                resolve();
+            }, 300); // Reduzido de 500ms
         });
-        
-        // Mostra elementos da UI novamente
-        this.showUIElements();
-        
-        // Restaura título original
-        this.restoreTitle();
-        
-        // Remove botão de fechar
-        const closeBtn = document.querySelector('.zoom-close-btn');
-        if (closeBtn) closeBtn.remove();
-        
-        // Remove dicas de teclado
-        const hints = document.querySelector('.zoom-keyboard-hints');
-        if (hints) hints.remove();
-        
-        // Remove seleção
-        document.querySelectorAll('.skill-node.selected').forEach(node => {
-            node.classList.remove('selected');
-            const info = node.querySelector('.skill-info-inline');
-            if (info) info.remove();
-            const upgrader = node.querySelector('.skill-upgrader');
-            if (upgrader) upgrader.remove();
-        });
-        
-        // Limpa referências
-        this.selectedSkill = null;
-        this.selectedNode = null;
-        this.selectedRenderer = null;
     }
     
-    // Esconde elementos da UI (MANTÉM Level e Points visíveis!)
     hideUIElements() {
-        const elements = [
-            '.nav-arrow',
-            '.navigation-dots',
-            '.scroll-hint',
-            '.keyboard-hints'
-        ];
+        const selectors = '.nav-arrow, .navigation-dots, .scroll-hint, .keyboard-hints';
+        const elements = document.querySelectorAll(selectors);
+        elements.forEach(el => el.style.display = 'none');
         
-        elements.forEach(selector => {
-            const el = document.querySelector(selector);
-            if (el) el.style.display = 'none';
-        });
-        
-        // Esconde apenas Back Button e Language dentro do header
         const backBtn = document.querySelector('.tree-header .back-btn');
         const langSelector = document.querySelector('.tree-header .language-selector');
         
@@ -214,21 +289,11 @@ export class SkillInlineSystem {
         if (langSelector) langSelector.style.display = 'none';
     }
     
-    // Mostra elementos da UI
     showUIElements() {
-        const elements = [
-            '.nav-arrow',
-            '.navigation-dots',
-            '.scroll-hint',
-            '.keyboard-hints'
-        ];
+        const selectors = '.nav-arrow, .navigation-dots, .scroll-hint, .keyboard-hints';
+        const elements = document.querySelectorAll(selectors);
+        elements.forEach(el => el.style.display = '');
         
-        elements.forEach(selector => {
-            const el = document.querySelector(selector);
-            if (el) el.style.display = '';
-        });
-        
-        // Mostra Back Button e Language novamente
         const backBtn = document.querySelector('.tree-header .back-btn');
         const langSelector = document.querySelector('.tree-header .language-selector');
         
@@ -236,28 +301,37 @@ export class SkillInlineSystem {
         if (langSelector) langSelector.style.display = 'flex';
     }
     
-    // Atualiza título para nome da skill
     updateTitle(skillData) {
-        const titleElement = document.querySelector('.tree-title');
-        if (titleElement) {
-            this.originalTitle = titleElement.textContent;
+        if (!this.cachedElements.treeTitle) {
+            this.cachedElements.treeTitle = document.querySelector('.tree-title');
+        }
+        
+        if (this.cachedElements.treeTitle) {
+            this.originalTitle = this.cachedElements.treeTitle.textContent;
             const skillName = t(`skill.${skillData.id}`) || skillData.name;
-            titleElement.textContent = skillName;
-            titleElement.classList.add('skill-title');
+            this.cachedElements.treeTitle.textContent = skillName;
+            this.cachedElements.treeTitle.classList.add('skill-title');
         }
     }
     
-    // Restaura título original
     restoreTitle() {
-        const titleElement = document.querySelector('.tree-title');
-        if (titleElement && this.originalTitle) {
-            titleElement.textContent = this.originalTitle;
-            titleElement.classList.remove('skill-title');
+        if (this.cachedElements.treeTitle && this.originalTitle) {
+            this.cachedElements.treeTitle.textContent = this.originalTitle;
+            this.cachedElements.treeTitle.classList.remove('skill-title');
         }
     }
     
-    // Adiciona botão de fechar zoom
     addCloseZoomButton() {
+        // Reusar se já existe
+        if (this.cachedElements.closeButton) {
+            document.body.appendChild(this.cachedElements.closeButton);
+            this.addZoomKeyboardHints();
+            return;
+        }
+        
+        const existingBtn = document.querySelector('.zoom-close-btn');
+        if (existingBtn) existingBtn.remove();
+        
         const closeBtn = document.createElement('button');
         closeBtn.className = 'zoom-close-btn';
         closeBtn.innerHTML = `
@@ -265,14 +339,22 @@ export class SkillInlineSystem {
             <span class="close-text">${t('tree.close') || 'Close'}</span>
         `;
         closeBtn.addEventListener('click', () => this.exitZoom());
+        
+        this.cachedElements.closeButton = closeBtn;
         document.body.appendChild(closeBtn);
         
-        // Adiciona dicas de teclado durante zoom
         this.addZoomKeyboardHints();
     }
     
-    // Adiciona dicas de teclado durante zoom
     addZoomKeyboardHints() {
+        // Reusar se já existe
+        if (this.cachedElements.keyboardHints) {
+            document.body.appendChild(this.cachedElements.keyboardHints);
+            return;
+        }
+        
+        document.querySelectorAll('.zoom-keyboard-hints').forEach(hints => hints.remove());
+        
         const hints = document.createElement('div');
         hints.className = 'zoom-keyboard-hints';
         hints.innerHTML = `
@@ -297,32 +379,26 @@ export class SkillInlineSystem {
                 <span>${t('tree.close') || 'Close'}</span>
             </div>
         `;
+        
+        this.cachedElements.keyboardHints = hints;
         document.body.appendChild(hints);
     }
     
-    // Seleciona/Toggle skill - MODIFICADO
-    toggleSkill(skillNode, skillData, renderer) {
-        // Se está em modo zoom e clica em outra skill, sai do zoom primeiro
+    async toggleSkill(skillNode, skillData, renderer) {
         if (document.body.classList.contains('skill-zoomed')) {
             const isSelected = skillNode.classList.contains('selected');
             
             if (isSelected) {
-                // Se clica na mesma skill, tenta dar upgrade
                 this.tryUpgrade(skillData, renderer);
             } else {
-                // Se clica em outra skill, sai do zoom e seleciona a nova
-                this.exitZoom();
-                setTimeout(() => {
-                    this.selectSkill(skillNode, skillData, renderer);
-                }, 300);
+                await this.exitZoom();
+                this.selectSkill(skillNode, skillData, renderer);
             }
         } else {
-            // Primeira seleção - faz zoom
             this.selectSkill(skillNode, skillData, renderer);
         }
     }
     
-    // Cria controle de upgrade em cima da skill
     createUpgrader(skillNode, skillData, renderer) {
         const upgrader = document.createElement('div');
         upgrader.className = 'skill-upgrader';
@@ -332,9 +408,7 @@ export class SkillInlineSystem {
         const isMaxLevel = skillData.currentLevel >= skillData.maxLevel;
         
         if (isMaxLevel) {
-            upgrader.innerHTML = `
-                <div class="upgrade-max">${t('skill.maxLevel') || 'MAX'}</div>
-            `;
+            upgrader.innerHTML = `<div class="upgrade-max">${t('skill.maxLevel') || 'MAX'}</div>`;
         } else if (canUpgrade) {
             upgrader.innerHTML = `
                 <div class="upgrade-button" data-action="upgrade">
@@ -343,22 +417,15 @@ export class SkillInlineSystem {
                 </div>
             `;
             
-            // Adiciona evento de clique
             const btn = upgrader.querySelector('.upgrade-button');
             btn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.tryUpgrade(skillData, renderer);
             });
         } else {
-            // Mostra requisitos não atendidos
-            upgrader.innerHTML = `
-                <div class="upgrade-locked">
-                    <span class="lock-icon">🔒</span>
-                </div>
-            `;
+            upgrader.innerHTML = `<div class="upgrade-locked"><span class="lock-icon">🔒</span></div>`;
         }
         
-        // Adiciona botão de downgrade se a skill tem pontos
         if (canDowngrade) {
             const downgradeBtn = document.createElement('div');
             downgradeBtn.className = 'downgrade-button';
@@ -376,16 +443,13 @@ export class SkillInlineSystem {
         skillNode.appendChild(upgrader);
     }
     
-    // Cria info inline embaixo da skill (SEM nome e contagem)
     createInfoInline(skillNode, skillData) {
         const info = document.createElement('div');
         info.className = 'skill-info-inline first-render';
         
-        // Traduz textos
         const desc = t(`skill.${skillData.id}.desc`) || skillData.description;
         const effect = t(`skill.${skillData.id}.effect`) || skillData.effect;
         
-        // Cria HTML da info (SEM info-name e info-level)
         info.innerHTML = `
             <div class="info-desc">${desc}</div>
             <div class="info-effect">${effect}</div>
@@ -395,29 +459,24 @@ export class SkillInlineSystem {
         
         skillNode.appendChild(info);
         
-        // Remove a classe first-render após a animação
-        setTimeout(() => {
+        this.addTimeout(() => {
             info.classList.remove('first-render');
         }, 300);
     }
     
-    // Atualiza conteúdo da info SEM recriar o elemento (evita piscar)
     updateInfoContent(infoElement, skillData) {
-        // Atualiza APENAS a seção de Level Bonus (a única que muda)
         const levelReqsElement = infoElement.querySelector('.info-level-reqs');
         if (levelReqsElement) {
-            levelReqsElement.innerHTML = `
-                <span class="level-label">${t('skill.levelBonus') || 'Level Bonus'}:</span>
-                <span class="level-list">${this.renderLevelBonusList(skillData)}</span>
-            `;
+            const levelList = levelReqsElement.querySelector('.level-list');
+            if (levelList) {
+                // Atualiza apenas o conteúdo, não recria o elemento
+                levelList.innerHTML = this.renderLevelBonusList(skillData);
+            }
         }
     }
     
-    // Renderiza apenas a lista de bônus (sem o container)
     renderLevelBonusList(skillData) {
-        if (typeof skillData.levelRequirements[0] !== 'number') {
-            return '';
-        }
+        if (typeof skillData.levelRequirements[0] !== 'number') return '';
         
         return skillData.levelRequirements.map((levelReq, index) => {
             const isActive = index < skillData.currentLevel;
@@ -426,7 +485,6 @@ export class SkillInlineSystem {
         }).join(' / ');
     }
     
-    // Renderiza requisitos
     renderRequirements(skillData) {
         if (!skillData.requires || skillData.requires.length === 0) return '';
         
@@ -444,7 +502,6 @@ export class SkillInlineSystem {
         `;
     }
     
-    // Renderiza requisitos de nível (agora Level Bonus com cores)
     renderLevelReqs(skillData) {
         if (typeof skillData.levelRequirements[0] !== 'number') {
             return `<div class="info-active-skill">${t('skill.active') || 'Active Skill'}</div>`;
@@ -458,62 +515,50 @@ export class SkillInlineSystem {
         `;
     }
     
-    // Tenta dar upgrade na skill
     tryUpgrade(skillData, renderer) {
+        // THROTTLE - bloqueia upgrades muito rápidos
+        const now = Date.now();
+        if (now - this.lastUpgradeTime < this.upgradeThrottle) {
+            console.log('Upgrade throttled - muito rápido');
+            return false;
+        }
+        
         if (!this.canUpgrade(skillData, renderer)) {
-            // Verifica se o problema são os requisitos
             const hasPoints = this.skillPoints - this.usedPoints > 0;
             const meetsRequirements = renderer.checkRequirements(skillData);
             
             if (hasPoints && !meetsRequirements) {
-                // Requisitos não atendidos - pisca os requisitos faltando
                 this.flashMissingRequirements(skillData, renderer);
             } else {
-                // Outros problemas (sem pontos, max level) - shake normal
                 const node = document.querySelector(`[data-skill="${skillData.id}"]`);
                 if (node) {
                     node.classList.add('shake');
-                    setTimeout(() => node.classList.remove('shake'), 500);
+                    this.addTimeout(() => node.classList.remove('shake'), 500);
                 }
             }
             return false;
         }
         
-        // Faz o upgrade
         if (this.skillPoints - this.usedPoints > 0) {
+            // Marca timestamp
+            this.lastUpgradeTime = now;
+            
             skillData.currentLevel++;
             this.usedPoints++;
             
-            // Atualiza visual
-            renderer.updateSkillLevel(skillData.id, skillData.currentLevel);
+            // Batch: adiciona à fila de atualizações
+            this.pendingUpdates.add({
+                type: 'upgrade',
+                skillId: skillData.id,
+                skillData: skillData,
+                renderer: renderer
+            });
             
-            // Atualiza display de pontos
+            // Atualiza pontos imediatamente (visual importante)
             this.updatePointsDisplay();
             
-            // Dispara evento para o controller atualizar também
-            window.dispatchEvent(new CustomEvent('pointsChanged'));
-            
-            // Atualiza info APENAS se estiver no zoom
-            const node = document.querySelector(`[data-skill="${skillData.id}"]`);
-            if (node) {
-                // Atualiza apenas o upgrader (remove e recria)
-                const oldUpgrader = node.querySelector('.skill-upgrader');
-                if (oldUpgrader) oldUpgrader.remove();
-                this.createUpgrader(node, skillData, renderer);
-                
-                // Atualiza conteúdo da info SEM recriar (sem piscar!)
-                const infoElement = node.querySelector('.skill-info-inline');
-                if (infoElement) {
-                    this.updateInfoContent(infoElement, skillData);
-                }
-                
-                // Efeito visual de upgrade (só na bolinha)
-                const skillImg = node.querySelector('.skill-icon-container');
-                if (skillImg) {
-                    skillImg.classList.add('upgrade-flash');
-                    setTimeout(() => skillImg.classList.remove('upgrade-flash'), 600);
-                }
-            }
+            // Agenda batch update
+            this.scheduleBatchUpdate();
             
             return true;
         }
@@ -521,7 +566,6 @@ export class SkillInlineSystem {
         return false;
     }
     
-    // Pisca os requisitos que estão faltando
     flashMissingRequirements(skillData, renderer) {
         const node = document.querySelector(`[data-skill="${skillData.id}"]`);
         if (!node) return;
@@ -532,104 +576,71 @@ export class SkillInlineSystem {
         const requiresElement = infoElement.querySelector('.info-requires');
         if (!requiresElement) return;
         
-        // Identifica quais requisitos não estão atendidos
-        const missingRequirements = [];
-        
-        if (skillData.requires && skillData.requires.length > 0) {
-            skillData.requires.forEach(req => {
-                const [skillId, level] = req.split(':');
-                const requiredSkill = renderer.treeData.skills[skillId];
-                const requiredLevel = parseInt(level) || 1;
-                
-                if (!requiredSkill || requiredSkill.currentLevel < requiredLevel) {
-                    missingRequirements.push(skillId);
-                }
-            });
-        }
-        
-        // Aplica animação de piscar
         requiresElement.classList.add('flash-missing');
-        setTimeout(() => {
+        this.addTimeout(() => {
             requiresElement.classList.remove('flash-missing');
         }, 1500);
         
-        // Também faz shake no node principal
         node.classList.add('shake');
-        setTimeout(() => node.classList.remove('shake'), 500);
+        this.addTimeout(() => node.classList.remove('shake'), 500);
     }
     
-    // Tenta remover ponto da skill (downgrade)
     tryDowngrade(skillData, renderer) {
-        if (skillData.currentLevel <= 0) {
+        // THROTTLE - bloqueia downgrades muito rápidos
+        const now = Date.now();
+        if (now - this.lastUpgradeTime < this.upgradeThrottle) {
+            console.log('Downgrade throttled - muito rápido');
             return false;
         }
         
-        // Verifica se outras skills dependem deste nível
+        if (skillData.currentLevel <= 0) return false;
+        
         const wouldBreakDependencies = this.checkDependencies(skillData, renderer);
         if (wouldBreakDependencies) {
-            // Feedback visual de bloqueado
             const node = document.querySelector(`[data-skill="${skillData.id}"]`);
             if (node) {
                 node.classList.add('shake');
-                setTimeout(() => node.classList.remove('shake'), 500);
+                this.addTimeout(() => node.classList.remove('shake'), 500);
             }
             alert('Cannot downgrade: other skills require this level!');
             return false;
         }
         
-        // Remove o ponto
+        // Marca timestamp
+        this.lastUpgradeTime = now;
+        
         skillData.currentLevel--;
         this.usedPoints--;
         
-        // Atualiza visual
-        renderer.updateSkillLevel(skillData.id, skillData.currentLevel);
+        // Batch: adiciona à fila de atualizações
+        this.pendingUpdates.add({
+            type: 'downgrade',
+            skillId: skillData.id,
+            skillData: skillData,
+            renderer: renderer
+        });
         
-        // Atualiza display de pontos
+        // Atualiza pontos imediatamente (visual importante)
         this.updatePointsDisplay();
         
-        // Dispara evento para o controller atualizar também
-        window.dispatchEvent(new CustomEvent('pointsChanged'));
-        
-        // Atualiza info APENAS se estiver no zoom
-        const node = document.querySelector(`[data-skill="${skillData.id}"]`);
-        if (node) {
-            // Atualiza apenas o upgrader (remove e recria)
-            const oldUpgrader = node.querySelector('.skill-upgrader');
-            if (oldUpgrader) oldUpgrader.remove();
-            this.createUpgrader(node, skillData, renderer);
-            
-            // Atualiza conteúdo da info SEM recriar (sem piscar!)
-            const infoElement = node.querySelector('.skill-info-inline');
-            if (infoElement) {
-                this.updateInfoContent(infoElement, skillData);
-            }
-            
-            // Efeito visual de downgrade (só na bolinha)
-            const skillImg = node.querySelector('.skill-icon-container');
-            if (skillImg) {
-                skillImg.classList.add('downgrade-flash');
-                setTimeout(() => skillImg.classList.remove('downgrade-flash'), 600);
-            }
-        }
+        // Agenda batch update
+        this.scheduleBatchUpdate();
         
         return true;
     }
     
-    // Verifica se remover um ponto quebraria dependências
     checkDependencies(skillData, renderer) {
         const tree = renderer.treeData;
         const targetLevel = skillData.currentLevel - 1;
         
-        // Verifica todas as skills da árvore
         for (const skill of Object.values(tree.skills)) {
             if (skill.requires && skill.currentLevel > 0) {
                 for (const req of skill.requires) {
                     const [requiredSkillId, requiredLevel] = req.split(':');
                     const reqLevel = parseInt(requiredLevel) || 1;
                     
-                    // Se esta skill requer o nível atual da skill que queremos downgrade
                     if (requiredSkillId === skillData.id && reqLevel > targetLevel) {
-                        return true; // Quebraria dependência!
+                        return true;
                     }
                 }
             }
@@ -638,84 +649,134 @@ export class SkillInlineSystem {
         return false;
     }
     
-    // Verifica se pode dar upgrade
-    canUpgrade(skillData, renderer) {
-        // Verifica se não está no máximo
-        if (skillData.currentLevel >= skillData.maxLevel) return false;
+    // Agenda processamento em batch das atualizações
+    scheduleBatchUpdate() {
+        if (this.batchUpdateRAF) return; // Já agendado
         
-        // Verifica se tem pontos
-        if (this.skillPoints - this.usedPoints <= 0) return false;
-        
-        // Verifica requisitos
-        return renderer.checkRequirements(skillData);
+        this.batchUpdateRAF = requestAnimationFrame(() => {
+            this.processBatchUpdates();
+            this.batchUpdateRAF = null;
+        });
     }
     
-    // Reseta pontos
-    resetPoints() {
-        this.usedPoints = 0;
-        this.updatePointsDisplay();
+    // Processa todas as atualizações pendentes de uma vez
+    processBatchUpdates() {
+        if (this.pendingUpdates.size === 0) return;
         
-        // Dispara evento para o controller atualizar também
+        // Converte Set para Array para processar
+        const updates = Array.from(this.pendingUpdates);
+        this.pendingUpdates.clear();
+        
+        // Agrupa atualizações por skill
+        const updatesBySkill = new Map();
+        updates.forEach(update => {
+            updatesBySkill.set(update.skillId, update);
+        });
+        
+        // Processa cada skill uma única vez
+        updatesBySkill.forEach(update => {
+            const { type, skillId, skillData, renderer } = update;
+            
+            // Atualiza visual do renderer (já otimizado com cache e batch)
+            renderer.updateSkillLevel(skillId, skillData.currentLevel);
+            
+            // USA CACHE do renderer se disponível
+            let node = renderer.nodeCache ? renderer.nodeCache.get(skillId) : null;
+            
+            // Fallback para querySelector
+            if (!node) {
+                node = document.querySelector(`[data-skill="${skillId}"]`);
+            }
+            
+            if (node) {
+                // Atualiza conteúdo da info
+                const infoElement = node.querySelector('.skill-info-inline');
+                if (infoElement) {
+                    this.updateInfoContent(infoElement, skillData);
+                }
+                
+                // Animação simplificada (sem cancelar anterior - RAF já controla)
+                const skillImg = node.querySelector('.skill-icon-container');
+                if (skillImg) {
+                    // Remove todas as classes de animação
+                    skillImg.classList.remove('upgrade-flash', 'downgrade-flash');
+                    
+                    // Adiciona animação apropriada
+                    const animClass = type === 'upgrade' ? 'upgrade-flash' : 'downgrade-flash';
+                    skillImg.classList.add(animClass);
+                    
+                    // Remove após animação
+                    this.addTimeout(() => {
+                        skillImg.classList.remove(animClass);
+                    }, 300);
+                }
+            }
+        });
+        
+        // Dispara evento UMA VEZ após processar tudo
         window.dispatchEvent(new CustomEvent('pointsChanged'));
     }
     
-    // Define pontos totais
+    canUpgrade(skillData, renderer) {
+        if (skillData.currentLevel >= skillData.maxLevel) return false;
+        if (this.skillPoints - this.usedPoints <= 0) return false;
+        return renderer.checkRequirements(skillData);
+    }
+    
+    resetPoints() {
+        this.usedPoints = 0;
+        this.updatePointsDisplay();
+        window.dispatchEvent(new CustomEvent('pointsChanged'));
+    }
+    
     setTotalPoints(points) {
         this.skillPoints = points;
         this.updatePointsDisplay();
     }
     
-    // CSS do sistema inline
     setupStyles() {
         const style = document.createElement('style');
         style.textContent = `
-            /* Modo zoom - CORRIGIDO */
+            /* OTIMIZAÇÕES DE PERFORMANCE */
             .tree-content {
-                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform;
             }
             
-            /* Skill em zoom (bolinha MENOR para caber descrição) */
             .skill-node.zoomed {
                 z-index: 110 !important;
-                transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform;
             }
             
             .skill-node.zoomed .skill-icon-container {
                 filter: brightness(1.8) drop-shadow(0 0 40px rgba(255, 215, 0, 1)) !important;
-                transform: translate(-50%, -50%) scale(1.5) !important; /* Reduzido de 2.5 para 1.5 */
-                transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+                transform: translate(-50%, -50%) scale(1.5) !important;
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                will-change: transform, filter;
             }
             
             .skill-node.zoomed .skill-glow::before {
                 animation: zoomedPulse 1s ease-in-out infinite !important;
-                transform: scale(2.5) !important; /* Reduzido de 4 para 2.5 */
+                transform: scale(2.5) !important;
             }
             
             @keyframes zoomedPulse {
-                0%, 100% {
-                    opacity: 1;
-                    filter: blur(5px);
-                }
-                50% {
-                    opacity: 0.7;
-                    filter: blur(8px);
-                }
+                0%, 100% { opacity: 1; filter: blur(5px); }
+                50% { opacity: 0.7; filter: blur(8px); }
             }
             
-            /* Escurece outras skills durante zoom */
             .skill-zoomed .skill-node:not(.zoomed):not(.selected) {
                 opacity: 0.2;
                 filter: grayscale(0.8);
-                transition: opacity 0.3s ease, filter 0.3s ease;
+                transition: opacity 0.2s ease, filter 0.2s ease;
             }
             
-            /* Linhas ficam mais discretas durante zoom */
             .skill-zoomed .constellation-lines {
                 opacity: 0.2;
-                transition: opacity 0.3s ease;
+                transition: opacity 0.2s ease;
             }
             
-            /* Skill selecionada */
             .skill-node.selected {
                 z-index: 110 !important;
             }
@@ -731,21 +792,14 @@ export class SkillInlineSystem {
             }
             
             @keyframes selectedPulse {
-                0%, 100% {
-                    opacity: 1;
-                }
-                50% {
-                    opacity: 0.7;
-                }
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.7; }
             }
             
-            /* Título muda para nome da skill */
             .tree-title.skill-title {
                 color: #ffd700 !important;
                 font-size: 1.5rem !important;
-                text-shadow: 
-                    0 0 30px rgba(255, 215, 0, 0.8),
-                    2px 2px 0 #333 !important;
+                text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 2px 2px 0 #333 !important;
                 animation: titlePulse 2s ease-in-out infinite;
                 z-index: 120 !important;
                 pointer-events: auto !important;
@@ -756,7 +810,6 @@ export class SkillInlineSystem {
                 50% { transform: translateX(-50%) scale(1.05); }
             }
             
-            /* Botão de fechar zoom */
             .zoom-close-btn {
                 position: fixed;
                 top: 20px;
@@ -772,8 +825,8 @@ export class SkillInlineSystem {
                 display: flex;
                 align-items: center;
                 gap: 0.5rem;
-                transition: all 0.3s ease;
-                animation: fadeIn 0.3s ease;
+                transition: all 0.2s ease;
+                animation: fadeIn 0.2s ease;
             }
             
             .zoom-close-btn:hover {
@@ -786,16 +839,19 @@ export class SkillInlineSystem {
                 font-size: 1rem;
             }
             
-            /* Dicas de teclado durante zoom - SEM BOUNDING BOX */
             .zoom-keyboard-hints {
                 position: fixed;
                 bottom: 2rem;
                 left: 2rem;
-                display: flex;
+                display: none;
                 flex-direction: column;
                 gap: 0.8rem;
                 z-index: 150;
-                animation: fadeInLeft 0.3s ease;
+                animation: fadeInLeft 0.2s ease;
+            }
+            
+            body.skill-zoomed .zoom-keyboard-hints {
+                display: flex !important;
             }
             
             .zoom-hint {
@@ -819,50 +875,45 @@ export class SkillInlineSystem {
             }
             
             @keyframes fadeInLeft {
-                from {
-                    opacity: 0;
-                    transform: translateX(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(0);
-                }
+                from { opacity: 0; transform: translateX(-20px); }
+                to { opacity: 1; transform: translateX(0); }
             }
             
-            /* Upgrader em cima - REDUZIDO */
             .skill-upgrader {
                 position: absolute;
                 top: -60px;
                 left: 50%;
                 transform: translateX(-50%);
                 z-index: 115;
-                animation: fadeInUp 0.3s ease;
+                animation: fadeInUp 0.2s ease;
                 display: flex;
                 gap: 0.5rem;
                 align-items: center;
-                pointer-events: none; /* Container não intercepta cliques */
+                pointer-events: none;
             }
             
-            /* Durante zoom, ajusta posição do upgrader - MENOR */
             .skill-node.zoomed .skill-upgrader {
                 top: -70px;
-                transform: translateX(-50%) scale(0.9); /* Reduzido de 1.5 para 0.9 */
+                transform: translateX(-50%) scale(0.9);
             }
             
-            .upgrade-button {
-                background: rgba(0, 255, 0, 0.2);
-                border: 2px solid rgba(0, 255, 0, 0.8);
+            .upgrade-button, .downgrade-button {
                 padding: 0.3rem 0.4rem;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 gap: 0.2rem;
-                transition: all 0.2s ease;
+                transition: all 0.15s ease;
                 font-family: 'Press Start 2P', cursive;
                 pointer-events: auto;
                 min-width: 50px;
                 height: 32px;
+            }
+            
+            .upgrade-button {
+                background: rgba(0, 255, 0, 0.2);
+                border: 2px solid rgba(0, 255, 0, 0.8);
             }
             
             .upgrade-button:hover {
@@ -872,34 +923,9 @@ export class SkillInlineSystem {
                 transform: scale(1.1);
             }
             
-            .upgrade-icon {
-                color: #0f0;
-                font-size: 0.9rem;
-                font-weight: bold;
-                line-height: 1;
-            }
-            
-            .upgrade-cost {
-                color: #fff;
-                font-size: 0.45rem;
-                line-height: 1;
-            }
-            
-            /* Botão de downgrade (remover ponto) */
             .downgrade-button {
                 background: rgba(255, 0, 0, 0.2);
                 border: 2px solid rgba(255, 0, 0, 0.8);
-                padding: 0.3rem 0.4rem;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 0.2rem;
-                transition: all 0.2s ease;
-                font-family: 'Press Start 2P', cursive;
-                pointer-events: auto;
-                min-width: 50px;
-                height: 32px;
             }
             
             .downgrade-button:hover {
@@ -909,44 +935,45 @@ export class SkillInlineSystem {
                 transform: scale(1.1);
             }
             
-            .downgrade-icon {
-                color: #f00;
+            .upgrade-icon, .downgrade-icon {
                 font-size: 0.9rem;
                 font-weight: bold;
                 line-height: 1;
             }
             
-            .downgrade-cost {
+            .upgrade-icon { color: #0f0; }
+            .downgrade-icon { color: #f00; }
+            
+            .upgrade-cost, .downgrade-cost {
                 color: #fff;
                 font-size: 0.45rem;
                 line-height: 1;
             }
             
             .upgrade-locked {
-                padding: 0.4rem; /* Reduzido */
+                padding: 0.4rem;
                 opacity: 0.5;
-                pointer-events: none; /* Cadeado não é clicável */
+                pointer-events: none;
             }
             
             .lock-icon {
-                font-size: 1rem; /* Reduzido de 1.2rem */
+                font-size: 1rem;
             }
             
             .upgrade-max {
                 color: #ffd700;
-                font-size: 0.45rem; /* Reduzido de 0.5rem */
-                padding: 0.3rem 0.5rem; /* Reduzido padding */
+                font-size: 0.45rem;
+                padding: 0.3rem 0.5rem;
                 background: rgba(255, 215, 0, 0.1);
                 border: 1px solid rgba(255, 215, 0, 0.3);
                 font-family: 'Press Start 2P', cursive;
                 white-space: nowrap;
-                pointer-events: none; /* MAX não é clicável */
+                pointer-events: none;
             }
             
-            /* Info inline embaixo - AINDA MAIS PRÓXIMA */
             .skill-info-inline {
                 position: absolute;
-                top: calc(100% + 20px); /* Reduzido de 30px para 20px */
+                top: calc(100% + 20px);
                 left: 50%;
                 transform: translateX(-50%);
                 background: rgba(0, 0, 0, 0.98);
@@ -956,32 +983,24 @@ export class SkillInlineSystem {
                 max-width: 400px;
                 z-index: 125;
                 font-family: 'Press Start 2P', cursive;
-                box-shadow: 
-                    0 10px 30px rgba(0, 0, 0, 0.9),
-                    0 0 20px rgba(255, 215, 0, 0.3);
-                pointer-events: none; /* NÃO intercepta cliques */
-                /* SEM transição para evitar piscar ao atualizar conteúdo */
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 215, 0, 0.3);
+                pointer-events: none;
             }
             
-            /* Animação apenas na primeira criação */
             .skill-info-inline.first-render {
-                animation: fadeInDown 0.3s ease;
+                animation: fadeInDown 0.2s ease;
             }
             
-            /* Durante zoom, bem próxima */
             .skill-node.zoomed .skill-info-inline {
-                top: calc(100% + 25px); /* Reduzido de 40px para 25px */
+                top: calc(100% + 25px);
                 transform: translateX(-50%) scale(1);
             }
             
-            /* Esconde o nome da skill durante zoom */
             .skill-node.zoomed .skill-name {
                 opacity: 0;
                 visibility: hidden;
-                transition: opacity 0.3s ease, visibility 0.3s ease;
+                transition: opacity 0.2s ease, visibility 0.2s ease;
             }
-            
-            /* Removidos: .info-name e .info-level (não são mais usados) */
             
             .info-desc {
                 color: rgba(255, 255, 255, 0.9);
@@ -1005,7 +1024,6 @@ export class SkillInlineSystem {
                 transition: all 0.2s ease;
             }
             
-            /* Animação de piscar quando requisitos não atendidos */
             .info-requires.flash-missing {
                 animation: flashRequirements 1.5s ease;
             }
@@ -1017,10 +1035,7 @@ export class SkillInlineSystem {
                 }
                 10%, 30%, 50%, 70%, 90% {
                     color: #ff0000;
-                    text-shadow: 
-                        0 0 10px rgba(255, 0, 0, 1),
-                        0 0 20px rgba(255, 0, 0, 0.8),
-                        0 0 30px rgba(255, 0, 0, 0.6);
+                    text-shadow: 0 0 10px rgba(255, 0, 0, 1), 0 0 20px rgba(255, 0, 0, 0.8), 0 0 30px rgba(255, 0, 0, 0.6);
                     transform: scale(1.05);
                 }
                 20%, 40%, 60%, 80% {
@@ -1035,17 +1050,16 @@ export class SkillInlineSystem {
                 font-size: 0.45rem;
             }
             
-            /* Bônus de nível - cores dinâmicas com transição suave */
             .bonus-active {
                 color: #0f0;
                 text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
                 font-weight: bold;
-                transition: color 0.3s ease, text-shadow 0.3s ease;
+                transition: color 0.2s ease, text-shadow 0.2s ease;
             }
             
             .bonus-inactive {
                 color: rgba(255, 255, 255, 0.4);
-                transition: color 0.3s ease;
+                transition: color 0.2s ease;
             }
             
             .info-active-skill {
@@ -1063,35 +1077,21 @@ export class SkillInlineSystem {
                 margin-right: 0.5rem;
             }
             
-            /* Animações */
             @keyframes fadeIn {
                 from { opacity: 0; }
                 to { opacity: 1; }
             }
             
             @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0);
-                }
+                from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
             }
             
             @keyframes fadeInDown {
-                from {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-10px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0);
-                }
+                from { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
             }
             
-            /* Efeito de shake */
             .skill-node.shake {
                 animation: shake 0.5s ease;
             }
@@ -1102,52 +1102,30 @@ export class SkillInlineSystem {
                 75% { transform: translate(-50%, -50%) translateX(5px); }
             }
             
-            /* Efeito de upgrade - APENAS no container da imagem */
             .skill-node .skill-icon-container.upgrade-flash {
-                animation: upgradeFlash 0.6s ease;
+                animation: upgradeFlash 0.3s ease;
             }
             
             @keyframes upgradeFlash {
-                0% { 
-                    filter: brightness(1);
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                50% { 
-                    filter: brightness(2) drop-shadow(0 0 40px rgba(0, 255, 0, 1));
-                    transform: translate(-50%, -50%) scale(1.4);
-                }
-                100% { 
-                    filter: brightness(1);
-                    transform: translate(-50%, -50%) scale(1);
-                }
+                0% { filter: brightness(1); transform: translate(-50%, -50%) scale(1); }
+                50% { filter: brightness(2) drop-shadow(0 0 40px rgba(0, 255, 0, 1)); transform: translate(-50%, -50%) scale(1.3); }
+                100% { filter: brightness(1); transform: translate(-50%, -50%) scale(1); }
             }
             
-            /* Efeito de downgrade - APENAS no container da imagem */
             .skill-node .skill-icon-container.downgrade-flash {
-                animation: downgradeFlash 0.6s ease;
+                animation: downgradeFlash 0.3s ease;
             }
             
             @keyframes downgradeFlash {
-                0% { 
-                    filter: brightness(1);
-                    transform: translate(-50%, -50%) scale(1);
-                }
-                50% { 
-                    filter: brightness(0.5) drop-shadow(0 0 40px rgba(255, 0, 0, 1));
-                    transform: translate(-50%, -50%) scale(0.8);
-                }
-                100% { 
-                    filter: brightness(1);
-                    transform: translate(-50%, -50%) scale(1);
-                }
+                0% { filter: brightness(1); transform: translate(-50%, -50%) scale(1); }
+                50% { filter: brightness(0.5) drop-shadow(0 0 40px rgba(255, 0, 0, 1)); transform: translate(-50%, -50%) scale(0.8); }
+                100% { filter: brightness(1); transform: translate(-50%, -50%) scale(1); }
             }
             
-            /* Previne scroll durante zoom */
             body.skill-zoomed {
                 overflow: hidden;
             }
             
-            /* Responsivo */
             @media (max-width: 768px) {
                 .skill-info-inline {
                     min-width: 260px;
@@ -1156,9 +1134,7 @@ export class SkillInlineSystem {
                 }
                 
                 .info-desc, .info-effect { font-size: 0.45rem; }
-                .info-requires, .info-level-reqs { 
-                    font-size: 0.4rem; 
-                }
+                .info-requires, .info-level-reqs { font-size: 0.4rem; }
                 
                 .zoom-close-btn {
                     padding: 0.6rem 0.8rem;
@@ -1171,39 +1147,21 @@ export class SkillInlineSystem {
                     gap: 0.6rem;
                 }
                 
-                .zoom-hint {
-                    font-size: 0.45rem;
-                }
+                .zoom-hint { font-size: 0.45rem; }
+                .zoom-key { font-size: 0.45rem; padding: 0.3rem 0.5rem; }
                 
-                .zoom-key {
-                    font-size: 0.45rem;
-                    padding: 0.3rem 0.5rem;
-                }
-                
-                .upgrade-button {
+                .upgrade-button, .downgrade-button {
                     padding: 0.3rem 0.4rem;
                     min-width: 45px;
                     height: 28px;
                 }
                 
-                .downgrade-button {
-                    padding: 0.3rem 0.4rem;
-                    min-width: 45px;
-                    height: 28px;
-                }
-                
-                .upgrade-icon, .downgrade-icon {
-                    font-size: 0.8rem;
-                }
-                
-                .upgrade-cost, .downgrade-cost {
-                    font-size: 0.4rem;
-                }
+                .upgrade-icon, .downgrade-icon { font-size: 0.8rem; }
+                .upgrade-cost, .downgrade-cost { font-size: 0.4rem; }
             }
         `;
         document.head.appendChild(style);
     }
 }
 
-// Exporta instância singleton
 export const skillInlineSystem = new SkillInlineSystem();

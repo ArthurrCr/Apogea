@@ -19,6 +19,7 @@ class TraitTreeController {
         this.currentLevel = 1;
         this.totalPoints = 0;
         this.maxLevelForPoints = 80; // Nível máximo para ganhar pontos
+        this.isNavigating = false; // Flag para prevenir múltiplas navegações simultâneas
         
         // Expõe o sistema inline globalmente para o renderer acessar
         window.skillInlineSystem = skillInlineSystem;
@@ -286,7 +287,7 @@ class TraitTreeController {
             });
         }
         
-        // Teclas de atalho
+        // Teclas de atalho - OTIMIZADO
         document.addEventListener('keydown', (e) => {
             // Verifica se está em modo zoom
             const isZoomed = document.body.classList.contains('skill-zoomed');
@@ -311,33 +312,76 @@ class TraitTreeController {
                 return;
             }
             
-            // Tab para navegar entre skills
+            // Tab para navegar entre skills - PROTEÇÃO CONTRA TAB RÁPIDO
             if (e.key === 'Tab' && !e.shiftKey) {
                 e.preventDefault();
                 
-                const skills = document.querySelectorAll('.skill-node');
-                const selected = document.querySelector('.skill-node.selected');
+                // BLOQUEIA SE JÁ ESTIVER NAVEGANDO
+                if (this.isNavigating) {
+                    console.log('Tab bloqueado - navegação em andamento');
+                    return;
+                }
+                
+                // PEGA APENAS AS SKILLS DA TRAIT ATUAL/VISÍVEL
+                const currentTreePanel = document.querySelector('.tree-panel[data-trait="' + this.currentTree + '"]');
+                if (!currentTreePanel) return;
+                
+                const skills = currentTreePanel.querySelectorAll('.skill-node');
+                if (skills.length === 0) return;
+                
+                const selected = currentTreePanel.querySelector('.skill-node.selected');
                 
                 if (isZoomed) {
-                    // Se já está em zoom, vai para a próxima skill
+                    // Se já está em zoom, vai para a próxima skill DA MESMA TRAIT
+                    if (selected) {
+                        this.isNavigating = true;
+                        
+                        const index = Array.from(skills).indexOf(selected);
+                        const nextIndex = (index + 1) % skills.length;
+                        
+                        // Remove TODAS as seleções
+                        this.clearAllSelections();
+                        
+                        // Sai do zoom e AGUARDA completar
+                        skillInlineSystem.exitZoom().then(() => {
+                            // Aguarda mais um frame para garantir que exitZoom completou
+                            requestAnimationFrame(() => {
+                                skills[nextIndex].click();
+                                
+                                // Aguarda o novo zoom completar antes de liberar
+                                // Usa timeout com base na duração da animação de zoom (300ms)
+                                setTimeout(() => {
+                                    this.isNavigating = false;
+                                    console.log('Navegação Tab completa');
+                                }, 350); // 300ms zoom + 50ms margem
+                            });
+                        }).catch(() => {
+                            this.isNavigating = false; // Libera mesmo se der erro
+                        });
+                    }
+                } else {
+                    // Se não está em zoom, navega normalmente mas AGUARDA o zoom da nova skill
+                    this.clearAllSelections();
+                    
                     if (selected) {
                         const index = Array.from(skills).indexOf(selected);
                         const nextIndex = (index + 1) % skills.length;
                         
-                        // Sai do zoom e seleciona a próxima
-                        skillInlineSystem.exitZoom();
-                        setTimeout(() => {
-                            skills[nextIndex].click();
-                        }, 300);
-                    }
-                } else {
-                    // Se não está em zoom, navega normalmente
-                    if (selected) {
-                        const index = Array.from(skills).indexOf(selected);
-                        const nextIndex = (index + 1) % skills.length;
+                        this.isNavigating = true;
                         skills[nextIndex].click();
+                        
+                        // Aguarda o zoom completar antes de liberar (300ms animação + 50ms margem)
+                        setTimeout(() => {
+                            this.isNavigating = false;
+                        }, 350);
                     } else if (skills.length > 0) {
+                        this.isNavigating = true;
                         skills[0].click();
+                        
+                        // Aguarda o zoom completar antes de liberar
+                        setTimeout(() => {
+                            this.isNavigating = false;
+                        }, 350);
                     }
                 }
             }
@@ -459,13 +503,7 @@ class TraitTreeController {
                 skillInlineSystem.resetPoints();
                 
                 // Remove seleções visuais
-                document.querySelectorAll('.skill-node.selected').forEach(node => {
-                    node.classList.remove('selected');
-                    const info = node.querySelector('.skill-info-inline');
-                    if (info) info.remove();
-                    const upgrader = node.querySelector('.skill-upgrader');
-                    if (upgrader) upgrader.remove();
-                });
+                this.clearAllSelections();
                 
                 this.updatePointsDisplay();
                 console.log(`Árvore ${this.currentTree} resetada`);
@@ -486,6 +524,14 @@ class TraitTreeController {
         skillInlineSystem.resetPoints();
         
         // Remove seleções visuais
+        this.clearAllSelections();
+        
+        this.updatePointsDisplay();
+        console.log('Todas as árvores resetadas');
+    }
+    
+    // Limpa todas as seleções de skills (helper function)
+    clearAllSelections() {
         document.querySelectorAll('.skill-node.selected').forEach(node => {
             node.classList.remove('selected');
             const info = node.querySelector('.skill-info-inline');
@@ -493,9 +539,6 @@ class TraitTreeController {
             const upgrader = node.querySelector('.skill-upgrader');
             if (upgrader) upgrader.remove();
         });
-        
-        this.updatePointsDisplay();
-        console.log('Todas as árvores resetadas');
     }
     
     // Métodos de utilidade
